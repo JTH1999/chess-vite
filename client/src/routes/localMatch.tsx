@@ -36,7 +36,7 @@ export default function LocalMatchRoute() {
                         capturedPieces={capturedPieces}
                         colour="white"
                     />
-                    <Flex>
+                    <Flex maxHeight={`${boardHeight}px`}>
                         <Board
                             pieces={pieces}
                             setPieces={setPieces}
@@ -63,6 +63,7 @@ export default function LocalMatchRoute() {
                             analysisMode={analysisMode}
                             setAnalysisMode={setAnalysisMode}
                             setAnalysisMoveNumber={setAnalysisMoveNumber}
+                            boardHeight={boardHeight}
                         />
                         <AnalysisSectionV2
                             moves={moves}
