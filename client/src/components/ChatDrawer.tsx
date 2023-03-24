@@ -25,11 +25,16 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 
-export function ChatDrawer({ buttonRef, username, socket, isOpen, onClose }) {
+export function ChatDrawer({
+    buttonRef,
+    username,
+    socket,
+    isOpen,
+    onClose,
+    messages,
+    setMessages,
+}) {
     const [message, setMessage] = useState("");
-    const [messages, setMessages] = useState<
-        { text: string; name: string; id: string; socketId: string }[]
-    >([]);
 
     function handleKeyDown(e) {
         if (e.key === "Enter") {

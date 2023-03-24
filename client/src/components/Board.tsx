@@ -32,6 +32,11 @@ export default function Board({
     setMoves,
     setAnalysisMode,
     setAnalysisMoveNumber,
+    colour,
+    previousPieceMovedFrom,
+    previousPieceMovedTo,
+    flipBoard,
+    setColour,
 }: {
     pieces: Piece[];
     selectedPiece: Piece | null;
@@ -45,7 +50,11 @@ export default function Board({
     promote: boolean;
     moves: Move[];
     analysisMode: boolean;
-    boardHeight: string;
+    boardHeight: number;
+    colour: string;
+    previousPieceMovedFrom: string;
+    previousPieceMovedTo: string;
+    flipBoard: boolean;
     setPieces: Dispatch<SetStateAction<Piece[]>>;
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
     setWhiteToMove: Dispatch<SetStateAction<boolean>>;
@@ -59,7 +68,10 @@ export default function Board({
     setMoves: Dispatch<SetStateAction<Move[]>>;
     setAnalysisMode: Dispatch<SetStateAction<boolean>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+    setColour: Dispatch<SetStateAction<string>>;
 }) {
+    const blackRows = [1, 2, 3, 4, 5, 6, 7, 8];
+    const whiteRows = [8, 7, 6, 5, 4, 3, 2, 1];
     return (
         <Flex>
             <Flex
@@ -105,9 +117,89 @@ export default function Board({
                     setPromote={setPromote}
                     moves={moves}
                     capturedPieces={capturedPieces}
+                    flipBoard={flipBoard}
+                    colour={colour}
+                    setColour={setColour}
                 />
+                {colour === "white"
+                    ? whiteRows.map((row) => {
+                          return (
+                              <BoardRow
+                                  key={row}
+                                  row={row}
+                                  pieces={pieces}
+                                  setPieces={setPieces}
+                                  selectedPiece={selectedPiece}
+                                  setSelectedPiece={setSelectedPiece}
+                                  whiteToMove={whiteToMove}
+                                  setWhiteToMove={setWhiteToMove}
+                                  capturedPieces={capturedPieces}
+                                  setCapturedPieces={setCapturedPieces}
+                                  whiteKingSquare={whiteKingSquare}
+                                  setWhiteKingSquare={setWhiteKingSquare}
+                                  blackKingSquare={blackKingSquare}
+                                  setBlackKingSquare={setBlackKingSquare}
+                                  isCheck={isCheck}
+                                  setIsCheck={setIsCheck}
+                                  setIsCheckmate={setIsCheckmate}
+                                  setIsStalemate={setIsStalemate}
+                                  promote={promote}
+                                  setPromote={setPromote}
+                                  moves={moves}
+                                  setMoves={setMoves}
+                                  analysisMode={analysisMode}
+                                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                                  boardHeight={boardHeight}
+                                  colour={colour}
+                                  previousPieceMovedFrom={
+                                      previousPieceMovedFrom
+                                  }
+                                  previousPieceMovedTo={previousPieceMovedTo}
+                                  flipBoard={flipBoard}
+                                  setColour={setColour}
+                              />
+                          );
+                      })
+                    : blackRows.map((row) => {
+                          return (
+                              <BoardRow
+                                  key={row}
+                                  row={row}
+                                  pieces={pieces}
+                                  setPieces={setPieces}
+                                  selectedPiece={selectedPiece}
+                                  setSelectedPiece={setSelectedPiece}
+                                  whiteToMove={whiteToMove}
+                                  setWhiteToMove={setWhiteToMove}
+                                  capturedPieces={capturedPieces}
+                                  setCapturedPieces={setCapturedPieces}
+                                  whiteKingSquare={whiteKingSquare}
+                                  setWhiteKingSquare={setWhiteKingSquare}
+                                  blackKingSquare={blackKingSquare}
+                                  setBlackKingSquare={setBlackKingSquare}
+                                  isCheck={isCheck}
+                                  setIsCheck={setIsCheck}
+                                  setIsCheckmate={setIsCheckmate}
+                                  setIsStalemate={setIsStalemate}
+                                  promote={promote}
+                                  setPromote={setPromote}
+                                  moves={moves}
+                                  setMoves={setMoves}
+                                  analysisMode={analysisMode}
+                                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                                  boardHeight={boardHeight}
+                                  colour={colour}
+                                  previousPieceMovedFrom={
+                                      previousPieceMovedFrom
+                                  }
+                                  previousPieceMovedTo={previousPieceMovedTo}
+                                  flipBoard={flipBoard}
+                                  setColour={setColour}
+                              />
+                          );
+                      })}
 
-                <BoardRow
+                {/* <BoardRow
                     row={8}
                     pieces={pieces}
                     setPieces={setPieces}
@@ -131,6 +223,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={7}
@@ -156,6 +249,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={6}
@@ -181,6 +275,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={5}
@@ -206,6 +301,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={4}
@@ -231,6 +327,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={3}
@@ -256,6 +353,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={2}
@@ -281,6 +379,7 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    boardHeight={boardHeight}
                 />
                 <BoardRow
                     row={1}
@@ -306,7 +405,8 @@ export default function Board({
                     setMoves={setMoves}
                     analysisMode={analysisMode}
                     setAnalysisMoveNumber={setAnalysisMoveNumber}
-                />
+                    boardHeight={boardHeight}
+                /> */}
             </Flex>
         </Flex>
     );

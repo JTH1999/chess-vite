@@ -8,7 +8,6 @@ import { useAuth } from "../hooks/useAuth";
 export default function Root() {
     const [data, setData] = useState(null);
     const auth = useAuth();
-    console.log("user: " + auth.user);
     useEffect(() => {
         auth.getUser();
     }, []);
@@ -39,6 +38,11 @@ export default function Root() {
                             url="/vs-computer"
                         />
                         <MenuButton text={"Online Match"} url="/online-match" />
+                        {auth.user?.username ? (
+                            <MenuButton text={"My Games"} url="/my-games" />
+                        ) : (
+                            <></>
+                        )}
                     </Stack>
                     <Flex borderTopColor={"gray.700"} borderTopWidth="2px">
                         <MenuButton
@@ -47,7 +51,7 @@ export default function Root() {
                         />
                     </Flex>
                 </Flex>
-                <Box flex="1">
+                <Box flex="1" overflowX={"scroll"} h="100vh">
                     <Outlet />
                 </Box>
             </Flex>

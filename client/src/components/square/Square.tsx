@@ -18,6 +18,12 @@ export default function Square({
     promote,
     moves,
     analysisMode,
+    boardHeight,
+    previousPieceMovedFrom,
+    previousPieceMovedTo,
+    colour,
+    flipBoard,
+    setColour,
     setPieces,
     setSelectedPiece,
     setWhiteToMove,
@@ -43,6 +49,12 @@ export default function Square({
     promote: boolean;
     moves: Move[];
     analysisMode: boolean;
+    boardHeight: number;
+    previousPieceMovedFrom: string;
+    previousPieceMovedTo: string;
+    colour: string;
+    flipBoard: boolean;
+    setColour: Dispatch<SetStateAction<string>>;
     setPieces: Dispatch<SetStateAction<Piece[]>>;
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
     setWhiteToMove: Dispatch<SetStateAction<boolean>>;
@@ -57,14 +69,10 @@ export default function Square({
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
     let bgColor;
-    if (row % 2 === 0) {
-        bgColor = col % 2 !== 0 ? "rgb(234, 248, 232)" : "rgb(101, 180, 90)";
-    } else {
-        bgColor = col % 2 === 0 ? "rgb(234, 248, 232)" : "rgb(101, 180, 90)";
-    }
 
     const square = col.toString() + row.toString();
     let piece: Piece | null = null;
+    const height = boardHeight / 8;
 
     for (let i = 0; i < pieces.length; i++) {
         if (pieces[i].currentRow === row && pieces[i].currentCol === col) {
@@ -89,6 +97,9 @@ export default function Square({
             promote,
             moves,
             analysisMode,
+            colour,
+            flipBoard,
+            setColour,
             setPieces,
             setSelectedPiece,
             setWhiteToMove,
@@ -107,57 +118,54 @@ export default function Square({
     if (row % 2 === 0) {
         bgColor =
             col % 2 !== 0
-                ? selectedPiece !== null &&
-                  selectedPiece.currentCol === col &&
-                  selectedPiece.currentRow === row
-                    ? "teal.100"
+                ? (selectedPiece !== null &&
+                      selectedPiece.currentCol === col &&
+                      selectedPiece.currentRow === row) ||
+                  square === previousPieceMovedFrom ||
+                  square === previousPieceMovedTo
+                    ? "teal.200"
                     : "green.50"
-                : selectedPiece !== null &&
-                  selectedPiece.currentCol === col &&
-                  selectedPiece.currentRow === row
+                : (selectedPiece !== null &&
+                      selectedPiece.currentCol === col &&
+                      selectedPiece.currentRow === row) ||
+                  square === previousPieceMovedFrom ||
+                  square === previousPieceMovedTo
                 ? "teal.400"
                 : "green.400";
     } else {
         bgColor =
             col % 2 === 0
-                ? selectedPiece !== null &&
-                  selectedPiece.currentCol === col &&
-                  selectedPiece.currentRow === row
-                    ? "teal.100"
+                ? (selectedPiece !== null &&
+                      selectedPiece.currentCol === col &&
+                      selectedPiece.currentRow === row) ||
+                  square === previousPieceMovedFrom ||
+                  square === previousPieceMovedTo
+                    ? "teal.200"
                     : "green.50"
-                : selectedPiece !== null &&
-                  selectedPiece.currentCol === col &&
-                  selectedPiece.currentRow === row
+                : (selectedPiece !== null &&
+                      selectedPiece.currentCol === col &&
+                      selectedPiece.currentRow === row) ||
+                  square === previousPieceMovedFrom ||
+                  square === previousPieceMovedTo
                 ? "teal.400"
                 : "green.400";
     }
 
     return (
         <Flex
-            className={
-                selectedPiece !== null &&
-                selectedPiece.currentCol.toString() +
-                    selectedPiece.currentRow.toString() ===
-                    square
-                    ? "square selected"
-                    : "square"
-            }
             alignItems="center"
             justify={"center"}
             bgColor={bgColor}
             onClick={handleClick}
-            // border="1px solid #999"
             float={"left"}
-            height="100px"
-            width="100px"
-            marginRight={"-1px"}
-            marginTop="-1px"
+            height={`${height}px`}
+            width={`${height}px`}
             userSelect={"none"}
         >
             <Image
                 src={piece ? piece.src : undefined}
                 zIndex="4"
-                h="75px"
+                h={`${height * 0.8}px`}
                 cursor={"pointer"}
             />
             <Img
@@ -167,7 +175,7 @@ export default function Square({
                         : undefined
                 }
                 className="available-marker"
-                w="40px"
+                w={`${height * 0.4}px`}
                 zIndex={"20"}
                 position="absolute"
             />
@@ -178,7 +186,7 @@ export default function Square({
                         : undefined
                 }
                 className="available-marker-piece"
-                w="100px"
+                w={`${height}px`}
                 zIndex={"3"}
                 position="absolute"
             />

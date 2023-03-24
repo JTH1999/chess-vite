@@ -35,6 +35,9 @@ export function handleClickLogic(
     promote: boolean,
     moves: Move[],
     analysisMode: boolean,
+    colour: string,
+    flipBoard: boolean,
+    setColour: Dispatch<SetStateAction<string>>,
     setPieces: Dispatch<SetStateAction<Piece[]>>,
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>,
     setWhiteToMove: Dispatch<SetStateAction<boolean>>,
@@ -211,6 +214,9 @@ export function handleClickLogic(
             setWhiteToMove(!whiteToMove);
             setCapturedPieces(capturedPiecesCopy);
             setAnalysisMoveNumber(movesCopy.length - 1);
+            if (flipBoard) {
+                setColour(colour === "white" ? "black" : "white");
+            }
         } else if (
             selectedPiece.currentCol.toString() +
                 selectedPiece.currentRow.toString() ===

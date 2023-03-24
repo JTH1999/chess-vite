@@ -1,28 +1,13 @@
 import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
-import { OnlineBoardRow } from "./OnlineBoardRow";
-import OnlineEndScreen from "./OnlineEndScreen";
-import OnlinePromoteScreen from "./OnlinePromoteScreen";
+import { AnalysisBoardRow } from "./AnalysisBoardRow";
 
-export function OnlineBoard({
+export function AnalysisBoard({
     colour,
     pieces,
-    isYourMove,
-    socket,
-    roomCode,
-    setIsYourMove,
-    gameId,
-    status,
-    winner,
-    moves,
-    whiteToMove,
     boardHeight,
-    analysisMode,
     previousPieceMovedFrom,
     previousPieceMovedTo,
-    setAnalysisMode,
-    setAnalysisMoveNumber,
-    setPieces,
 }) {
     const [selectedPiece, setSelectedPiece] = useState(null);
 
@@ -38,42 +23,16 @@ export function OnlineBoard({
                     alignItems={"center"}
                     // boxShadow="-10px -10px 40px 0px rgba(73, 73, 73, 0.45), 10px 10px 30px 0px rgba(0, 0, 0, 0.4);"
                 >
-                    <OnlineEndScreen
-                        whiteToMove={whiteToMove}
-                        analysisMode={analysisMode}
-                        winner={winner}
-                        status={status}
-                        moves={moves}
-                        socket={socket}
-                        roomCode={roomCode}
-                        setAnalysisMode={setAnalysisMode}
-                        setAnalysisMoveNumber={setAnalysisMoveNumber}
-                        setPieces={setPieces}
-                    />
-                    <OnlinePromoteScreen
-                        socket={socket}
-                        roomCode={roomCode}
-                        gameId={gameId}
-                        status={status}
-                        whiteToMove={whiteToMove}
-                    />
                     {colour === "white"
                         ? whiteRows.map((row) => {
                               return (
-                                  <OnlineBoardRow
+                                  <AnalysisBoardRow
                                       key={row}
                                       row={row}
                                       pieces={pieces}
                                       selectedPiece={selectedPiece}
                                       colour={colour}
-                                      isYourMove={isYourMove}
-                                      socket={socket}
-                                      roomCode={roomCode}
-                                      setIsYourMove={setIsYourMove}
-                                      setSelectedPiece={setSelectedPiece}
-                                      gameId={gameId}
                                       boardHeight={boardHeight}
-                                      analysisMode={analysisMode}
                                       previousPieceMovedFrom={
                                           previousPieceMovedFrom
                                       }
@@ -85,20 +44,13 @@ export function OnlineBoard({
                           })
                         : blackRows.map((row) => {
                               return (
-                                  <OnlineBoardRow
+                                  <AnalysisBoardRow
                                       key={row}
                                       row={row}
                                       pieces={pieces}
                                       selectedPiece={selectedPiece}
                                       colour={colour}
-                                      isYourMove={isYourMove}
-                                      socket={socket}
-                                      roomCode={roomCode}
-                                      setIsYourMove={setIsYourMove}
-                                      setSelectedPiece={setSelectedPiece}
-                                      gameId={gameId}
                                       boardHeight={boardHeight}
-                                      analysisMode={analysisMode}
                                       previousPieceMovedFrom={
                                           previousPieceMovedFrom
                                       }

@@ -11,18 +11,26 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(uuid())
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  username     String    @unique
+  id           String   @id @default(uuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  username     String   @unique
   passwordHash String
-  authStrategy String    @default("local")
-  points       Int       @default(50)
-  refreshToken Session[]
+  authStrategy String   @default("local")
+  points       Int      @default(50)
+  gamesAsWhite Game[]   @relation("whiteUser")
+  gamesAsBlack Game[]   @relation("blackUser")
 }
 
-model Session {
-  refreshToken String @id @default("")
-  userId       String
-  user         User   @relation(fields: [userId], references: [id])
+model Game {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  whiteId   String
+  blackId   String
+  moves     String
+  winner    String?
+  result    String
+  whiteUser User     @relation("whiteUser", fields: [whiteId], references: [id])
+  blackUser User     @relation("blackUser", fields: [blackId], references: [id])
 }

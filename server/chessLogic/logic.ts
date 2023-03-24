@@ -218,7 +218,7 @@ function moveLogic(
     }
 
     return {
-        status: "active",
+        status: "unfinished",
         pieces: piecesCopy,
         moves: movesCopy,
         capturedPieces: capturedPiecesCopy,
@@ -323,7 +323,7 @@ function promoteLogic(
     }
 
     return {
-        status: "active",
+        status: "unfinished",
         pieces: piecesCopy,
         moves: moves,
         capturedPieces: capturedPieces,

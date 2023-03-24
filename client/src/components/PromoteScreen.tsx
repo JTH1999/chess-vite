@@ -24,6 +24,9 @@ export default function PromoteScreen({
     selectedPiece,
     moves,
     capturedPieces,
+    flipBoard,
+    colour,
+    setColour,
     setIsCheck,
     setPromote,
     setIsCheckmate,
@@ -40,6 +43,9 @@ export default function PromoteScreen({
     selectedPiece: Piece | null;
     moves: Move[];
     capturedPieces: Piece[];
+    colour: string;
+    flipBoard: boolean;
+    setColour: Dispatch<SetStateAction<string>>;
     setIsCheck: Dispatch<SetStateAction<boolean>>;
     setPromote: Dispatch<SetStateAction<boolean>>;
     setIsCheckmate: Dispatch<SetStateAction<boolean>>;
@@ -90,31 +96,6 @@ export default function PromoteScreen({
         let playerColour = selectedPiece.colour;
         let oppositionColour = playerColour === "white" ? "black" : "white";
 
-        // piecesCopy[selectedPiece.index].availableMoves = checkAvailableMoves(
-        //     piecesCopy[selectedPiece.index],
-        //     piecesCopy,
-        //     moves
-        // );
-
-        // const isCheck = checkIfCheck(
-        //     piecesCopy,
-        //     selectedPiece.index,
-        //     blackKingSquare,
-        //     whiteKingSquare
-        // );
-
-        // // check if checkmate
-        // let isCheckmate = false;
-        // if (isCheck) {
-        //     isCheckmate = checkIfCheckmate(
-        //         piecesCopy,
-        //         selectedPiece.index,
-        //         blackKingSquare,
-        //         whiteKingSquare,
-        //         moves
-        //     );
-        // }
-
         const calculateAllAvailableMovesResult = calculateAllAvailableMoves(
             piecesCopy,
             selectedPiece.colour,
@@ -146,6 +127,9 @@ export default function PromoteScreen({
         setSelectedPiece(null);
         setWhiteToMove(!whiteToMove);
         setPromote(false);
+        if (flipBoard) {
+            setColour(colour === "white" ? "black" : "white");
+        }
     }
 
     return (

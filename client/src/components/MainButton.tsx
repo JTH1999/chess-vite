@@ -4,10 +4,12 @@ export default function MainButton({
     text,
     onClick,
     disabled = false,
+    w = "100%",
 }: {
     text: string;
     onClick: any;
     disabled: boolean | undefined;
+    w: string;
 }) {
     return (
         <Button
@@ -15,7 +17,7 @@ export default function MainButton({
             bgColor="green.400"
             color={"white"}
             padding="20px"
-            w="100%"
+            w={w}
             mt="20px"
             border="0 solid white"
             boxShadow={"0px 5px 10px rgba(0, 0, 0, 0.15)"}

@@ -23,13 +23,19 @@ import MainButton from "../MainButton";
 import { useAuth } from "../../hooks/useAuth";
 
 import TransparentButton from "../TransparentButton";
+import { io } from "socket.io-client";
 
-export function LobbyScreen({ socket, username, onOpen }) {
+export function LobbyScreen({
+    socket,
+    username,
+    onOpen,
+    isRoomCreated,
+    setIsRoomCreated,
+    roomJoined,
+    players,
+}) {
     const auth = useAuth();
     const navigate = useNavigate();
-    const [players, setPlayers] = useState([]);
-    const [isRoomCreated, setIsRoomCreated] = useState(false);
-    const [roomJoined, setRoomJoined] = useState("");
     const [joinRoomCode, setJoinRoomCode] = useState("");
     const [tabIndex, setTabIndex] = useState(-1);
     const buttonRef = useRef();
@@ -61,36 +67,6 @@ export function LobbyScreen({ socket, username, onOpen }) {
     function startMatch(roomCode: string) {
         socket.emit("startMatch", roomCode);
     }
-
-    useEffect(() => {
-        socket.on("roomCreated", (response) => {
-            setIsRoomCreated(true);
-            setPlayers(response.players);
-        });
-    }, [socket, players]);
-
-    useEffect(() => {
-        socket.on("roomJoined", (response) => {
-            if (!isRoomCreated) {
-                setRoomJoined(response.room);
-            }
-
-            setPlayers(response.players);
-        });
-    }, [socket, players]);
-
-    useEffect(() => {
-        socket.on("playerLeft", (response) => {
-            setPlayers(response.players);
-        });
-    }, [socket, players]);
-
-    useEffect(() => {
-        socket.on("exitedRoom", (response) => {
-            console.log(response.message);
-            setRoomJoined("");
-        });
-    });
 
     function createNewRoom() {
         if (isRoomCreated) return;

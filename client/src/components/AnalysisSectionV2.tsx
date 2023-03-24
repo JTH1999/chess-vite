@@ -53,6 +53,9 @@ export function AnalysisSectionV2({
         if (!analysisMode) {
             setAnalysisMode(true);
         }
+        if (analysisMoveNumber + 1 === moves.length - 1) {
+            setAnalysisMode(false);
+        }
         setPieces(moves[index].pieces);
     }
 
@@ -100,10 +103,8 @@ export function AnalysisSectionV2({
             bgColor={"gray.900"}
             borderColor="gray.700"
             borderWidth="2px"
-            ml="50px"
-            w="400px"
             flexFlow={"column"}
-            height={"792px"}
+            height={"100%"}
             // height="inherit"
             // overflow="hidden"
 
@@ -127,9 +128,6 @@ export function AnalysisSectionV2({
                     columnGap={"0px"}
                     rowGap={"6px"}
                     w="100%"
-                    pt="50px"
-
-                    // h="80%"
                 >
                     {moves.map((move, index) => (
                         <GridItem

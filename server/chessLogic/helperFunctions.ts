@@ -533,7 +533,7 @@ export function checkAvailableMoves(
                 ) {
                     const twoAheadIndex = possibleMoves.indexOf(twoAhead);
                     if (twoAheadIndex > -1) {
-                        possibleMoves.splice(twoAheadIndex);
+                        possibleMoves.splice(twoAheadIndex, 1);
                     }
                 }
             }

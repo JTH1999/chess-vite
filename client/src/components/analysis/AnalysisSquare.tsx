@@ -1,24 +1,14 @@
 import { Flex, Image } from "@chakra-ui/react";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
-import { Move, Piece } from "../../../types";
-import { Socket } from "socket.io-client";
-import { checkAvailableMoves } from "../square/helperFunctions";
+import { Piece } from "../../../types";
 
-export default function OnlineSquare({
+export default function AnalysisSquare({
     row,
     col,
     pieces,
     selectedPiece,
-    isYourMove,
-    socket,
-    setSelectedPiece,
-    roomCode,
-    setIsYourMove,
-    colour,
-    gameId,
     boardHeight,
-    analysisMode,
     previousPieceMovedFrom,
     previousPieceMovedTo,
 }: {
@@ -26,12 +16,7 @@ export default function OnlineSquare({
     col: number;
     pieces: Piece[];
     selectedPiece: Piece | null | undefined;
-    isYourMove: boolean;
-    roomCode: string;
-    colour: string;
-    gameId: string;
     boardHeight: number;
-    analysisMode: boolean;
     previousPieceMovedFrom: string;
     previousPieceMovedTo: string;
 }) {
@@ -87,64 +72,11 @@ export default function OnlineSquare({
                 : "green.400";
     }
 
-    function sendMove(selectedPiece: Piece, square: string) {
-        const move = {
-            selectedPiece: selectedPiece,
-            square: square,
-            roomCode: roomCode,
-            gameId: gameId,
-            colour: colour,
-        };
-
-        socket.emit("sendMove", move);
-        setIsYourMove(false);
-        setSelectedPiece(null);
-    }
-
-    function handleClick() {
-        if (!isYourMove) {
-            return;
-        }
-
-        if (analysisMode) {
-            return;
-        }
-        // if there is a selected piece
-        if (selectedPiece) {
-            if (
-                piece?.colour === selectedPiece.colour &&
-                piece?.name !== selectedPiece.name
-            ) {
-                let selectedPieceCopy = { ...piece };
-
-                setSelectedPiece(selectedPieceCopy);
-                return;
-            }
-
-            if (selectedPiece.availableMoves.includes(square)) {
-                sendMove(selectedPiece, square);
-            } else if (
-                selectedPiece.currentCol.toString() +
-                    selectedPiece.currentRow.toString() ===
-                square
-            ) {
-                setSelectedPiece(null);
-            }
-            // if no piece selected yet
-        } else if (piece) {
-            if (piece.colour === colour) {
-                let selectedPieceCopy = { ...piece };
-                setSelectedPiece(selectedPieceCopy);
-            }
-        }
-    }
-
     return (
         <Flex
             alignItems="center"
             justify={"center"}
             bgColor={bgColor}
-            onClick={handleClick}
             float={"left"}
             height={`${height}px`}
             width={`${height}px`}

@@ -14,6 +14,11 @@ export default function BoardRow({
     promote,
     moves,
     analysisMode,
+    boardHeight,
+    colour,
+    previousPieceMovedFrom,
+    previousPieceMovedTo,
+    flipBoard,
     setPieces,
     setSelectedPiece,
     setWhiteToMove,
@@ -26,6 +31,7 @@ export default function BoardRow({
     setPromote,
     setMoves,
     setAnalysisMoveNumber,
+    setColour,
 }: {
     row: number;
     pieces: Piece[];
@@ -38,6 +44,11 @@ export default function BoardRow({
     promote: boolean;
     moves: Move[];
     analysisMode: boolean;
+    boardHeight: number;
+    colour: string;
+    previousPieceMovedFrom: string;
+    previousPieceMovedTo: string;
+    flipBoard: boolean;
     setPieces: Dispatch<SetStateAction<Piece[]>>;
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
     setWhiteToMove: Dispatch<SetStateAction<boolean>>;
@@ -50,10 +61,88 @@ export default function BoardRow({
     setPromote: Dispatch<SetStateAction<boolean>>;
     setMoves: Dispatch<SetStateAction<Move[]>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+    setColour: Dispatch<SetStateAction<string>>;
 }) {
+    const whiteCols = [1, 2, 3, 4, 5, 6, 7, 8];
+    const blackCols = [8, 7, 6, 5, 4, 3, 2, 1];
     return (
         <div>
-            <Square
+            {colour === "white"
+                ? whiteCols.map((col) => {
+                      return (
+                          <Square
+                              key={col}
+                              row={row}
+                              col={col}
+                              pieces={pieces}
+                              setPieces={setPieces}
+                              selectedPiece={selectedPiece}
+                              setSelectedPiece={setSelectedPiece}
+                              whiteToMove={whiteToMove}
+                              setWhiteToMove={setWhiteToMove}
+                              capturedPieces={capturedPieces}
+                              setCapturedPieces={setCapturedPieces}
+                              whiteKingSquare={whiteKingSquare}
+                              setWhiteKingSquare={setWhiteKingSquare}
+                              blackKingSquare={blackKingSquare}
+                              setBlackKingSquare={setBlackKingSquare}
+                              isCheck={isCheck}
+                              setIsCheck={setIsCheck}
+                              setIsCheckmate={setIsCheckmate}
+                              setIsStalemate={setIsStalemate}
+                              promote={promote}
+                              setPromote={setPromote}
+                              moves={moves}
+                              setMoves={setMoves}
+                              analysisMode={analysisMode}
+                              setAnalysisMoveNumber={setAnalysisMoveNumber}
+                              boardHeight={boardHeight}
+                              colour={colour}
+                              previousPieceMovedFrom={previousPieceMovedFrom}
+                              previousPieceMovedTo={previousPieceMovedTo}
+                              flipBoard={flipBoard}
+                              setColour={setColour}
+                          />
+                      );
+                  })
+                : blackCols.map((col) => {
+                      return (
+                          <Square
+                              key={col}
+                              row={row}
+                              col={col}
+                              pieces={pieces}
+                              setPieces={setPieces}
+                              selectedPiece={selectedPiece}
+                              setSelectedPiece={setSelectedPiece}
+                              whiteToMove={whiteToMove}
+                              setWhiteToMove={setWhiteToMove}
+                              capturedPieces={capturedPieces}
+                              setCapturedPieces={setCapturedPieces}
+                              whiteKingSquare={whiteKingSquare}
+                              setWhiteKingSquare={setWhiteKingSquare}
+                              blackKingSquare={blackKingSquare}
+                              setBlackKingSquare={setBlackKingSquare}
+                              isCheck={isCheck}
+                              setIsCheck={setIsCheck}
+                              setIsCheckmate={setIsCheckmate}
+                              setIsStalemate={setIsStalemate}
+                              promote={promote}
+                              setPromote={setPromote}
+                              moves={moves}
+                              setMoves={setMoves}
+                              analysisMode={analysisMode}
+                              setAnalysisMoveNumber={setAnalysisMoveNumber}
+                              boardHeight={boardHeight}
+                              colour={colour}
+                              previousPieceMovedFrom={previousPieceMovedFrom}
+                              previousPieceMovedTo={previousPieceMovedTo}
+                              flipBoard={flipBoard}
+                              setColour={setColour}
+                          />
+                      );
+                  })}
+            {/* <Square
                 row={row}
                 col={1}
                 pieces={pieces}
@@ -78,6 +167,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -104,6 +194,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -130,6 +221,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -156,6 +248,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -182,6 +275,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -208,6 +302,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -234,6 +329,7 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
+                boardHeight={boardHeight}
             />
             <Square
                 row={row}
@@ -260,7 +356,8 @@ export default function BoardRow({
                 setMoves={setMoves}
                 analysisMode={analysisMode}
                 setAnalysisMoveNumber={setAnalysisMoveNumber}
-            />
+                boardHeight={boardHeight}
+            /> */}
         </div>
     );
 }

@@ -2,11 +2,15 @@ import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import { Piece } from "../../types";
 
 export default function CapturedPieces({
+    username,
     capturedPieces,
     colour,
+    top,
 }: {
+    username: string;
     capturedPieces: Piece[];
     colour: string;
+    top: boolean;
 }) {
     // This is the pieces captured by the player
     const playerCapturedPieces = capturedPieces.filter(
@@ -32,135 +36,71 @@ export default function CapturedPieces({
         (capturedPiece) => capturedPiece.type == "pawn"
     );
 
-    // let capturedPawnsImgs = <></>;
-    // let zIndex = 9;
-    // if (capturedPawns.length > 0) {
-    //     capturedPawnsImgs = (
-    //         <Flex
-    //             alignItems={"center"}
-    //             pr="14px"
-    //             className="captured-piece-type"
-    //         >
-    //             {capturedPawns.map((capturedPiece, index) => (
-    //                 <Image
-    //                     key={capturedPiece.index}
-    //                     src={capturedPiece.src}
-    //                     className="captured-pieces"
-    //                     zIndex={zIndex - index}
-    //                     h="25px"
-    //                     mr="-10px"
-    //                     position={"relative"}
-    //                 />
-    //             ))}
-    //         </Flex>
-    //     );
-    // }
-
     const capturedKnights = playerCapturedPieces.filter(
         (capturedPiece) => capturedPiece.type == "knight"
     );
-    // let capturedKnightsImgs = <></>;
-    // if (capturedKnights.length > 0) {
-    //     capturedKnightsImgs = (
-    //         <Flex className="captured-piece-type" alignItems={"center"}
-    //         pr="14px">
-    //             {capturedKnights.map((capturedPiece, index) => (
-    //                 <Image
-    //                     key={capturedPiece.index}
-    //                     src={capturedPiece.src}
-    //                     className="captured-pieces"
-    //                     zIndex={zIndex - index}
-    //                     h="25px"
-    //                     mr="-10px"
-    //                     position={"relative"}
-    //                 />
-    //             ))}
-    //         </div>
-    //     );
-    // }
 
     const capturedBishops = playerCapturedPieces.filter(
         (capturedPiece) => capturedPiece.type == "bishop"
     );
-    // let capturedBishopsImgs = <></>;
-    // if (capturedBishops.length > 0) {
-    //     capturedBishopsImgs = (
-    //         <div className="captured-piece-type">
-    //             {capturedBishops.map((capturedPiece, index) => (
-    //                 <img
-    //                     key={capturedPiece.index}
-    //                     src={capturedPiece.src}
-    //                     className="captured-pieces"
-    //                     style={{ zIndex: zIndex - index }}
-    //                 />
-    //             ))}
-    //         </div>
-    //     );
-    // }
 
     const capturedRooks = playerCapturedPieces.filter(
         (capturedPiece) => capturedPiece.type == "rook"
     );
-    // let capturedRooksImgs = <></>;
-    // if (capturedRooks.length > 0) {
-    //     capturedRooksImgs = (
-    //         <div className="captured-piece-type">
-    //             {capturedRooks.map((capturedPiece, index) => (
-    //                 <img
-    //                     key={capturedPiece.index}
-    //                     src={capturedPiece.src}
-    //                     className="captured-pieces"
-    //                     style={{ zIndex: zIndex - index }}
-    //                 />
-    //             ))}
-    //         </div>
-    //     );
-    // }
 
     const capturedQueens = playerCapturedPieces.filter(
         (capturedPiece) => capturedPiece.type == "queen"
     );
-    // let capturedQueensImgs = <></>;
-    // if (capturedQueens.length > 0) {
-    //     capturedQueensImgs = (
-    //         <div className="captured-piece-type">
-    //             {capturedQueens.map((capturedPiece, index) => (
-    //                 <img
-    //                     key={capturedPiece.index}
-    //                     src={capturedPiece.src}
-    //                     className="captured-pieces"
-    //                     style={{ zIndex: zIndex - index }}
-    //                 />
-    //             ))}
-    //         </div>
-    //     );
-    // }
 
     return (
-        <Flex>
+        <Flex alignItems={"end"}>
             <Flex
-                className="captured-pieces-section"
-                height="45px"
-                py="10px"
+                // borderRadius="1000px"
+                h="50px"
+                w="50px"
+                bgColor={"gray.300"}
+                justifyContent="center"
                 alignItems={"center"}
-                fontSize="18px"
+                mr="10px"
             >
-                <CapturedPiecesGroup capturedPiecesGroup={capturedPawns} />
-                <CapturedPiecesGroup capturedPiecesGroup={capturedKnights} />
-                <CapturedPiecesGroup capturedPiecesGroup={capturedBishops} />
-                <CapturedPiecesGroup capturedPiecesGroup={capturedRooks} />
-                <CapturedPiecesGroup capturedPiecesGroup={capturedQueens} />
-                <Flex>
-                    <Text>
-                        {playerCapturedPiecesValue >
-                        oppositionCapturedPiecesValue
-                            ? "+ " +
-                              (
-                                  playerCapturedPiecesValue -
-                                  oppositionCapturedPiecesValue
-                              ).toString()
-                            : ""}
-                    </Text>
+                <Image
+                    src="/src/assets/pieces/w_pawn_svg_NoShadow.svg"
+                    height="35px"
+                />
+            </Flex>
+
+            <Flex flexDirection="column">
+                <Flex></Flex>
+                <Text fontSize={"18px"} fontWeight="semibold" mb="-1px">
+                    {username}
+                </Text>
+                <Flex
+                    className="captured-pieces-section"
+                    height="24px"
+                    alignItems={"end"}
+                    fontSize="16px"
+                >
+                    <CapturedPiecesGroup capturedPiecesGroup={capturedPawns} />
+                    <CapturedPiecesGroup
+                        capturedPiecesGroup={capturedKnights}
+                    />
+                    <CapturedPiecesGroup
+                        capturedPiecesGroup={capturedBishops}
+                    />
+                    <CapturedPiecesGroup capturedPiecesGroup={capturedRooks} />
+                    <CapturedPiecesGroup capturedPiecesGroup={capturedQueens} />
+                    <Flex>
+                        <Text p="0" m="0">
+                            {playerCapturedPiecesValue >
+                            oppositionCapturedPiecesValue
+                                ? "+ " +
+                                  (
+                                      playerCapturedPiecesValue -
+                                      oppositionCapturedPiecesValue
+                                  ).toString()
+                                : ""}
+                        </Text>
+                    </Flex>
                 </Flex>
             </Flex>
         </Flex>
@@ -187,8 +127,8 @@ function CapturedPiecesGroup({
                         src={capturedPiece.src}
                         className="captured-pieces"
                         zIndex={zIndex - index}
-                        h="25px"
-                        mr={capturedPiecesGroup.length > 1 ? "-10px" : "0"}
+                        h="20px"
+                        mr={capturedPiecesGroup.length > 1 ? "-8px" : "0"}
                         position={"relative"}
                     />
                 ))}

@@ -14,25 +14,19 @@ export default function OnlineEndScreen({
     winner,
     analysisMode,
     whiteToMove,
-}: // moves,
-// setWhiteToMove,
-// setCapturedPieces,
-// setWhiteKingSquare,
-// setBlackKingSquare,
-// setIsCheck,
-// setIsCheckmate,
-// setIsStalemate,
-// setPromote,
-// setMoves,
-// setPieces,
-// setSelectedPiece,
-// setAnalysisMode,
-// setAnalysisMoveNumber,
-{
+    moves,
+    socket,
+    roomCode,
+    setAnalysisMode,
+    setAnalysisMoveNumber,
+    setPieces,
+}: {
     status: string;
     winner: string;
     analysisMode: boolean;
     whiteToMove: boolean;
+    moves: Move[];
+    roomCode: string;
 
     // setWhiteToMove: Dispatch<SetStateAction<boolean>>;
     // setCapturedPieces: Dispatch<SetStateAction<Piece[]>>;
@@ -43,27 +37,37 @@ export default function OnlineEndScreen({
     // setIsStalemate: Dispatch<SetStateAction<boolean>>;
     // setPromote: Dispatch<SetStateAction<boolean>>;
     // setMoves: Dispatch<SetStateAction<Move[]>>;
-    // setPieces: Dispatch<SetStateAction<Piece[]>>;
+    setPieces: Dispatch<SetStateAction<Piece[]>>;
     // setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
-    // setAnalysisMode: Dispatch<SetStateAction<boolean>>;
-    // setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+    setAnalysisMode: Dispatch<SetStateAction<boolean>>;
+    setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
     const navigate = useNavigate();
     const auth = useAuth();
     const username = auth.user.username;
+    const statuses = [
+        "checkmate",
+        "stalemate",
+        "draw",
+        "resignation",
+        "forfeit",
+        "time",
+    ];
 
-    // function enterAnalysisMode() {
-    //     setAnalysisMode(true);
-    //     setAnalysisMoveNumber(1);
-    //     setPieces(moves[0].pieces);
-    // }
+    function enterAnalysisMode() {
+        setAnalysisMode(true);
+        setAnalysisMoveNumber(0);
+        setPieces(moves[0].pieces);
+    }
+
+    function handleHomeClick(roomCode: string) {
+        navigate("/");
+    }
+
     return (
         <Box
             display={
-                (status === "checkmate" && !analysisMode) ||
-                (status === "stalemate" && !analysisMode)
-                    ? "flex"
-                    : "none"
+                statuses.includes(status) && !analysisMode ? "flex" : "none"
             }
             flexDirection="column"
             justifyContent={"center"}
@@ -85,7 +89,11 @@ export default function OnlineEndScreen({
                 fontWeight="bold"
                 margin={"10px"}
             >
-                {status === "stalemate" ? "Stalemate" : `${winner} Wins!`}
+                {status === "stalemate"
+                    ? "Stalemate"
+                    : status === "draw"
+                    ? "Draw"
+                    : `${winner} Wins!`}
             </Heading>
             <Text
                 className="checkmate-text"
@@ -94,11 +102,19 @@ export default function OnlineEndScreen({
                 margin={"10px"}
                 mt="0"
             >
-                {status === "checkmate" ? "Checkmate" : ""}
+                {status === "checkmate"
+                    ? "Checkmate"
+                    : status === "resignation"
+                    ? "By resignation"
+                    : status === "time"
+                    ? "Out of time"
+                    : status === "forfeit"
+                    ? "By forfeit"
+                    : ""}
             </Text>
             <Image
                 src={
-                    status === "stalemate"
+                    status === "stalemate" || status === "draw"
                         ? stalematePNG
                         : whiteToMove
                         ? blackCheckmate
@@ -108,9 +124,9 @@ export default function OnlineEndScreen({
                 w="100%"
                 mt={"20px"}
             />
-            <MainButton onClick={() => navigate("/")} text="Home" />
+            <MainButton onClick={handleHomeClick} text="Home" />
 
-            <MainButton onClick={null} text="Analyse" />
+            <MainButton onClick={enterAnalysisMode} text="Analyse" />
         </Box>
     );
 }

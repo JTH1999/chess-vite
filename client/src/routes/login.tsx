@@ -102,14 +102,7 @@ export default function Login() {
     };
 
     return (
-        <Box
-            bgImage={bgImage}
-            height="100vh"
-            objectFit={"cover"}
-            bgRepeat="no-repeat"
-            pt="40"
-            w="100vw"
-        >
+        <Box bgImage={bgImage} height="100vh" bgSize="cover" pt="40">
             {/* <Image src={bgImage} objectFit="contain" /> */}
             <Flex justify={"center"}>
                 <Flex

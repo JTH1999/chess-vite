@@ -5,7 +5,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import App from "./App";
 import { UserProvider } from "./context/UserContext";
 import ErrorPage from "./error-page";
-import { ProvideAuth } from "./hooks/useAuth";
+import { ProvideAuth, useAuth } from "./hooks/useAuth";
 import "./index.css";
 import Login from "./routes/login";
 import Home from "./routes/home";
@@ -17,6 +17,8 @@ import theme from "./theme";
 import { LogoutRoute } from "./routes/logout";
 import SocketTest from "./routes/socketTest";
 import { BoardTest } from "./routes/boardTest";
+import { MyGamesRoute } from "./routes/myGames";
+import { AnalysisRoute } from "./routes/analysis";
 
 const router = createBrowserRouter([
     {
@@ -39,6 +41,49 @@ const router = createBrowserRouter([
             {
                 path: "/online-match",
                 element: <OnlineMatchRoute />,
+            },
+            {
+                path: "/my-games",
+                element: <MyGamesRoute />,
+                loader: async () => {
+                    const tokenString = localStorage.getItem("token");
+                    const userToken = tokenString
+                        ? JSON.parse(tokenString)
+                        : null;
+                    return await fetch(
+                        import.meta.env.VITE_CHESS_API_ENDPOINT + "users/games",
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${userToken}`,
+                            },
+                        }
+                    );
+                },
+            },
+            {
+                path: "/analysis/:gameId",
+                element: <AnalysisRoute />,
+                loader: async ({ params }) => {
+                    const tokenString = localStorage.getItem("token");
+                    const userToken = tokenString
+                        ? JSON.parse(tokenString)
+                        : null;
+                    return await fetch(
+                        import.meta.env.VITE_CHESS_API_ENDPOINT +
+                            `users/games/${params.gameId}`,
+                        {
+                            method: "GET",
+                            credentials: "include",
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${userToken}`,
+                            },
+                        }
+                    );
+                },
             },
             {
                 path: "/socket-test",

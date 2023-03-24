@@ -18,7 +18,6 @@ router.post("/signup", async (req, res, next) => {
         where: { username: req.body.username },
     });
     if (userExists) {
-        console.log(userExists);
         return res.status(400).json({
             fieldErrors: null,
             fields: null,
@@ -56,7 +55,6 @@ router.post(
     "/login",
     passport.authenticate("local"),
     async (req, res, next) => {
-        console.log(req.body);
         const token = getToken({ id: req.user.id });
         // const refreshToken = getRefreshToken({ id: req.user.id });
         // const session = await db.session.create({
@@ -83,7 +81,6 @@ router.post(
         // req.session.refreshToken = refreshToken;
         // console.log("login rt: " + refreshToken);
         res.send({ success: true, username: req.user.username, token });
-        console.log(res.body);
     }
 );
 
@@ -198,6 +195,69 @@ router.get("/logout", verifyUser, async (req, res, next) => {
 
     // res.clearCookie("refreshToken", COOKIE_OPTIONS);
     return res.send({ success: true });
+});
+
+router.get("/games", verifyUser, async (req, res, next) => {
+    const games = await db.game.findMany({
+        where: {
+            OR: [
+                {
+                    whiteId: req.user.id,
+                },
+                {
+                    blackId: req.user.id,
+                },
+            ],
+        },
+        select: {
+            id: true,
+            moves: true,
+            winner: true,
+            result: true,
+            createdAt: true,
+            whiteUser: {
+                select: {
+                    username: true,
+                },
+            },
+            blackUser: {
+                select: {
+                    username: true,
+                },
+            },
+        },
+        orderBy: {
+            createdAt: "desc",
+        },
+    });
+    return res.send({ success: true, games: games });
+});
+
+router.get("/games/:gameId", verifyUser, async (req, res, next) => {
+    const gameId = req.params.gameId;
+    const game = await db.game.findUnique({
+        where: {
+            id: gameId,
+        },
+        select: {
+            id: true,
+            moves: true,
+            winner: true,
+            result: true,
+            createdAt: true,
+            whiteUser: {
+                select: {
+                    username: true,
+                },
+            },
+            blackUser: {
+                select: {
+                    username: true,
+                },
+            },
+        },
+    });
+    return res.send({ success: true, game: game });
 });
 
 router.delete("/clearSessions", async (req, res) => {
