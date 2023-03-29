@@ -4,10 +4,12 @@ export default function TransparentButton({
     text,
     onClick,
     disabled = false,
+    w = "100%",
 }: {
     text: string;
     onClick: any;
     disabled: any;
+    w: string;
 }) {
     return (
         <Button
@@ -15,7 +17,7 @@ export default function TransparentButton({
             bgColor="transparent"
             color={"white"}
             padding="20px"
-            w="100%"
+            w={w}
             mt="20px"
             borderWidth="2px"
             borderColor={"gray.700"}

@@ -35,6 +35,7 @@ import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useAuth } from "../hooks/useAuth";
 import MainButton from "../components/MainButton";
+import { useNavigate } from "react-router-dom";
 
 export default function LocalMatchRoute() {
     const auth = useAuth();
@@ -60,6 +61,7 @@ export default function LocalMatchRoute() {
     const [player2Name, setPlayer2Name] = useState("Player 2");
     const [flipBoard, setFlipBoard] = useState(true);
     const [colour, setColour] = useState("white");
+    const navigate = useNavigate();
 
     const screenHeight = height - 30;
     const boardHeight = screenHeight - 120;
@@ -101,10 +103,6 @@ export default function LocalMatchRoute() {
         }
     }
 
-    console.log("flipBoard");
-    console.log(flipBoard);
-    console.log(colour);
-
     return (
         <>
             <Modal
@@ -118,6 +116,7 @@ export default function LocalMatchRoute() {
                     <ModalHeader textAlign={"center"}>
                         Configure Local Match
                     </ModalHeader>
+                    <ModalCloseButton onClick={() => navigate("/")} />
                     <ModalBody>
                         <Flex direction="column">
                             <Text fontSize={"18px"} pb="4px">

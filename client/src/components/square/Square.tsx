@@ -1,9 +1,9 @@
 import { Flex, Image, Img } from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 import { Move, Piece } from "../../../types";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
-import { handleClickLogic } from "./logic";
+import { calculateBotMove, handleClickLogic } from "./logic";
 
 export default function Square({
     row,
@@ -36,6 +36,7 @@ export default function Square({
     setPromote,
     setMoves,
     setAnalysisMoveNumber,
+    matchType = "local",
 }: {
     row: number;
     col: number;
@@ -67,6 +68,7 @@ export default function Square({
     setPromote: Dispatch<SetStateAction<boolean>>;
     setMoves: Dispatch<SetStateAction<Move[]>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+    matchType: string;
 }) {
     let bgColor;
 

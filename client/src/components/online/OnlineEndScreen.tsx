@@ -124,9 +124,9 @@ export default function OnlineEndScreen({
                 w="100%"
                 mt={"20px"}
             />
-            <MainButton onClick={handleHomeClick} text="Home" />
+            <MainButton onClick={handleHomeClick} text="Home" mt="20px" />
 
-            <MainButton onClick={enterAnalysisMode} text="Analyse" />
+            <MainButton onClick={enterAnalysisMode} text="Analyse" mt="20px" />
         </Box>
     );
 }

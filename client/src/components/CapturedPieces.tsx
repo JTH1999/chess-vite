@@ -6,11 +6,13 @@ export default function CapturedPieces({
     capturedPieces,
     colour,
     top,
+    src = null,
 }: {
     username: string;
     capturedPieces: Piece[];
     colour: string;
     top: boolean;
+    src: string | null;
 }) {
     // This is the pieces captured by the player
     const playerCapturedPieces = capturedPieces.filter(
@@ -64,8 +66,10 @@ export default function CapturedPieces({
                 mr="10px"
             >
                 <Image
-                    src="/src/assets/pieces/w_pawn_svg_NoShadow.svg"
-                    height="35px"
+                    src={
+                        src ? src : "/src/assets/pieces/w_pawn_svg_NoShadow.svg"
+                    }
+                    height={src ? "50px" : "35px"}
                 />
             </Flex>
 

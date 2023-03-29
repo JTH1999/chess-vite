@@ -121,9 +121,9 @@ export default function CheckmateScreen({
                 className="checkmate-screen-pieces"
                 mt={"20px"}
             />
-            <MainButton onClick={resetBoard} text="New Game" />
+            <MainButton onClick={resetBoard} text="New Game" mt="20px" />
 
-            <MainButton onClick={enterAnalysisMode} text="Analyse" />
+            <MainButton onClick={enterAnalysisMode} text="Analyse" mt="20px" />
         </Box>
     );
 }
