@@ -3,6 +3,7 @@ import { Dispatch, SetStateAction, useEffect } from "react";
 import { Move, Piece } from "../../../types";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
+import { useColour } from "../../hooks/useColour";
 import { calculateBotMove, handleClickLogic } from "./logic";
 
 export default function Square({
@@ -36,7 +37,6 @@ export default function Square({
     setPromote,
     setMoves,
     setAnalysisMoveNumber,
-    matchType = "local",
 }: {
     row: number;
     col: number;
@@ -68,8 +68,9 @@ export default function Square({
     setPromote: Dispatch<SetStateAction<boolean>>;
     setMoves: Dispatch<SetStateAction<Move[]>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
-    matchType: string;
 }) {
+    const colourScheme = useColour();
+
     let bgColor;
 
     const square = col.toString() + row.toString();
@@ -133,7 +134,7 @@ export default function Square({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
@@ -150,7 +151,7 @@ export default function Square({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.colourScheme.primary;
     }
 
     return (

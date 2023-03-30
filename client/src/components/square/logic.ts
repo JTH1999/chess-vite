@@ -262,6 +262,7 @@ export function calculateBotMove(
     analysisMode: boolean,
     colour: string,
     flipBoard: boolean,
+    botDifficulty: string,
     setColour: Dispatch<SetStateAction<string>>,
     setPieces: Dispatch<SetStateAction<Piece[]>>,
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>,
@@ -277,10 +278,11 @@ export function calculateBotMove(
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>
 ) {
     let count = 0;
+    const depth = parseInt(botDifficulty);
     const minimaxResult = minimax(
         pieces,
         moves,
-        3,
+        depth,
         true,
         colour,
         count,

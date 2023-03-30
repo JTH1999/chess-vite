@@ -1,9 +1,10 @@
-import { Flex, Image } from "@chakra-ui/react";
+import { Flex, Image, useColorMode } from "@chakra-ui/react";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
 import { Move, Piece } from "../../../types";
 import { Socket } from "socket.io-client";
 import { checkAvailableMoves } from "../square/helperFunctions";
+import { useColour } from "../../hooks/useColour";
 
 export default function Square({
     row,
@@ -20,6 +21,7 @@ export default function Square({
     previousPieceMovedFrom: string;
     previousPieceMovedTo: string;
 }) {
+    const colourScheme = useColour();
     const square = col.toString() + row.toString();
     let piece: Piece | null = null;
     const height = boardHeight / 8;
@@ -42,7 +44,7 @@ export default function Square({
                 : square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
@@ -53,7 +55,7 @@ export default function Square({
                 : square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.colourScheme.primary;
     }
 
     return (

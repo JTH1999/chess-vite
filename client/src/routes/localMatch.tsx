@@ -65,7 +65,6 @@ export default function LocalMatchRoute() {
 
     const screenHeight = height - 30;
     const boardHeight = screenHeight - 120;
-    // REMEMBER TO REMOVE THIS ONCE CONFIG SET UP PROPERLY
 
     let previousPieceMovedFrom = "";
     let previousPieceMovedTo = "";
@@ -116,7 +115,7 @@ export default function LocalMatchRoute() {
                     <ModalHeader textAlign={"center"}>
                         Configure Local Match
                     </ModalHeader>
-                    <ModalCloseButton onClick={() => navigate("/")} />
+                    <ModalCloseButton onClick={onClose} />
                     <ModalBody>
                         <Flex direction="column">
                             <Text fontSize={"18px"} pb="4px">

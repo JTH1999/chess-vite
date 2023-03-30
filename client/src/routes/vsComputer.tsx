@@ -66,6 +66,7 @@ export default function VsComputerRoute() {
     const [colour, setColour] = useState("white");
     const [bot, setBot] = useState(generateBot());
     const [botToMove, setBotToMove] = useState(false);
+    const [botDifficulty, setBotDifficulty] = useState("2");
     const navigate = useNavigate();
 
     const screenHeight = height - 30;
@@ -152,6 +153,7 @@ export default function VsComputerRoute() {
                 analysisMode,
                 colour,
                 false,
+                botDifficulty,
                 setColour,
                 setPieces,
                 setSelectedPiece,
@@ -166,9 +168,8 @@ export default function VsComputerRoute() {
                 setMoves,
                 setAnalysisMoveNumber
             );
-
-            setBotToMove(false);
         }
+        setBotToMove(false);
     }, [botToMove]);
 
     return (
@@ -184,7 +185,7 @@ export default function VsComputerRoute() {
                     <ModalHeader textAlign={"center"}>
                         Configure Match
                     </ModalHeader>
-                    <ModalCloseButton onClick={() => navigate("/")} />
+                    <ModalCloseButton onClick={onClose} />
                     <ModalBody>
                         <Flex direction="column">
                             <Text fontSize={"18px"} pb="4px">
@@ -196,6 +197,22 @@ export default function VsComputerRoute() {
                                 value={player1Name}
                                 onChange={(e) => setPlayer1Name(e.target.value)}
                             />
+                            <Text fontSize={"18px"} pb="8px">
+                                Select Bot Difficulty
+                            </Text>
+                            <RadioGroup
+                                colorScheme="green"
+                                mb="20px"
+                                isDisabled={moves.length > 0}
+                                onChange={setBotDifficulty}
+                                defaultValue="2"
+                            >
+                                <Stack direction="row" spacing="20px">
+                                    <Radio value="1">Easy</Radio>
+                                    <Radio value="2">Medium</Radio>
+                                    <Radio value="3">Hard</Radio>
+                                </Stack>
+                            </RadioGroup>
 
                             <Text fontSize={"18px"} pb="8px">
                                 Select Your Colour

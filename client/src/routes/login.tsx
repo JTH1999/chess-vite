@@ -22,7 +22,7 @@ import {
     useEffect,
     useState,
 } from "react";
-import { Form, redirect, useNavigate } from "react-router-dom";
+import { Form, Link, redirect, useNavigate } from "react-router-dom";
 import bgImage from "../assets/GreenPiecesNoLogo.png";
 import MainButton from "../components/MainButton";
 import { UserContext } from "../context/UserContext";
@@ -204,11 +204,17 @@ export default function Login() {
                             >
                                 {`${isSubmitting ? "Signing In" : "Sign In"}`}
                             </Button>
+                            <Text
+                                pt="8"
+                                color="green.400"
+                                textAlign={"center"}
+                                _hover={{ textDecor: "underline" }}
+                            >
+                                <Link to="/">Continue without logging in</Link>
+                            </Text>
                         </Stack>
                     </form>
-                    {/* <Text pt="8" color="blue.500">
-                        <Link to="/">Home</Link>
-                    </Text> */}
+                    {/*  */}
                 </Flex>
             </Flex>
         </Box>

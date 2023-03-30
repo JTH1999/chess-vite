@@ -19,6 +19,7 @@ import SocketTest from "./routes/socketTest";
 import { BoardTest } from "./routes/boardTest";
 import { MyGamesRoute } from "./routes/myGames";
 import { AnalysisRoute } from "./routes/analysis";
+import { ProvideColour } from "./hooks/useColour";
 
 const router = createBrowserRouter([
     {
@@ -109,7 +110,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     // <React.StrictMode>
     <ChakraProvider theme={theme}>
         <ProvideAuth>
-            <RouterProvider router={router} />
+            <ProvideColour>
+                <RouterProvider router={router} />
+            </ProvideColour>
         </ProvideAuth>
     </ChakraProvider>
     // {/* </React.StrictMode> */}
