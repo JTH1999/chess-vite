@@ -14,6 +14,7 @@ import {
 import { Move, Piece } from "../../types";
 import { Dispatch, SetStateAction } from "react";
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
+import { useColour } from "../hooks/useColour";
 
 export default function PromoteScreen({
     pieces,
@@ -54,6 +55,7 @@ export default function PromoteScreen({
     setWhiteToMove: Dispatch<SetStateAction<boolean>>;
     setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
 }) {
+    const { colourScheme } = useColour();
     function handleClick(pieceType: string) {
         let piecesCopy = JSON.parse(JSON.stringify(pieces));
         if (selectedPiece === null) {
@@ -138,12 +140,11 @@ export default function PromoteScreen({
             flexDirection="column"
             className="promote"
             zIndex={5}
-            bgColor="white"
+            bgColor={colourScheme.body}
             p="20px"
             borderRadius={"16px"}
             boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
             position="absolute"
-            color="black"
         >
             <Flex justify={"space-between"}>
                 <PromoteItem

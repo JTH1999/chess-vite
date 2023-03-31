@@ -1,5 +1,6 @@
 import { Box, Flex, Image, Text } from "@chakra-ui/react";
 import { Piece } from "../../types";
+import { useColour } from "../hooks/useColour";
 
 export default function CapturedPieces({
     username,
@@ -14,6 +15,7 @@ export default function CapturedPieces({
     top: boolean;
     src: string | null;
 }) {
+    const { colourScheme } = useColour();
     // This is the pieces captured by the player
     const playerCapturedPieces = capturedPieces.filter(
         (capturedPiece) => capturedPiece.colour == colour
@@ -60,7 +62,11 @@ export default function CapturedPieces({
                 // borderRadius="1000px"
                 h="50px"
                 w="50px"
-                bgColor={"gray.300"}
+                bgColor={colourScheme.darker}
+                borderRadius={"12px"}
+                overflow="hidden"
+                borderWidth="2px"
+                borderColor={colourScheme.border}
                 justifyContent="center"
                 alignItems={"center"}
                 mr="10px"

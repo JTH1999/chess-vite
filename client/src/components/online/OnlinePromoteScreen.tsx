@@ -7,6 +7,7 @@ import bBishop from "../../assets/pieces/b_bishop_svg_NoShadow.svg";
 import wQueen from "../../assets/pieces/w_queen_svg_NoShadow.svg";
 import bQueen from "../../assets/pieces/b_queen_svg_NoShadow.svg";
 import { Flex, Image } from "@chakra-ui/react";
+import { useColour } from "../../hooks/useColour";
 
 export default function PromoteScreen({
     socket,
@@ -20,6 +21,8 @@ export default function PromoteScreen({
     status: string;
     whiteToMove: boolean;
 }) {
+    const { colourScheme } = useColour();
+
     function handleClick(pieceType: string) {
         const request = {
             roomCode: roomCode,
@@ -34,12 +37,11 @@ export default function PromoteScreen({
             display={status === "promote" ? "flex" : "none"}
             flexDirection="column"
             zIndex={5}
-            bgColor="white"
+            bgColor={colourScheme.body}
             p="20px"
             borderRadius={"16px"}
             boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
             position="absolute"
-            color="black"
         >
             <Flex justify={"space-between"}>
                 <PromoteItem

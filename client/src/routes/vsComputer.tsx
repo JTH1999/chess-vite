@@ -41,6 +41,7 @@ import walle from "../assets/botAvatars/walleAvatar.png";
 import r2d2 from "../assets/botAvatars/r2d2Avatar.png";
 import terminator from "../assets/botAvatars/terminatorAvatar.png";
 import { calculateBotMove } from "../components/square/logic";
+import { useColour } from "../hooks/useColour";
 
 export default function VsComputerRoute() {
     const auth = useAuth();
@@ -68,10 +69,10 @@ export default function VsComputerRoute() {
     const [botToMove, setBotToMove] = useState(false);
     const [botDifficulty, setBotDifficulty] = useState("2");
     const navigate = useNavigate();
+    const { colourScheme } = useColour();
 
     const screenHeight = height - 30;
     const boardHeight = screenHeight - 120;
-    // REMEMBER TO REMOVE THIS ONCE CONFIG SET UP PROPERLY
 
     let previousPieceMovedFrom = "";
     let previousPieceMovedTo = "";
@@ -168,20 +169,15 @@ export default function VsComputerRoute() {
                 setMoves,
                 setAnalysisMoveNumber
             );
+            setBotToMove(false);
         }
-        setBotToMove(false);
     }, [botToMove]);
 
     return (
         <>
-            <Modal
-                closeOnOverlayClick={false}
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered
-            >
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
-                <ModalContent bgColor="gray.800" p="20px">
+                <ModalContent bgColor={colourScheme.body} p="20px">
                     <ModalHeader textAlign={"center"}>
                         Configure Match
                     </ModalHeader>
@@ -264,10 +260,10 @@ export default function VsComputerRoute() {
                                             size="lg"
                                             h="50px"
                                             w="50px"
-                                            borderRadius={"0"}
+                                            borderRadius={"8px"}
                                             borderWidth="2px"
-                                            borderColor={"gray.700"}
-                                            bgColor="gray.900"
+                                            borderColor={colourScheme.border}
+                                            bgColor={colourScheme.darker}
                                         />
 
                                         <MenuList zIndex={"20"}>

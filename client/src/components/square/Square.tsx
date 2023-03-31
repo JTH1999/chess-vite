@@ -69,7 +69,7 @@ export default function Square({
     setMoves: Dispatch<SetStateAction<Move[]>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
-    const colourScheme = useColour();
+    const { colourScheme } = useColour();
 
     let bgColor;
 
@@ -127,14 +127,14 @@ export default function Square({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece.currentCol === col &&
                       selectedPiece.currentRow === row) ||
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : colourScheme.colourScheme.primary;
+                : colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
@@ -144,14 +144,14 @@ export default function Square({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece.currentCol === col &&
                       selectedPiece.currentRow === row) ||
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : colourScheme.colourScheme.primary;
+                : colourScheme.primary;
     }
 
     return (

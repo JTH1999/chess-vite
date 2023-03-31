@@ -67,6 +67,7 @@ export default function Home() {
                             text="Play offline against a friend"
                             link="/local-match"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                         <GameCard
                             icon={faRobot}
@@ -74,6 +75,7 @@ export default function Home() {
                             text="Play against a very bad bot"
                             link="/vs-computer"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                         <GameCard
                             icon={faWifi}
@@ -81,6 +83,7 @@ export default function Home() {
                             text="Play online against a friend"
                             link="/online-match"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                     </Flex>
                     <Flex
@@ -95,6 +98,7 @@ export default function Home() {
                             text="Analyse your previous matches"
                             link="/my-games"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                         <GameCard
                             icon={faUsers}
@@ -102,6 +106,7 @@ export default function Home() {
                             text="View and add friends"
                             link="/friends"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                         <GameCard
                             icon={faUser}
@@ -109,6 +114,7 @@ export default function Home() {
                             text="View and edit your profile"
                             link="/profile"
                             hoverColour={colourScheme.primary}
+                            colourBackground={false}
                         />
                     </Flex>
                 </Flex>
@@ -131,7 +137,7 @@ export default function Home() {
                             >
                                 Experience the{" "}
                                 <Box
-                                    color="green.400"
+                                    color={colourScheme.primary}
                                     as="h1"
                                     fontSize={"60px"}
                                     textAlign="left"
@@ -174,7 +180,7 @@ export default function Home() {
                             </Flex>
                         </Flex>
                         <Flex>
-                            <Flex borderRadius={"12px"} overflow="hidden">
+                            <Flex>
                                 <Board
                                     moves={[]}
                                     colour={"white"}
@@ -195,21 +201,24 @@ export default function Home() {
                             heading={"Local match"}
                             text="Play offline against a friend"
                             link="/local-match"
-                            hoverColour={colourScheme.body}
+                            hoverColour={colourScheme.text}
+                            colourBackground={true}
                         />
                         <GameCard
                             icon={faRobot}
                             heading={"Vs Computer"}
                             text="Play against a very bad bot"
                             link="/vs-computer"
-                            hoverColour={colourScheme.body}
+                            hoverColour={colourScheme.text}
+                            colourBackground={true}
                         />
                         <GameCard
                             icon={faWifi}
                             heading={"Online match"}
                             text="Play online against a friend"
                             link="/online-match"
-                            hoverColour={colourScheme.body}
+                            hoverColour={colourScheme.text}
+                            colourBackground={true}
                         />
                     </Flex>
                 </Flex>
@@ -218,25 +227,55 @@ export default function Home() {
     );
 }
 
-function GameCard({ icon, heading, text, link, hoverColour }) {
+function GameCard({
+    icon,
+    heading,
+    text,
+    link,
+    hoverColour,
+    colourBackground,
+}) {
     const navigate = useNavigate();
     const { colourScheme } = useColour();
     return (
         <Flex
-            _hover={{ color: hoverColour }}
             cursor="pointer"
             onClick={() => navigate(link)}
             w="400px"
+            _hover={{
+                color: colourBackground ? "gray.800" : colourScheme.primary,
+            }}
+            color={colourBackground ? "white" : colourScheme.text}
         >
-            <Flex w="100px" justify="center" color={colourScheme.primary}>
-                {" "}
-                <FontAwesomeIcon icon={icon} fontSize="80px" />
-            </Flex>
+            {colourBackground ? (
+                <>
+                    <Flex w="100px" justify="center">
+                        {" "}
+                        <FontAwesomeIcon icon={icon} fontSize="80px" />
+                    </Flex>
 
-            <Flex direction={"column"} ml="30px">
-                <Heading fontSize="40px">{heading}</Heading>
-                <Text fontSize="20px">{text}</Text>
-            </Flex>
+                    <Flex direction={"column"} ml="30px">
+                        <Heading fontSize="40px">{heading}</Heading>
+                        <Text fontSize="20px">{text}</Text>
+                    </Flex>
+                </>
+            ) : (
+                <>
+                    <Flex
+                        w="100px"
+                        justify="center"
+                        color={colourScheme.primary}
+                    >
+                        {" "}
+                        <FontAwesomeIcon icon={icon} fontSize="80px" />
+                    </Flex>
+
+                    <Flex direction={"column"} ml="30px">
+                        <Heading fontSize="40px">{heading}</Heading>
+                        <Text fontSize="20px">{text}</Text>
+                    </Flex>
+                </>
+            )}
         </Flex>
     );
 }

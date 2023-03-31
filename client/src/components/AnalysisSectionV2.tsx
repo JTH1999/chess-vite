@@ -7,6 +7,7 @@ import {
     Heading,
     Image,
     Text,
+    useColorMode,
 } from "@chakra-ui/react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -21,6 +22,7 @@ import { Move, Piece } from "../../types";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import MenuButton from "./MenuButton";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import { useColour } from "../hooks/useColour";
 
 export function AnalysisSectionV2({
     moves,
@@ -39,6 +41,8 @@ export function AnalysisSectionV2({
     analysisMoveNumber: number;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
+    const { colourScheme } = useColour();
+    const { colorMode } = useColorMode();
     const evenIndexMoves = moves.filter((move, index) => {
         index % 2 === 0;
     });
@@ -100,24 +104,14 @@ export function AnalysisSectionV2({
 
     return (
         <Flex
-            bgColor={"gray.900"}
-            borderColor="gray.700"
+            bgColor={colourScheme.darker}
+            borderColor={colourScheme.border}
             borderWidth="2px"
+            borderRadius={"12px"}
             flexFlow={"column"}
             height={"100%"}
-            // height="inherit"
-            // overflow="hidden"
-
-            // position="relative"
-            // borderRadius={"12px"}
+            overflow="hidden"
         >
-            {/* <Flex>
-                <Grid templateColumns={"repeat(1,1fr)"}>
-                    {evenIndexMoves.map((move, index) => {
-                        <GridItem
-                    })}
-                </Grid>
-            </Flex> */}
             <Box
                 overflow={"auto"}
                 style={{ overflowAnchor: "none" }}
@@ -138,7 +132,9 @@ export function AnalysisSectionV2({
                             verticalAlign={"bottom"}
                             bgColor={
                                 index % 4 === 0 || index % 4 === 1
-                                    ? "#1f2129"
+                                    ? colorMode === "dark"
+                                        ? "#1f2129"
+                                        : "#D5E1EC"
                                     : "transparent"
                             }
                             pl="30px"
@@ -159,7 +155,7 @@ export function AnalysisSectionV2({
                                     px="6px"
                                     borderColor={
                                         analysisMoveNumber === index
-                                            ? "green.400"
+                                            ? colourScheme.primary
                                             : "transparent"
                                     }
                                     borderRadius={"4px"}
@@ -207,7 +203,9 @@ export function AnalysisSectionV2({
                             ref={bottomRef}
                             bgColor={
                                 moves.length % 4 === 0 || moves.length % 4 === 1
-                                    ? "#1f2129"
+                                    ? colorMode === "dark"
+                                        ? "#1f2129"
+                                        : "#D5E1EC"
                                     : "transparent"
                             }
                         ></GridItem>
@@ -218,16 +216,19 @@ export function AnalysisSectionV2({
             </Box>
 
             <Box flex="0 0" w="100%">
-                <Flex borderTopWidth={"2px"} borderTopColor="gray.700">
+                <Flex
+                    borderTopWidth={"2px"}
+                    borderTopColor={colourScheme.border}
+                >
                     <Button
                         textAlign={"center"}
                         display="block"
                         bgColor="transparent"
-                        color={"white"}
+                        color={colourScheme.text}
                         width="100%"
                         fontSize="16px"
                         cursor="pointer"
-                        _hover={{ bgColor: "green.500" }}
+                        _hover={{ bgColor: colourScheme.primary }}
                         borderRadius="0"
                         onClick={handleClickStart}
                         isDisabled={analysisMoveNumber < 1}
@@ -238,11 +239,11 @@ export function AnalysisSectionV2({
                         textAlign={"center"}
                         display="block"
                         bgColor="transparent"
-                        color={"white"}
+                        color={colourScheme.text}
                         width="100%"
                         fontSize="16px"
                         cursor="pointer"
-                        _hover={{ bgColor: "green.500" }}
+                        _hover={{ bgColor: colourScheme.primary }}
                         borderRadius="0"
                         onClick={handleClickBack}
                         isDisabled={analysisMoveNumber < 1}
@@ -253,12 +254,12 @@ export function AnalysisSectionV2({
                         textAlign={"center"}
                         display="block"
                         bgColor="transparent"
-                        color={"white"}
+                        color={colourScheme.text}
                         width="100%"
                         border="0 solid white"
                         fontSize="16px"
                         cursor="pointer"
-                        _hover={{ bgColor: "green.500" }}
+                        _hover={{ bgColor: colourScheme.primary }}
                         borderRadius="0"
                         onClick={handleClickForward}
                         isDisabled={
@@ -272,12 +273,12 @@ export function AnalysisSectionV2({
                         textAlign={"center"}
                         display="block"
                         bgColor="transparent"
-                        color={"white"}
+                        color={colourScheme.text}
                         width="100%"
                         border="0 solid white"
                         fontSize="16px"
                         cursor="pointer"
-                        _hover={{ bgColor: "green.500" }}
+                        _hover={{ bgColor: colourScheme.primary }}
                         borderRadius="0"
                         onClick={handleClickEnd}
                         isDisabled={

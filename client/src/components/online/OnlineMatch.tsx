@@ -19,6 +19,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { newGamePieces } from "../../data/newGamePieces";
 import { useAuth } from "../../hooks/useAuth";
+import { useColour } from "../../hooks/useColour";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { AnalysisSectionV2 } from "../AnalysisSectionV2";
 import CapturedPieces from "../CapturedPieces";
@@ -52,6 +53,7 @@ export function OnlineMatch({
     const [whiteTime, setWhiteTime] = useState(1800000);
     const [blackTime, setBlackTime] = useState(1800000);
     const auth = useAuth();
+    const { colourScheme } = useColour();
     const username = auth.user.username;
     let opposition: string;
     for (const player of players) {
@@ -203,7 +205,7 @@ export function OnlineMatch({
     return (
         <Flex justify={"center"} pt="8px">
             <Flex flexDirection={"column"}>
-                <Flex h={`${screenHeight}px`} maxH={`${screenHeight}px`}>
+                <Flex h={`${screenHeight}px`}>
                     <Flex flexDirection={"column"}>
                         <Flex justify={"space-between"} pb="10px">
                             <CapturedPieces
@@ -222,11 +224,11 @@ export function OnlineMatch({
                                         size="lg"
                                         h="50px"
                                         w="50px"
-                                        borderRadius={"0"}
+                                        borderRadius={"12px"}
                                         borderWidth="2px"
-                                        borderColor={"gray.700"}
+                                        borderColor={colourScheme.border}
                                         mr="10px"
-                                        bgColor="gray.900"
+                                        bgColor={colourScheme.darker}
                                     />
 
                                     <MenuList zIndex={"20"}>
@@ -241,9 +243,12 @@ export function OnlineMatch({
                                 <Flex
                                     borderWidth={"2px"}
                                     borderColor={
-                                        isYourMove ? "gray.700" : "green.400"
+                                        isYourMove
+                                            ? colourScheme.border
+                                            : colourScheme.primary
                                     }
-                                    bgColor="gray.900"
+                                    bgColor={colourScheme.darker}
+                                    borderRadius="12px"
                                     // w={`${boardHeight / 8}px`}
                                     px="20px"
                                     justify="center"
@@ -252,7 +257,7 @@ export function OnlineMatch({
                                     <Text
                                         fontSize={"24px"}
                                         fontWeight={"bold"}
-                                        color="white"
+                                        color={colourScheme.text}
                                     >
                                         {colour === "white"
                                             ? msToTime(blackTime)
@@ -291,10 +296,13 @@ export function OnlineMatch({
                             />
                             <Flex
                                 borderWidth={"2px"}
+                                borderRadius={"12px"}
                                 borderColor={
-                                    isYourMove ? "green.400" : "gray.700"
+                                    isYourMove
+                                        ? colourScheme.primary
+                                        : colourScheme.border
                                 }
-                                bgColor="gray.900"
+                                bgColor={colourScheme.darker}
                                 // w={`${boardHeight / 8}px`}
                                 justify="center"
                                 alignItems="center"
@@ -303,7 +311,7 @@ export function OnlineMatch({
                                 <Text
                                     fontSize={"24px"}
                                     fontWeight={"bold"}
-                                    color="white"
+                                    color={colourScheme.text}
                                 >
                                     {colour === "white"
                                         ? msToTime(whiteTime)
@@ -319,7 +327,7 @@ export function OnlineMatch({
                         ml="50px"
                         height={"inherit"}
                     >
-                        <Box h="60%">
+                        <Box h="60%" flexShrink={"0"}>
                             <AnalysisSectionV2
                                 moves={moves}
                                 pieces={pieces}
@@ -331,12 +339,14 @@ export function OnlineMatch({
                             />
                         </Box>
                         <Flex
-                            bgColor={"gray.900"}
-                            borderColor="gray.700"
+                            bgColor={colourScheme.darker}
+                            borderColor={colourScheme.border}
                             borderWidth="2px"
+                            borderRadius="12px"
                             borderTopWidth={"0"}
                             flex="1 1 auto"
                             flexDirection={"column"}
+                            overflow="hidden"
                         >
                             <Box
                                 flex="1 1 auto"
@@ -386,7 +396,7 @@ export function OnlineMatch({
                                                                         }
                                                                         _hover={{
                                                                             backgroundColor:
-                                                                                "green.400",
+                                                                                colourScheme.primary,
                                                                         }}
                                                                         onClick={() =>
                                                                             acceptDrawOffer(
@@ -410,7 +420,7 @@ export function OnlineMatch({
                                                                         }
                                                                         _hover={{
                                                                             backgroundColor:
-                                                                                "green.400",
+                                                                                colourScheme.primary,
                                                                         }}
                                                                         onClick={() =>
                                                                             rejectDrawOffer(
@@ -453,7 +463,7 @@ export function OnlineMatch({
                                                             bgColor={
                                                                 message.name ===
                                                                 username
-                                                                    ? "green.400"
+                                                                    ? colourScheme.primary
                                                                     : "gray.600"
                                                             }
                                                             p="2px"
@@ -485,10 +495,10 @@ export function OnlineMatch({
                                     onKeyDown={handleKeyDown}
                                     borderWidth="0"
                                     borderTopWidth="2px"
-                                    borderTopColor={"gray.700"}
+                                    borderTopColor={colourScheme.border}
                                 />
                                 <Button
-                                    bgColor="green.400"
+                                    bgColor={colourScheme.primary}
                                     color="white"
                                     borderRadius={"0"}
                                     onClick={sendMessage}

@@ -72,6 +72,7 @@ export function useProvideAuth() {
             username: data.username,
         });
         setToken(data.token);
+        return true;
     };
 
     const signin = async (

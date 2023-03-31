@@ -20,6 +20,7 @@ import { BoardTest } from "./routes/boardTest";
 import { MyGamesRoute } from "./routes/myGames";
 import { AnalysisRoute } from "./routes/analysis";
 import { ProvideColour } from "./hooks/useColour";
+import { ProfileRoute } from "./routes/Profile";
 
 const router = createBrowserRouter([
     {
@@ -85,6 +86,10 @@ const router = createBrowserRouter([
                         }
                     );
                 },
+            },
+            {
+                path: "/profile",
+                element: <ProfileRoute />,
             },
             {
                 path: "/socket-test",

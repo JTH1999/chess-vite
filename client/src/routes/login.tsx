@@ -13,30 +13,13 @@ import {
     Text,
     VStack,
 } from "@chakra-ui/react";
-import {
-    ChangeEvent,
-    ChangeEventHandler,
-    FormEvent,
-    FormEventHandler,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import { useContext, useEffect, useState } from "react";
 import { Form, Link, redirect, useNavigate } from "react-router-dom";
 import bgImage from "../assets/GreenPiecesNoLogo.png";
 import MainButton from "../components/MainButton";
 import { UserContext } from "../context/UserContext";
 import { useAuth } from "../hooks/useAuth";
-
-async function loginUser(credentials) {
-    return fetch("http://localhost:8080/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-    }).then((data) => data.json());
-}
+import { useColour } from "../hooks/useColour";
 
 export default function Login() {
     // const [searchParams] = useSearchParams();
@@ -50,6 +33,7 @@ export default function Login() {
     const handlePasswordShowClick = () => setShow(!show);
     const auth = useAuth();
     const navigate = useNavigate();
+    const { colourScheme } = useColour();
 
     // redirect to home if user is already logged in
     useEffect(() => {
@@ -59,7 +43,6 @@ export default function Login() {
                 return navigate("/");
             }
         };
-        const test = getUser();
     }, []);
 
     const handleSubmit = async (e) => {
@@ -101,13 +84,15 @@ export default function Login() {
         }
     };
 
+    console.log(value);
+
     return (
         <Box bgImage={bgImage} height="100vh" bgSize="cover" pt="40">
             {/* <Image src={bgImage} objectFit="contain" /> */}
             <Flex justify={"center"}>
                 <Flex
                     p="10"
-                    bg="gray.900"
+                    bg={colourScheme.body}
                     direction="column"
                     textAlign={"center"}
                     borderRadius="16px"
@@ -202,7 +187,13 @@ export default function Login() {
                                 type="submit"
                                 mt="20px"
                             >
-                                {`${isSubmitting ? "Signing In" : "Sign In"}`}
+                                {isSubmitting && value === "Login"
+                                    ? "Signing In"
+                                    : isSubmitting && value === "Register"
+                                    ? "Creating account"
+                                    : value === "Register"
+                                    ? "Create Account"
+                                    : "Sign In"}
                             </Button>
                             <Text
                                 pt="8"

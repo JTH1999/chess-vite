@@ -4,8 +4,10 @@ import stalematePNG from "../assets/Stalemate.png";
 import { newGamePieces } from "../data/newGamePieces";
 import { Move, Piece } from "../../types";
 import { Dispatch, SetStateAction } from "react";
-import { Box, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
 import MainButton from "./MainButton";
+import { useColour } from "../hooks/useColour";
+import { CloseIcon } from "@chakra-ui/icons";
 
 export default function CheckmateScreen({
     isCheckmate,
@@ -47,6 +49,8 @@ export default function CheckmateScreen({
     setAnalysisMode: Dispatch<SetStateAction<boolean>>;
     setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
+    const { colourScheme } = useColour();
+
     function resetBoard() {
         setWhiteToMove(true);
         setCapturedPieces([]);
@@ -79,22 +83,24 @@ export default function CheckmateScreen({
             justifyContent={"center"}
             alignItems={"center"}
             zIndex="5"
-            bgColor={"white"}
+            bgColor={colourScheme.body}
             p="20px"
             pb="30px"
             borderRadius="16px"
             boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
             width={"350px"}
             position="absolute"
-            color="black"
-            className="checkmate-screen"
         >
-            <Heading
-                className="checkmate-winner-text"
-                fontSize={"30px"}
-                fontWeight="bold"
-                margin={"10px"}
-            >
+            <Flex justify="end" w="100%" mb="-20px">
+                <IconButton
+                    onClick={() => setAnalysisMode(true)}
+                    aria-label="Close"
+                    bgColor="transparent"
+                    icon={<CloseIcon />}
+                />
+            </Flex>
+
+            <Heading fontSize={"30px"} fontWeight="bold" margin={"10px"}>
                 {isStalemate
                     ? "Stalemate"
                     : whiteToMove

@@ -4,6 +4,7 @@ import translucentRing from "../../assets/TranslucentRing.svg";
 import { Move, Piece } from "../../../types";
 import { Socket } from "socket.io-client";
 import { checkAvailableMoves } from "../square/helperFunctions";
+import { useColour } from "../../hooks/useColour";
 
 export default function OnlineSquare({
     row,
@@ -35,6 +36,7 @@ export default function OnlineSquare({
     previousPieceMovedFrom: string;
     previousPieceMovedTo: string;
 }) {
+    const { colourScheme } = useColour();
     const square = col.toString() + row.toString();
     let piece: Piece | null = null;
     const height = boardHeight / 8;
@@ -57,7 +59,7 @@ export default function OnlineSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece !== undefined &&
                       selectedPiece.currentCol === col &&
@@ -65,7 +67,7 @@ export default function OnlineSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
@@ -76,7 +78,7 @@ export default function OnlineSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece !== undefined &&
                       selectedPiece.currentCol === col &&
@@ -84,7 +86,7 @@ export default function OnlineSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.primary;
     }
 
     function sendMove(selectedPiece: Piece, square: string) {

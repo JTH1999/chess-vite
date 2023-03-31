@@ -18,6 +18,7 @@ import { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import Board from "../components/boardImage/Board";
 import { useAuth } from "../hooks/useAuth";
+import { useColour } from "../hooks/useColour";
 
 export function MyGamesRoute() {
     const [gameHoverId, setGameHoverId] = useState(null);
@@ -25,6 +26,7 @@ export function MyGamesRoute() {
     const games = data.games;
     const auth = useAuth();
     const navigate = useNavigate();
+    const { colourScheme } = useColour();
     const boardHeight = 200;
 
     return (
@@ -37,15 +39,21 @@ export function MyGamesRoute() {
             <Heading pb="30px">My Games</Heading>
 
             <Box
-                bgColor={"gray.900"}
+                bgColor={colourScheme.darker}
                 borderRadius={"12px"}
                 p="40px"
                 borderWidth="2px"
-                borderColor="gray.700"
+                borderColor={colourScheme.border}
             >
-                <Table variant="simple" w="700px">
+                <Table
+                    variant="simple"
+                    w="700px"
+                    overflowY={"scroll"}
+                    overflowX="visible"
+                    h="500px"
+                >
                     <TableCaption>{`${auth.user.username}'s matches`}</TableCaption>
-                    <Thead bgColor={"gray.900"}>
+                    <Thead bgColor={colourScheme.darker}>
                         <Tr>
                             <Th fontSize="18px">Opponent</Th>
                             <Th fontSize="18px">Colour</Th>
@@ -54,13 +62,18 @@ export function MyGamesRoute() {
                             <Th fontSize="18px">Date</Th>
                         </Tr>
                     </Thead>
-                    <Tbody bgColor={"gray.900"} borderRadius={"12px"}>
+                    <Tbody bgColor={colourScheme.darker} borderRadius={"12px"}>
                         {games.map((game) => (
                             <Tr
                                 key={game.id}
                                 cursor="pointer"
-                                _hover={{ backgroundColor: "gray.800" }}
-                                onClick={() => navigate(`/analysis/${game.id}`)}
+                                _hover={{
+                                    backgroundColor: colourScheme.border,
+                                }}
+                                onClick={() => {
+                                    if (JSON.parse(game.moves).length > 0)
+                                        navigate(`/analysis/${game.id}`);
+                                }}
                                 onMouseOver={() => setGameHoverId(game.id)}
                                 onMouseLeave={() => setGameHoverId(null)}
                                 position="relative"
@@ -96,12 +109,14 @@ export function MyGamesRoute() {
                                 <Flex
                                     position={"absolute"}
                                     // left="100%"
+
                                     top={`calc(50% - ${boardHeight / 2 + 8}px)`}
                                 >
                                     <Flex
                                         position="relative"
                                         p="8px"
-                                        bgColor={"gray.600"}
+                                        bgColor={colourScheme.border}
+                                        borderRadius="12px"
                                         display={
                                             gameHoverId === game.id
                                                 ? "flex"
@@ -117,7 +132,8 @@ export function MyGamesRoute() {
                                             position: "absolute",
                                             pointerEvents: "none",
                                             borderColor: "transparent",
-                                            borderRightColor: "gray.600",
+                                            borderRightColor:
+                                                colourScheme.border,
                                             borderWidth: "20px",
                                             marginTop: "-20px",
                                         }}

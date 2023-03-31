@@ -21,7 +21,9 @@ export function AnalysisBoard({
                     flexDirection={"column"}
                     justify="center"
                     alignItems={"center"}
-                    // boxShadow="-10px -10px 40px 0px rgba(73, 73, 73, 0.45), 10px 10px 30px 0px rgba(0, 0, 0, 0.4);"
+                    overflow="hidden"
+                    borderRadius="12px"
+                    boxShadow="-10px -10px 30px 0px rgba(0, 0, 0, 0.1), 10px 10px 30px 0px rgba(0, 0, 0, 0.1);"
                 >
                     {colour === "white"
                         ? whiteRows.map((row) => {

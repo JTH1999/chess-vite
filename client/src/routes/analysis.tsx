@@ -25,6 +25,7 @@ import { AnalysisSectionV2 } from "../components/AnalysisSectionV2";
 import CapturedPieces from "../components/CapturedPieces";
 import { AnalysisBoard } from "../components/analysis/AnalysisBoard";
 import { Move, Piece } from "../../types";
+import { useColour } from "../hooks/useColour";
 
 export function AnalysisRoute() {
     const data = useLoaderData() as {
@@ -42,6 +43,7 @@ export function AnalysisRoute() {
 
     const game = data.game;
     const auth = useAuth();
+    const { colourScheme } = useColour();
     const moves = useRef(JSON.parse(game.moves));
     const [pieces, setPieces] = useState(moves.current[0].pieces);
     const [analysisMode, setAnalsysisMode] = useState(true);
@@ -99,7 +101,7 @@ export function AnalysisRoute() {
                                 username={opposition}
                                 top={true}
                             />
-                            <Flex>
+                            {/* <Flex>
                                 <Menu>
                                     <MenuButton
                                         as={IconButton}
@@ -109,10 +111,10 @@ export function AnalysisRoute() {
                                         size="lg"
                                         h="50px"
                                         w="50px"
-                                        borderRadius={"0"}
+                                        borderRadius={"12px"}
                                         borderWidth="2px"
-                                        borderColor={"gray.700"}
-                                        bgColor="gray.900"
+                                        borderColor={colourScheme.border}
+                                        bgColor={colourScheme.darker}
                                     />
 
                                     <MenuList zIndex={"20"}>
@@ -120,7 +122,7 @@ export function AnalysisRoute() {
                                         <MenuItem>Flip Board</MenuItem>
                                     </MenuList>
                                 </Menu>
-                            </Flex>
+                            </Flex> */}
                         </Flex>
 
                         <AnalysisBoard

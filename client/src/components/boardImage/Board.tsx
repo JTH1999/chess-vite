@@ -44,53 +44,48 @@ export default function Board({
         pieces = newGamePieces;
     }
     return (
-        <>
-            <Flex>
-                <Flex
-                    className="board"
-                    flexDirection={"column"}
-                    justify="center"
-                    alignItems={"center"}
-
-                    // boxShadow="-10px -10px 40px 0px rgba(73, 73, 73, 0.45), 10px 10px 30px 0px rgba(0, 0, 0, 0.4);"
-                >
-                    {colour === "white"
-                        ? whiteRows.map((row) => {
-                              return (
-                                  <BoardRow
-                                      key={row}
-                                      row={row}
-                                      pieces={pieces}
-                                      colour={colour}
-                                      boardHeight={boardHeight}
-                                      previousPieceMovedFrom={
-                                          previousPieceMovedFrom
-                                      }
-                                      previousPieceMovedTo={
-                                          previousPieceMovedTo
-                                      }
-                                  />
-                              );
-                          })
-                        : blackRows.map((row) => {
-                              return (
-                                  <BoardRow
-                                      key={row}
-                                      row={row}
-                                      pieces={pieces}
-                                      colour={colour}
-                                      boardHeight={boardHeight}
-                                      previousPieceMovedFrom={
-                                          previousPieceMovedFrom
-                                      }
-                                      previousPieceMovedTo={
-                                          previousPieceMovedTo
-                                      }
-                                  />
-                              );
-                          })}
-                </Flex>
+        <Flex>
+            <Flex
+                className="board"
+                flexDirection={"column"}
+                justify="center"
+                alignItems={"center"}
+                borderRadius="6px"
+                overflow={"hidden"}
+                boxShadow="-10px -10px 30px 0px rgba(0, 0, 0, 0.1), 10px 10px 30px 0px rgba(0, 0, 0, 0.1);"
+            >
+                {colour === "white"
+                    ? whiteRows.map((row) => {
+                          return (
+                              <BoardRow
+                                  key={row}
+                                  row={row}
+                                  pieces={pieces}
+                                  colour={colour}
+                                  boardHeight={boardHeight}
+                                  previousPieceMovedFrom={
+                                      previousPieceMovedFrom
+                                  }
+                                  previousPieceMovedTo={previousPieceMovedTo}
+                              />
+                          );
+                      })
+                    : blackRows.map((row) => {
+                          return (
+                              <BoardRow
+                                  key={row}
+                                  row={row}
+                                  pieces={pieces}
+                                  colour={colour}
+                                  boardHeight={boardHeight}
+                                  previousPieceMovedFrom={
+                                      previousPieceMovedFrom
+                                  }
+                                  previousPieceMovedTo={previousPieceMovedTo}
+                              />
+                          );
+                      })}
             </Flex>
-        </>
+        </Flex>
     );
 }

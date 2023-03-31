@@ -1,26 +1,18 @@
 import { useColorMode, useTheme } from "@chakra-ui/react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-const darkBody = "#1A202C"; // gray.800
-const darkDarker = "#171923"; // gray.900
-const darkBorder = "#2D3748"; // gray.700
-
-const lightBody = "#FFFFFF"; // white
-const lightDarker = "#EDF2F7"; // gray.100
-const lightBorder = "#E2E8F0"; // gray.200
-
-const colors = {
+const colours = {
     dark: {
-        body: darkBody,
-        darker: darkDarker,
-        border: darkBorder,
+        body: "gray.800",
+        darker: "gray.900",
+        border: "gray.700",
         text: "white",
     },
     light: {
-        body: lightBody,
-        darker: lightDarker,
-        border: lightBorder,
-        text: darkBody,
+        body: "white",
+        darker: "gray.100",
+        border: "gray.200",
+        text: "gray.800",
     },
 };
 
@@ -49,29 +41,66 @@ export function useColourWrapper() {
 
     function getPrimaryColour() {
         const colour = getColourScheme();
-        return colour === "blue"
-            ? "blue.400"
-            : colour === "purple"
-            ? "purple.400"
-            : colour === "pink"
-            ? "pink.400"
-            : colour === "red"
-            ? "red.400"
-            : colour === "yellow"
-            ? "yellow.400"
-            : "green.400";
+        const primary =
+            colour === "blue"
+                ? "blue.400"
+                : colour === "purple"
+                ? "purple.400"
+                : colour === "pink"
+                ? "pink.400"
+                : colour === "red"
+                ? "red.400"
+                : colour === "yellow"
+                ? "yellow.400"
+                : "green.400";
+        const primaryDarker =
+            colour === "blue"
+                ? "blue.500"
+                : colour === "purple"
+                ? "purple.500"
+                : colour === "pink"
+                ? "pink.500"
+                : colour === "red"
+                ? "red.500"
+                : colour === "yellow"
+                ? "yellow.500"
+                : "green.500";
+
+        const primarySquare =
+            colour === "blue"
+                ? "blue.50"
+                : colour === "purple"
+                ? "purple.50"
+                : colour === "pink"
+                ? "pink.50"
+                : colour === "red"
+                ? "red.50"
+                : colour === "yellow"
+                ? "yellow.50"
+                : "green.50";
+
+        return {
+            primary,
+            primaryDarker,
+            primarySquare,
+        };
     }
 
     // Firgured out the weird bug, this is running twice, once with initial (default) colour mode,
     // then with the actual. The actual one is not being saved to state for some reason.
     // Going to work around by initialising with local storage value rather than colorMode (hope it works)
     const dlTheme = localStorage.getItem("chakra-ui-color-mode");
+    const { primary, primaryDarker, primarySquare } = getPrimaryColour();
     const scheme = {
-        border: dlTheme === "light" ? colors.light.border : colors.dark.border,
-        darker: dlTheme === "light" ? colors.light.darker : colors.dark.darker,
-        body: dlTheme === "light" ? colors.light.body : colors.dark.body,
-        text: dlTheme === "light" ? colors.light.text : colors.dark.text,
-        primary: getPrimaryColour(),
+        border:
+            dlTheme === "light" ? colours.light.border : colours.dark.border,
+        darker:
+            dlTheme === "light" ? colours.light.darker : colours.dark.darker,
+        body: dlTheme === "light" ? colours.light.body : colours.dark.body,
+        text: dlTheme === "light" ? colours.light.text : colours.dark.text,
+        primary: primary,
+        primaryDarker: primaryDarker,
+        primarySquare: primarySquare,
     };
 
     const [colourScheme, setColourScheme] = useState(scheme);
@@ -79,24 +108,35 @@ export function useColourWrapper() {
     const updateColourScheme = (colourSchemeString: string) => {
         console.log("here " + colourSchemeString);
         setColourSchemeStorage(colourSchemeString);
-        setColourScheme({ ...colourScheme, primary: getPrimaryColour() });
+        const { primary, primaryDarker, primarySquare } = getPrimaryColour();
+        setColourScheme({
+            ...colourScheme,
+            primary: primary,
+            primaryDarker: primaryDarker,
+            primarySquare: primarySquare,
+        });
     };
 
     const updateTheme = () => {
         toggleColorMode();
 
+        const { primary, primaryDarker, primarySquare } = getPrimaryColour();
         const updatedScheme = {
             border:
                 colorMode === "light"
-                    ? colors.dark.border
-                    : colors.light.border,
+                    ? colours.dark.border
+                    : colours.light.border,
             darker:
                 colorMode === "light"
-                    ? colors.dark.darker
-                    : colors.light.darker,
-            body: colorMode === "light" ? colors.dark.body : colors.light.body,
-            text: colorMode === "light" ? colors.dark.text : colors.light.text,
-            primary: getPrimaryColour(),
+                    ? colours.dark.darker
+                    : colours.light.darker,
+            body:
+                colorMode === "light" ? colours.dark.body : colours.light.body,
+            text:
+                colorMode === "light" ? colours.dark.text : colours.light.text,
+            primary: primary,
+            primaryDarker: primaryDarker,
+            primarySquare: primarySquare,
         };
         setColourScheme(updatedScheme);
     };

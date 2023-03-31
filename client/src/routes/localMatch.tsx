@@ -36,6 +36,7 @@ import { HamburgerIcon } from "@chakra-ui/icons";
 import { useAuth } from "../hooks/useAuth";
 import MainButton from "../components/MainButton";
 import { useNavigate } from "react-router-dom";
+import { useColour } from "../hooks/useColour";
 
 export default function LocalMatchRoute() {
     const auth = useAuth();
@@ -62,6 +63,7 @@ export default function LocalMatchRoute() {
     const [flipBoard, setFlipBoard] = useState(true);
     const [colour, setColour] = useState("white");
     const navigate = useNavigate();
+    const { colourScheme } = useColour();
 
     const screenHeight = height - 30;
     const boardHeight = screenHeight - 120;
@@ -104,14 +106,9 @@ export default function LocalMatchRoute() {
 
     return (
         <>
-            <Modal
-                closeOnOverlayClick={false}
-                isOpen={isOpen}
-                onClose={onClose}
-                isCentered
-            >
+            <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
-                <ModalContent bgColor="gray.800" p="20px">
+                <ModalContent bgColor={colourScheme.body} p="20px">
                     <ModalHeader textAlign={"center"}>
                         Configure Local Match
                     </ModalHeader>
@@ -141,7 +138,7 @@ export default function LocalMatchRoute() {
                                 Select Player 1 Colour
                             </Text>
                             <RadioGroup
-                                colorScheme="green"
+                                // colorScheme={colourScheme.primary}
                                 mb="20px"
                                 isDisabled={moves.length > 0}
                                 onChange={setColours}
@@ -159,7 +156,7 @@ export default function LocalMatchRoute() {
                                 </Text>
                                 <Switch
                                     isChecked={flipBoard}
-                                    colorScheme={"green"}
+                                    // colorScheme={"green"}
                                     onChange={(e) => setFlipBoard(!flipBoard)}
                                 />
                             </Flex>
@@ -204,11 +201,10 @@ export default function LocalMatchRoute() {
                                             size="lg"
                                             h="50px"
                                             w="50px"
-                                            borderRadius={"0"}
+                                            borderRadius={"8px"}
                                             borderWidth="2px"
-                                            borderColor={"gray.700"}
-                                            mr="10px"
-                                            bgColor="gray.900"
+                                            borderColor={colourScheme.border}
+                                            bgColor={colourScheme.darker}
                                         />
 
                                         <MenuList zIndex={"20"}>

@@ -2,6 +2,7 @@ import { Flex, Image } from "@chakra-ui/react";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
 import { Piece } from "../../../types";
+import { useColour } from "../../hooks/useColour";
 
 export default function AnalysisSquare({
     row,
@@ -20,6 +21,7 @@ export default function AnalysisSquare({
     previousPieceMovedFrom: string;
     previousPieceMovedTo: string;
 }) {
+    const { colourScheme } = useColour();
     const square = col.toString() + row.toString();
     let piece: Piece | null = null;
     const height = boardHeight / 8;
@@ -42,7 +44,7 @@ export default function AnalysisSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece !== undefined &&
                       selectedPiece.currentCol === col &&
@@ -50,7 +52,7 @@ export default function AnalysisSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
@@ -61,7 +63,7 @@ export default function AnalysisSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : (selectedPiece !== null &&
                       selectedPiece !== undefined &&
                       selectedPiece.currentCol === col &&
@@ -69,7 +71,7 @@ export default function AnalysisSquare({
                   square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : "green.400";
+                : colourScheme.primary;
     }
 
     return (

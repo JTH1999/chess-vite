@@ -4,10 +4,12 @@ import stalematePNG from "../../assets/Stalemate.png";
 import { newGamePieces } from "../../data/newGamePieces";
 import { Move, Piece } from "../../../types";
 import { Dispatch, SetStateAction } from "react";
-import { Box, Heading, Image, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, IconButton, Image, Text } from "@chakra-ui/react";
 import MainButton from "../MainButton";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
+import { CloseIcon } from "@chakra-ui/icons";
+import { useColour } from "../../hooks/useColour";
 
 export default function OnlineEndScreen({
     status,
@@ -44,6 +46,7 @@ export default function OnlineEndScreen({
 }) {
     const navigate = useNavigate();
     const auth = useAuth();
+    const { colourScheme } = useColour();
     const username = auth.user.username;
     const statuses = [
         "checkmate",
@@ -73,17 +76,25 @@ export default function OnlineEndScreen({
             justifyContent={"center"}
             alignItems={"center"}
             zIndex="5"
-            bgColor={"gray.900"}
+            bgColor={colourScheme.body}
             p="40px"
-            pb="30px"
+            pt="20px"
             borderRadius="16px"
             boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
-            width={"350px"}
+            width={"400px"}
             position="absolute"
-            color="white"
             className="checkmate-screen"
         >
+            <Flex justify="end" w="100%" mb="-20px">
+                <IconButton
+                    onClick={() => setAnalysisMode(true)}
+                    aria-label="Close"
+                    bgColor="transparent"
+                    icon={<CloseIcon />}
+                />
+            </Flex>
             <Heading
+                textAlign={"center"}
                 className="checkmate-winner-text"
                 fontSize={"30px"}
                 fontWeight="bold"

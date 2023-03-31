@@ -24,6 +24,7 @@ import { useAuth } from "../../hooks/useAuth";
 
 import TransparentButton from "../TransparentButton";
 import { io } from "socket.io-client";
+import { useColour } from "../../hooks/useColour";
 
 export function LobbyScreen({
     socket,
@@ -39,6 +40,7 @@ export function LobbyScreen({
     const [joinRoomCode, setJoinRoomCode] = useState("");
     const [tabIndex, setTabIndex] = useState(-1);
     const buttonRef = useRef();
+    const { colourScheme } = useColour();
 
     function createRoom() {
         const createRoomRequest = {
@@ -82,8 +84,8 @@ export function LobbyScreen({
     return (
         <Flex justify={"center"} alignItems="center" pt="60px">
             <Flex
-                bgColor={"gray.900"}
-                borderColor="gray.700"
+                bgColor={colourScheme.darker}
+                borderColor={colourScheme.border}
                 borderWidth={"2px"}
                 borderRadius="12px"
                 w="500px"
@@ -108,13 +110,14 @@ export function LobbyScreen({
                             <TabList mb="1em">
                                 <Tab
                                     isDisabled={Boolean(roomJoined)}
+                                    fontWeight={"semibold"}
                                     onClick={() => {
                                         createNewRoom();
                                         setTabIndex(0);
                                     }}
                                     _selected={{
-                                        color: "green.400",
-                                        borderColor: "gray.700",
+                                        color: colourScheme.primary,
+                                        borderColor: colourScheme.border,
                                         borderBottomWidth: "0",
                                     }}
                                 >
@@ -122,10 +125,11 @@ export function LobbyScreen({
                                 </Tab>
                                 <Tab
                                     isDisabled={isRoomCreated}
+                                    fontWeight={"semibold"}
                                     onClick={() => setTabIndex(1)}
                                     _selected={{
-                                        color: "green.400",
-                                        borderColor: "gray.700",
+                                        color: colourScheme.primary,
+                                        borderColor: colourScheme.border,
                                         borderBottomWidth: "0",
                                     }}
                                 >

@@ -34,7 +34,7 @@ export default function Root() {
     const [data, setData] = useState(null);
     const { colorMode, toggleColorMode } = useColorMode();
     const auth = useAuth();
-    const colours = useColour();
+    const { colourScheme, updateColourScheme, updateTheme } = useColour();
     const [paletteOpen, setPaletteOpen] = useState(false);
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -45,7 +45,7 @@ export default function Root() {
         <>
             <Flex flex="1">
                 <Flex
-                    bgColor={colours.colourScheme.darker}
+                    bgColor={colourScheme.darker}
                     borderRightColor={
                         colorMode === "light" ? "light.border" : "dark.border"
                     }
@@ -70,7 +70,13 @@ export default function Root() {
                         />
                         <MenuButton text={"Online Match"} url="/online-match" />
                         {auth.user?.username ? (
-                            <MenuButton text={"My Games"} url="/my-games" />
+                            <>
+                                <MenuButton text={"My Games"} url="/my-games" />
+                                <MenuButton
+                                    text={"My Profile"}
+                                    url="/profile"
+                                />
+                            </>
                         ) : (
                             <></>
                         )}
@@ -101,7 +107,7 @@ export default function Root() {
                     >
                         <Flex
                             _hover={{ color: "gray.300", cursor: "pointer" }}
-                            onClick={() => colours.updateTheme()}
+                            onClick={updateTheme}
                         >
                             <FontAwesomeIcon
                                 icon={colorMode === "light" ? faSun : faMoon}
@@ -124,7 +130,7 @@ export default function Root() {
             </Flex>
             <Modal isOpen={isOpen} onClose={onClose} isCentered>
                 <ModalOverlay />
-                <ModalContent bgColor={colours.colourScheme.body} p="20px">
+                <ModalContent bgColor={colourScheme.body} p="20px">
                     <ModalHeader textAlign={"center"}>
                         Select your preferred colour scheme
                     </ModalHeader>
@@ -143,8 +149,9 @@ export default function Root() {
                                         borderRadius="12px"
                                         bgColor="green.400"
                                         mr="20px"
+                                        cursor="pointer"
                                         onClick={() =>
-                                            colours.updateColourScheme("green")
+                                            updateColourScheme("green")
                                         }
                                     ></Flex>
 
@@ -153,8 +160,9 @@ export default function Root() {
                                         h="50px"
                                         borderRadius="12px"
                                         bgColor="blue.400"
+                                        cursor="pointer"
                                         onClick={() =>
-                                            colours.updateColourScheme("blue")
+                                            updateColourScheme("blue")
                                         }
                                     ></Flex>
                                 </Flex>
@@ -164,9 +172,10 @@ export default function Root() {
                                         h="50px"
                                         borderRadius="12px"
                                         bgColor="purple.400"
+                                        cursor="pointer"
                                         mr="20px"
                                         onClick={() =>
-                                            colours.updateColourScheme("purple")
+                                            updateColourScheme("purple")
                                         }
                                     ></Flex>
 
@@ -175,8 +184,9 @@ export default function Root() {
                                         h="50px"
                                         borderRadius="12px"
                                         bgColor="red.400"
+                                        cursor="pointer"
                                         onClick={() =>
-                                            colours.updateColourScheme("red")
+                                            updateColourScheme("red")
                                         }
                                     ></Flex>
                                 </Flex>
@@ -186,9 +196,10 @@ export default function Root() {
                                         h="50px"
                                         borderRadius="12px"
                                         bgColor="yellow.400"
+                                        cursor="pointer"
                                         mr="20px"
                                         onClick={() =>
-                                            colours.updateColourScheme("yellow")
+                                            updateColourScheme("yellow")
                                         }
                                     ></Flex>
                                     <Flex
@@ -196,13 +207,14 @@ export default function Root() {
                                         h="50px"
                                         borderRadius="12px"
                                         bgColor="pink.400"
+                                        cursor="pointer"
                                         onClick={() =>
-                                            colours.updateColourScheme("pink")
+                                            updateColourScheme("pink")
                                         }
                                     ></Flex>
                                 </Flex>
                             </Flex>
-                            <Flex borderRadius={"6px"} overflow="hidden">
+                            <Flex>
                                 <Board
                                     moves={[]}
                                     colour={"white"}

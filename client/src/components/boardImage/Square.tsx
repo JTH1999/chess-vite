@@ -21,7 +21,7 @@ export default function Square({
     previousPieceMovedFrom: string;
     previousPieceMovedTo: string;
 }) {
-    const colourScheme = useColour();
+    const { colourScheme } = useColour();
     const square = col.toString() + row.toString();
     let piece: Piece | null = null;
     const height = boardHeight / 8;
@@ -40,22 +40,22 @@ export default function Square({
                 ? square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : colourScheme.colourScheme.primary;
+                : colourScheme.primary;
     } else {
         bgColor =
             col % 2 === 0
                 ? square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                     ? "teal.200"
-                    : "green.50"
+                    : colourScheme.primarySquare
                 : square === previousPieceMovedFrom ||
                   square === previousPieceMovedTo
                 ? "teal.400"
-                : colourScheme.colourScheme.primary;
+                : colourScheme.primary;
     }
 
     return (
