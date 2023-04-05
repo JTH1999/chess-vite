@@ -6,201 +6,197 @@ import { Dispatch, SetStateAction } from "react";
 import { Flex } from "@chakra-ui/react";
 
 export default function Board({
-    pieces,
-    selectedPiece,
-    whiteToMove,
-    capturedPieces,
-    whiteKingSquare,
-    blackKingSquare,
-    isCheck,
-    isCheckmate,
-    isStalemate,
-    promote,
-    moves,
-    analysisMode,
-    boardHeight,
-    setPieces,
-    setSelectedPiece,
-    setWhiteToMove,
-    setCapturedPieces,
-    setWhiteKingSquare,
-    setBlackKingSquare,
-    setIsCheck,
-    setIsCheckmate,
-    setIsStalemate,
-    setPromote,
-    setMoves,
-    setAnalysisMode,
-    setAnalysisMoveNumber,
-    colour,
-    previousPieceMovedFrom,
-    previousPieceMovedTo,
-    flipBoard,
-    setColour,
+  pieces,
+  selectedPiece,
+  whiteToMove,
+  capturedPieces,
+  whiteKingSquare,
+  blackKingSquare,
+  isCheck,
+  isCheckmate,
+  isStalemate,
+  promote,
+  moves,
+  analysisMode,
+  boardHeight,
+  setPieces,
+  setSelectedPiece,
+  setWhiteToMove,
+  setCapturedPieces,
+  setWhiteKingSquare,
+  setBlackKingSquare,
+  setIsCheck,
+  setIsCheckmate,
+  setIsStalemate,
+  setPromote,
+  setMoves,
+  setAnalysisMode,
+  setAnalysisMoveNumber,
+  colour,
+  previousPieceMovedFrom,
+  previousPieceMovedTo,
+  flipBoard,
+  setColour,
 }: {
-    pieces: Piece[];
-    selectedPiece: Piece | null;
-    whiteToMove: boolean;
-    capturedPieces: Piece[];
-    whiteKingSquare: string;
-    blackKingSquare: string;
-    isCheck: boolean;
-    isCheckmate: boolean;
-    isStalemate: boolean;
-    promote: boolean;
-    moves: Move[];
-    analysisMode: boolean;
-    boardHeight: number;
-    colour: string;
-    previousPieceMovedFrom: string;
-    previousPieceMovedTo: string;
-    flipBoard: boolean;
-    setPieces: Dispatch<SetStateAction<Piece[]>>;
-    setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
-    setWhiteToMove: Dispatch<SetStateAction<boolean>>;
-    setCapturedPieces: Dispatch<SetStateAction<Piece[]>>;
-    setWhiteKingSquare: Dispatch<SetStateAction<string>>;
-    setBlackKingSquare: Dispatch<SetStateAction<string>>;
-    setIsCheck: Dispatch<SetStateAction<boolean>>;
-    setIsCheckmate: Dispatch<SetStateAction<boolean>>;
-    setIsStalemate: Dispatch<SetStateAction<boolean>>;
-    setPromote: Dispatch<SetStateAction<boolean>>;
-    setMoves: Dispatch<SetStateAction<Move[]>>;
-    setAnalysisMode: Dispatch<SetStateAction<boolean>>;
-    setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
-    setColour: Dispatch<SetStateAction<string>>;
+  pieces: Piece[];
+  selectedPiece: Piece | null;
+  whiteToMove: boolean;
+  capturedPieces: Piece[];
+  whiteKingSquare: string;
+  blackKingSquare: string;
+  isCheck: boolean;
+  isCheckmate: boolean;
+  isStalemate: boolean;
+  promote: boolean;
+  moves: Move[];
+  analysisMode: boolean;
+  boardHeight: number;
+  colour: string;
+  previousPieceMovedFrom: string;
+  previousPieceMovedTo: string;
+  flipBoard: boolean;
+  setPieces: Dispatch<SetStateAction<Piece[]>>;
+  setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
+  setWhiteToMove: Dispatch<SetStateAction<boolean>>;
+  setCapturedPieces: Dispatch<SetStateAction<Piece[]>>;
+  setWhiteKingSquare: Dispatch<SetStateAction<string>>;
+  setBlackKingSquare: Dispatch<SetStateAction<string>>;
+  setIsCheck: Dispatch<SetStateAction<boolean>>;
+  setIsCheckmate: Dispatch<SetStateAction<boolean>>;
+  setIsStalemate: Dispatch<SetStateAction<boolean>>;
+  setPromote: Dispatch<SetStateAction<boolean>>;
+  setMoves: Dispatch<SetStateAction<Move[]>>;
+  setAnalysisMode: Dispatch<SetStateAction<boolean>>;
+  setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+  setColour: Dispatch<SetStateAction<string>>;
 }) {
-    const blackRows = [1, 2, 3, 4, 5, 6, 7, 8];
-    const whiteRows = [8, 7, 6, 5, 4, 3, 2, 1];
-    return (
-        <Flex>
-            <Flex
-                className="board"
-                flexDirection={"column"}
-                justify="center"
-                alignItems={"center"}
-                overflow="hidden"
-                borderRadius="12px"
-                boxShadow="-10px -10px 30px 0px rgba(0, 0, 0, 0.1), 10px 10px 30px 0px rgba(0, 0, 0, 0.1);"
-            >
-                <CheckmateScreen
-                    whiteToMove={whiteToMove}
-                    isCheckmate={isCheckmate}
-                    isStalemate={isStalemate}
-                    setWhiteToMove={setWhiteToMove}
-                    setCapturedPieces={setCapturedPieces}
-                    setWhiteKingSquare={setWhiteKingSquare}
-                    setBlackKingSquare={setBlackKingSquare}
-                    setIsCheck={setIsCheck}
-                    setIsCheckmate={setIsCheckmate}
-                    setIsStalemate={setIsStalemate}
-                    setPromote={setPromote}
-                    setMoves={setMoves}
-                    setPieces={setPieces}
-                    setSelectedPiece={setSelectedPiece}
-                    analysisMode={analysisMode}
-                    setAnalysisMode={setAnalysisMode}
-                    setAnalysisMoveNumber={setAnalysisMoveNumber}
-                    moves={moves}
+  const blackRows = [1, 2, 3, 4, 5, 6, 7, 8];
+  const whiteRows = [8, 7, 6, 5, 4, 3, 2, 1];
+  return (
+    <Flex>
+      <Flex
+        className="board"
+        flexDirection={"column"}
+        justify="center"
+        alignItems={"center"}
+        overflow="hidden"
+        borderRadius="12px"
+        boxShadow="-10px -10px 30px 0px rgba(0, 0, 0, 0.1), 10px 10px 30px 0px rgba(0, 0, 0, 0.1);"
+      >
+        <CheckmateScreen
+          whiteToMove={whiteToMove}
+          isCheckmate={isCheckmate}
+          isStalemate={isStalemate}
+          setWhiteToMove={setWhiteToMove}
+          setCapturedPieces={setCapturedPieces}
+          setWhiteKingSquare={setWhiteKingSquare}
+          setBlackKingSquare={setBlackKingSquare}
+          setIsCheck={setIsCheck}
+          setIsCheckmate={setIsCheckmate}
+          setIsStalemate={setIsStalemate}
+          setPromote={setPromote}
+          setMoves={setMoves}
+          setPieces={setPieces}
+          setSelectedPiece={setSelectedPiece}
+          analysisMode={analysisMode}
+          setAnalysisMode={setAnalysisMode}
+          setAnalysisMoveNumber={setAnalysisMoveNumber}
+          moves={moves}
+        />
+        <PromoteScreen
+          pieces={pieces}
+          setPieces={setPieces}
+          selectedPiece={selectedPiece}
+          setSelectedPiece={setSelectedPiece}
+          whiteToMove={whiteToMove}
+          setWhiteToMove={setWhiteToMove}
+          whiteKingSquare={whiteKingSquare}
+          blackKingSquare={blackKingSquare}
+          setIsCheck={setIsCheck}
+          setIsCheckmate={setIsCheckmate}
+          setIsStalemate={setIsStalemate}
+          promote={promote}
+          setPromote={setPromote}
+          moves={moves}
+          capturedPieces={capturedPieces}
+          flipBoard={flipBoard}
+          colour={colour}
+          setColour={setColour}
+        />
+        {colour === "white"
+          ? whiteRows.map((row) => {
+              return (
+                <BoardRow
+                  key={row}
+                  row={row}
+                  pieces={pieces}
+                  setPieces={setPieces}
+                  selectedPiece={selectedPiece}
+                  setSelectedPiece={setSelectedPiece}
+                  whiteToMove={whiteToMove}
+                  setWhiteToMove={setWhiteToMove}
+                  capturedPieces={capturedPieces}
+                  setCapturedPieces={setCapturedPieces}
+                  whiteKingSquare={whiteKingSquare}
+                  setWhiteKingSquare={setWhiteKingSquare}
+                  blackKingSquare={blackKingSquare}
+                  setBlackKingSquare={setBlackKingSquare}
+                  isCheck={isCheck}
+                  setIsCheck={setIsCheck}
+                  setIsCheckmate={setIsCheckmate}
+                  setIsStalemate={setIsStalemate}
+                  promote={promote}
+                  setPromote={setPromote}
+                  moves={moves}
+                  setMoves={setMoves}
+                  analysisMode={analysisMode}
+                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                  boardHeight={boardHeight}
+                  colour={colour}
+                  previousPieceMovedFrom={previousPieceMovedFrom}
+                  previousPieceMovedTo={previousPieceMovedTo}
+                  flipBoard={flipBoard}
+                  setColour={setColour}
                 />
-                <PromoteScreen
-                    pieces={pieces}
-                    setPieces={setPieces}
-                    selectedPiece={selectedPiece}
-                    setSelectedPiece={setSelectedPiece}
-                    whiteToMove={whiteToMove}
-                    setWhiteToMove={setWhiteToMove}
-                    whiteKingSquare={whiteKingSquare}
-                    blackKingSquare={blackKingSquare}
-                    setIsCheck={setIsCheck}
-                    setIsCheckmate={setIsCheckmate}
-                    setIsStalemate={setIsStalemate}
-                    promote={promote}
-                    setPromote={setPromote}
-                    moves={moves}
-                    capturedPieces={capturedPieces}
-                    flipBoard={flipBoard}
-                    colour={colour}
-                    setColour={setColour}
+              );
+            })
+          : blackRows.map((row) => {
+              return (
+                <BoardRow
+                  key={row}
+                  row={row}
+                  pieces={pieces}
+                  setPieces={setPieces}
+                  selectedPiece={selectedPiece}
+                  setSelectedPiece={setSelectedPiece}
+                  whiteToMove={whiteToMove}
+                  setWhiteToMove={setWhiteToMove}
+                  capturedPieces={capturedPieces}
+                  setCapturedPieces={setCapturedPieces}
+                  whiteKingSquare={whiteKingSquare}
+                  setWhiteKingSquare={setWhiteKingSquare}
+                  blackKingSquare={blackKingSquare}
+                  setBlackKingSquare={setBlackKingSquare}
+                  isCheck={isCheck}
+                  setIsCheck={setIsCheck}
+                  setIsCheckmate={setIsCheckmate}
+                  setIsStalemate={setIsStalemate}
+                  promote={promote}
+                  setPromote={setPromote}
+                  moves={moves}
+                  setMoves={setMoves}
+                  analysisMode={analysisMode}
+                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                  boardHeight={boardHeight}
+                  colour={colour}
+                  previousPieceMovedFrom={previousPieceMovedFrom}
+                  previousPieceMovedTo={previousPieceMovedTo}
+                  flipBoard={flipBoard}
+                  setColour={setColour}
                 />
-                {colour === "white"
-                    ? whiteRows.map((row) => {
-                          return (
-                              <BoardRow
-                                  key={row}
-                                  row={row}
-                                  pieces={pieces}
-                                  setPieces={setPieces}
-                                  selectedPiece={selectedPiece}
-                                  setSelectedPiece={setSelectedPiece}
-                                  whiteToMove={whiteToMove}
-                                  setWhiteToMove={setWhiteToMove}
-                                  capturedPieces={capturedPieces}
-                                  setCapturedPieces={setCapturedPieces}
-                                  whiteKingSquare={whiteKingSquare}
-                                  setWhiteKingSquare={setWhiteKingSquare}
-                                  blackKingSquare={blackKingSquare}
-                                  setBlackKingSquare={setBlackKingSquare}
-                                  isCheck={isCheck}
-                                  setIsCheck={setIsCheck}
-                                  setIsCheckmate={setIsCheckmate}
-                                  setIsStalemate={setIsStalemate}
-                                  promote={promote}
-                                  setPromote={setPromote}
-                                  moves={moves}
-                                  setMoves={setMoves}
-                                  analysisMode={analysisMode}
-                                  setAnalysisMoveNumber={setAnalysisMoveNumber}
-                                  boardHeight={boardHeight}
-                                  colour={colour}
-                                  previousPieceMovedFrom={
-                                      previousPieceMovedFrom
-                                  }
-                                  previousPieceMovedTo={previousPieceMovedTo}
-                                  flipBoard={flipBoard}
-                                  setColour={setColour}
-                              />
-                          );
-                      })
-                    : blackRows.map((row) => {
-                          return (
-                              <BoardRow
-                                  key={row}
-                                  row={row}
-                                  pieces={pieces}
-                                  setPieces={setPieces}
-                                  selectedPiece={selectedPiece}
-                                  setSelectedPiece={setSelectedPiece}
-                                  whiteToMove={whiteToMove}
-                                  setWhiteToMove={setWhiteToMove}
-                                  capturedPieces={capturedPieces}
-                                  setCapturedPieces={setCapturedPieces}
-                                  whiteKingSquare={whiteKingSquare}
-                                  setWhiteKingSquare={setWhiteKingSquare}
-                                  blackKingSquare={blackKingSquare}
-                                  setBlackKingSquare={setBlackKingSquare}
-                                  isCheck={isCheck}
-                                  setIsCheck={setIsCheck}
-                                  setIsCheckmate={setIsCheckmate}
-                                  setIsStalemate={setIsStalemate}
-                                  promote={promote}
-                                  setPromote={setPromote}
-                                  moves={moves}
-                                  setMoves={setMoves}
-                                  analysisMode={analysisMode}
-                                  setAnalysisMoveNumber={setAnalysisMoveNumber}
-                                  boardHeight={boardHeight}
-                                  colour={colour}
-                                  previousPieceMovedFrom={
-                                      previousPieceMovedFrom
-                                  }
-                                  previousPieceMovedTo={previousPieceMovedTo}
-                                  flipBoard={flipBoard}
-                                  setColour={setColour}
-                              />
-                          );
-                      })}
-            </Flex>
-        </Flex>
-    );
+              );
+            })}
+      </Flex>
+    </Flex>
+  );
 }

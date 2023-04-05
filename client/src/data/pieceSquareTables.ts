@@ -1,4 +1,4 @@
-const reverseArray = function (array) {
+const reverseArray = function (array: any[]) {
     return array.slice().reverse();
 };
 

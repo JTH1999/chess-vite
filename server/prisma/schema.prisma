@@ -18,6 +18,7 @@ model User {
   passwordHash String
   authStrategy String   @default("local")
   points       Int      @default(50)
+  avatar       String   @default("defaultAvatar.png")
   gamesAsWhite Game[]   @relation("whiteUser")
   gamesAsBlack Game[]   @relation("blackUser")
 }

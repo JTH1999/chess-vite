@@ -178,7 +178,7 @@ export function calculateSelectedPieceLegalMoves(
                     piecesCopy
                 );
                 const opPieceIndex = oppositionPiecesCopy.findIndex(
-                    (piece) => piece.index === capturedPieceIndex
+                    (piece: Piece) => piece.index === capturedPieceIndex
                 );
 
                 oppositionPiecesCopy[opPieceIndex] =
@@ -197,7 +197,7 @@ export function calculateSelectedPieceLegalMoves(
                     piecesCopy
                 );
                 const opPieceIndex = oppositionPiecesCopy.findIndex(
-                    (piece) => piece.index === capturedPieceIndex
+                    (piece: Piece) => piece.index === capturedPieceIndex
                 );
 
                 oppositionPiecesCopy[opPieceIndex] =
