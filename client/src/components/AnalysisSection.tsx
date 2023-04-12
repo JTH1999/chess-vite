@@ -19,7 +19,7 @@ import { Move, Piece } from "../../types";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { useColour } from "../hooks/useColour";
 
-export function AnalysisSectionV2({
+export function AnalysisSection({
   moves,
   pieces,
   setPieces,

@@ -10,7 +10,7 @@ import bQueen from "../assets/pieces/b_queen_svg_NoShadow.svg";
 import {
   calculateAllAvailableMoves,
   calculateOppositionLegalMoves,
-} from "./square/helperFunctions.js";
+} from "./board/square/helperFunctions.js";
 import { Move, Piece } from "../../types";
 import { Dispatch, SetStateAction } from "react";
 import { Box, Flex, Image, Text } from "@chakra-ui/react";

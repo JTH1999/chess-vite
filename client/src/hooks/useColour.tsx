@@ -34,6 +34,7 @@ const typedColourContext: {
     darker: "",
     body: "",
     text: "",
+    name: "",
     primary: "",
     primaryDarker: "",
     primarySquare: "",
@@ -128,7 +129,10 @@ export function useColourWrapper() {
         : colour === "yellow"
         ? "orange.400"
         : "blue.400";
+
+    const name = colour ? colour : "green";
     return {
+      name,
       primary,
       primaryDarker,
       primarySquare,
@@ -142,6 +146,7 @@ export function useColourWrapper() {
   // Going to work around by initialising with local storage value rather than colorMode (hope it works)
   const dlTheme = localStorage.getItem("chakra-ui-color-mode");
   const {
+    name,
     primary,
     primaryDarker,
     primarySquare,
@@ -153,6 +158,7 @@ export function useColourWrapper() {
     darker: dlTheme === "light" ? colours.light.darker : colours.dark.darker,
     body: dlTheme === "light" ? colours.light.body : colours.dark.body,
     text: dlTheme === "light" ? colours.light.text : colours.dark.text,
+    name: name,
     primary: primary,
     primaryDarker: primaryDarker,
     primarySquare: primarySquare,
@@ -163,9 +169,9 @@ export function useColourWrapper() {
   const [colourScheme, setColourScheme] = useState(scheme);
 
   const updateColourScheme = (colourSchemeString: string) => {
-    console.log("here " + colourSchemeString);
     setColourSchemeStorage(colourSchemeString);
     const {
+      name,
       primary,
       primaryDarker,
       primarySquare,
@@ -174,6 +180,7 @@ export function useColourWrapper() {
     } = getPrimaryColour();
     setColourScheme({
       ...colourScheme,
+      name: name,
       primary: primary,
       primaryDarker: primaryDarker,
       primarySquare: primarySquare,
@@ -186,6 +193,7 @@ export function useColourWrapper() {
     toggleColorMode();
 
     const {
+      name,
       primary,
       primaryDarker,
       primarySquare,
@@ -199,6 +207,7 @@ export function useColourWrapper() {
         colorMode === "light" ? colours.dark.darker : colours.light.darker,
       body: colorMode === "light" ? colours.dark.body : colours.light.body,
       text: colorMode === "light" ? colours.dark.text : colours.light.text,
+      name: name,
       primary: primary,
       primaryDarker: primaryDarker,
       primarySquare: primarySquare,

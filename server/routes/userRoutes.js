@@ -18,6 +18,7 @@ const {
   getRefreshToken,
   verifyUser,
 } = require("../authenticate");
+const { error } = require("console");
 
 router.post("/signup", async (req, res, next) => {
   const userExists = await db.user.findFirst({

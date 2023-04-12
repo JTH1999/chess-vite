@@ -1,6 +1,6 @@
 import { Flex, Image } from "@chakra-ui/react";
-import { Piece } from "../../../types";
-import { useColour } from "../../hooks/useColour";
+import { Piece } from "../../types";
+import { useColour } from "../hooks/useColour";
 
 export default function Square({
   row,
@@ -55,7 +55,6 @@ export default function Square({
       alignItems="center"
       justify={"center"}
       bgColor={bgColor}
-      // float={"left"}
       height={`${height}px`}
       width={`${height}px`}
       userSelect={"none"}

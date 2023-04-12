@@ -1,9 +1,9 @@
 import { Flex } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useState } from "react";
 import { OnlineBoardRow } from "./OnlineBoardRow";
-import OnlineEndScreen from "./OnlineEndScreen";
-import OnlinePromoteScreen from "./OnlinePromoteScreen";
-import { Move, Piece } from "../../../types";
+import OnlineEndScreen from "../components/online/OnlineEndScreen";
+import OnlinePromoteScreen from "../components/online/OnlinePromoteScreen";
+import { Move, Piece } from "../../types";
 import { Socket } from "socket.io-client";
 
 export function OnlineBoard({
@@ -45,8 +45,6 @@ export function OnlineBoard({
   setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
   setPieces: Dispatch<SetStateAction<Piece[]>>;
 }) {
-  const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
-
   const blackRows = [1, 2, 3, 4, 5, 6, 7, 8];
   const whiteRows = [8, 7, 6, 5, 4, 3, 2, 1];
   return (
@@ -61,25 +59,6 @@ export function OnlineBoard({
           borderRadius="12px"
           boxShadow="-10px -10px 30px 0px rgba(0, 0, 0, 0.1), 10px 10px 30px 0px rgba(0, 0, 0, 0.1);"
         >
-          <OnlineEndScreen
-            whiteToMove={whiteToMove}
-            analysisMode={analysisMode}
-            winner={winner}
-            status={status}
-            moves={moves}
-            roomCode={roomCode}
-            socket={socket}
-            setAnalysisMode={setAnalysisMode}
-            setAnalysisMoveNumber={setAnalysisMoveNumber}
-            setPieces={setPieces}
-          />
-          <OnlinePromoteScreen
-            roomCode={roomCode}
-            gameId={gameId}
-            status={status}
-            whiteToMove={whiteToMove}
-            socket={socket}
-          />
           {colour === "white"
             ? whiteRows.map((row) => {
                 return (

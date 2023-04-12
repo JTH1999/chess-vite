@@ -29,11 +29,13 @@ import { newGamePieces } from "../../data/newGamePieces";
 import { useAuth } from "../../hooks/useAuth";
 import { useColour } from "../../hooks/useColour";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
-import { AnalysisSectionV2 } from "../AnalysisSection";
+import { AnalysisSection } from "../AnalysisSection";
 import CapturedPieces from "../CapturedPieces";
-import { OnlineBoard } from "./OnlineBoard";
 import { Message, Move, Piece } from "../../../types";
 import { Socket } from "socket.io-client";
+import Board from "../board/Board";
+import OnlinePromoteScreen from "./OnlinePromoteScreen";
+import OnlineEndScreen from "./OnlineEndScreen";
 
 export function OnlineMatch({
   colour,
@@ -81,6 +83,7 @@ export function OnlineMatch({
   const [drawOffer, setDrawOffer] = useState(false);
   const [whiteTime, setWhiteTime] = useState(1800000);
   const [blackTime, setBlackTime] = useState(1800000);
+  const [selectedPiece, setSelectedPiece] = useState<Piece | null>(null);
   const auth = useAuth();
   const { colourScheme } = useColour();
   const username = auth!.user.username!;
@@ -122,6 +125,63 @@ export function OnlineMatch({
     if (e.key === "Enter") {
       sendMessage();
       setMessage("");
+    }
+  }
+
+  function sendMove(selectedPiece: Piece, square: string) {
+    const move = {
+      selectedPiece: selectedPiece,
+      square: square,
+      roomCode: roomCode,
+      gameId: gameId,
+      colour: colour,
+    };
+
+    socket.emit("sendMove", move);
+    setIsYourMove(false);
+    setSelectedPiece(null);
+  }
+
+  function handleSquareClick(
+    row: number,
+    col: number,
+    square: string,
+    piece: Piece | null
+  ) {
+    if (!isYourMove) {
+      return;
+    }
+
+    if (analysisMode) {
+      return;
+    }
+    // if there is a selected piece
+    if (selectedPiece) {
+      if (
+        piece?.colour === selectedPiece.colour &&
+        piece?.name !== selectedPiece.name
+      ) {
+        let selectedPieceCopy = { ...piece };
+
+        setSelectedPiece(selectedPieceCopy);
+        return;
+      }
+
+      if (selectedPiece.availableMoves.includes(square)) {
+        sendMove(selectedPiece, square);
+      } else if (
+        selectedPiece.currentCol.toString() +
+          selectedPiece.currentRow.toString() ===
+        square
+      ) {
+        setSelectedPiece(null);
+      }
+      // if no piece selected yet
+    } else if (piece) {
+      if (piece.colour === colour) {
+        let selectedPieceCopy = { ...piece };
+        setSelectedPiece(selectedPieceCopy);
+      }
     }
   }
 
@@ -290,26 +350,35 @@ export function OnlineMatch({
               </Flex>
             </Flex>
 
-            <OnlineBoard
+            <Board
               colour={colour}
               pieces={pieces}
-              isYourMove={isYourMove}
-              socket={socket}
-              roomCode={roomCode}
-              setIsYourMove={setIsYourMove}
-              gameId={gameId}
-              whiteToMove={whiteToMove}
-              status={status}
-              winner={winner}
+              selectedPiece={selectedPiece}
               boardHeight={boardHeight}
-              analysisMode={analysisMode}
               previousPieceMovedFrom={previousPieceMovedFrom}
               previousPieceMovedTo={previousPieceMovedTo}
-              setAnalysisMode={setAnalysisMode}
-              setAnalysisMoveNumber={setAnalysisMoveNumber}
-              setPieces={setPieces}
-              moves={moves}
-            />
+              handleSquareClick={handleSquareClick}
+            >
+              <OnlineEndScreen
+                whiteToMove={whiteToMove}
+                analysisMode={analysisMode}
+                winner={winner}
+                status={status}
+                moves={moves}
+                roomCode={roomCode}
+                socket={socket}
+                setAnalysisMode={setAnalysisMode}
+                setAnalysisMoveNumber={setAnalysisMoveNumber}
+                setPieces={setPieces}
+              />
+              <OnlinePromoteScreen
+                roomCode={roomCode}
+                gameId={gameId}
+                status={status}
+                whiteToMove={whiteToMove}
+                socket={socket}
+              />
+            </Board>
             <Flex justify={"space-between"} pt="10px">
               <CapturedPieces
                 username={username}
@@ -325,7 +394,6 @@ export function OnlineMatch({
                   isYourMove ? colourScheme.primary : colourScheme.border
                 }
                 bgColor={colourScheme.darker}
-                // w={`${boardHeight / 8}px`}
                 justify="center"
                 alignItems="center"
                 px="20px"
@@ -345,7 +413,7 @@ export function OnlineMatch({
 
           <Flex w="400px" flexDirection={"column"} ml="50px" height={"inherit"}>
             <Box h="60%" flexShrink={"0"}>
-              <AnalysisSectionV2
+              <AnalysisSection
                 moves={moves}
                 pieces={pieces}
                 setPieces={setPieces}
@@ -367,10 +435,7 @@ export function OnlineMatch({
             >
               <Box
                 flex="1 1 auto"
-                // h="600px"
                 bgColor={"transparent"}
-                // borderRadius="20px"
-                // mb="30px"
                 m="10px"
                 mr="0"
                 pr="10px"

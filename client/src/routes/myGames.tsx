@@ -2,18 +2,7 @@ import {
   Box,
   Flex,
   Heading,
-  List,
-  ListItem,
-  Table,
-  TableCaption,
-  TableContainer,
   Text,
-  Tbody,
-  Td,
-  Tfoot,
-  Th,
-  Thead,
-  Tr,
   Input,
   Button,
   Grid,
@@ -21,13 +10,19 @@ import {
 } from "@chakra-ui/react";
 import { Children, ReactNode, useState } from "react";
 import { Form, useLoaderData, useNavigate } from "react-router-dom";
-import Board from "../components/boardImage/Board";
 import { useAuth } from "../hooks/useAuth";
 import { useColour } from "../hooks/useColour";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAnglesLeft, faAnglesRight } from "@fortawesome/free-solid-svg-icons";
-import { Game } from "../../types";
+import {
+  faAngleLeft,
+  faAngleRight,
+  faAnglesLeft,
+  faAnglesRight,
+} from "@fortawesome/free-solid-svg-icons";
+import { Game, Move } from "../../types";
 import { PleaseLogin } from "../components/PleaseLogin";
+import { newGamePieces } from "../data/newGamePieces";
+import Board from "../components/board/Board";
 
 export async function loader({ request }: { request: Request }) {
   const tokenString = localStorage.getItem("token");
@@ -64,9 +59,27 @@ export function MyGamesRoute() {
   const boardHeight = 200;
 
   const pageValues = [];
-  for (let i = 0; i < data.pagesCount; i++) {
+  const startingPage =
+    data.pagesCount > 5
+      ? data.pagesCount - 1 - data.currentPage < 2
+        ? data.pagesCount - 5
+        : data.currentPage > 2
+        ? data.currentPage - 2
+        : 0
+      : 0;
+  for (
+    let i = startingPage;
+    i < Math.min(5, data.pagesCount) + startingPage;
+    i++
+  ) {
     pageValues.push(i);
   }
+
+  // Responsive styling
+  const tableWidth = ["100%", null, null, null, "800px", "800px"];
+  const headingFontSizes = ["12px", null, "14px", "18px", "20px"];
+  const fontSizes = ["10px", null, "12px", "16px", "18px"];
+  const columnGaps = ["10px", null, null, "20px", "30px", "40px"];
 
   function PaginationButton({
     children,
@@ -75,25 +88,27 @@ export function MyGamesRoute() {
   }: {
     children: ReactNode;
     value: number;
-    jumpTo: "start" | "end" | "";
+    jumpTo: "start" | "end" | "previous" | "next" | "";
   }) {
     return (
       <Form>
         <Input type="hidden" name="page" value={value} />
         <Button
           py="5px"
-          px="12px"
+          px={["4px", null, null, "12px"]}
           bgColor="transparent"
           cursor="pointer"
-          fontSize={"18px"}
+          fontSize={fontSizes}
           transition="0.2s linear"
           type="submit"
           isDisabled={
             games.length === 0
               ? true
-              : jumpTo === "start" && data.currentPage === 0
+              : (jumpTo === "start" || jumpTo === "previous") &&
+                data.currentPage === 0
               ? true
-              : jumpTo === "end" && data.currentPage === data.pagesCount - 1
+              : (jumpTo === "end" || jumpTo === "next") &&
+                data.currentPage === data.pagesCount - 1
               ? true
               : false
           }
@@ -110,6 +125,38 @@ export function MyGamesRoute() {
     );
   }
 
+  function getPieces(moves: Move[]) {
+    let pieces;
+    let previousPieceMovedFrom = "";
+    let previousPieceMovedTo = "";
+    if (moves.length >= 1) {
+      pieces = moves[moves.length - 1].pieces;
+
+      const previousPieceIndex = moves[moves.length - 1].movedPieceIndex;
+      let previousPiecePreviousPosition;
+      if (moves.length === 1) {
+        previousPiecePreviousPosition = newGamePieces[previousPieceIndex];
+      } else {
+        previousPiecePreviousPosition =
+          moves[moves.length - 2].pieces[previousPieceIndex];
+      }
+      previousPieceMovedFrom =
+        previousPiecePreviousPosition.currentCol.toString() +
+        previousPiecePreviousPosition.currentRow.toString();
+      const previousPieceCurrentPosition = pieces[previousPieceIndex];
+      previousPieceMovedTo =
+        previousPieceCurrentPosition.currentCol.toString() +
+        previousPieceCurrentPosition.currentRow.toString();
+    } else {
+      pieces = newGamePieces;
+    }
+    return {
+      pieces: pieces,
+      previousPieceMovedFrom: previousPieceMovedFrom,
+      previousPieceMovedTo: previousPieceMovedTo,
+    };
+  }
+
   return (
     <>
       {auth?.user.username ? (
@@ -118,6 +165,7 @@ export function MyGamesRoute() {
           flexDirection="column"
           alignItems="center"
           pt="60px"
+          px="30px"
         >
           <Heading pb="30px">My Games</Heading>
           <Box
@@ -131,12 +179,16 @@ export function MyGamesRoute() {
               position="relative"
               borderBottomWidth={"1px"}
               borderBottomColor={colourScheme.border}
-              fontSize={"24px"}
+              fontSize={headingFontSizes}
               fontWeight={"bold"}
               px="20px"
               py="8px"
+              w={tableWidth}
             >
-              <Grid templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"} gap="40px">
+              <Grid
+                templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"}
+                gap={columnGaps}
+              >
                 <GridItem>Opponent</GridItem>
                 <GridItem>Colour</GridItem>
                 <GridItem>Result</GridItem>
@@ -145,91 +197,115 @@ export function MyGamesRoute() {
                 <GridItem>Date</GridItem>
               </Grid>
             </Box>
-            {games.map((game) => (
-              <Box
-                key={game.id}
-                cursor="pointer"
-                transition="0.3s ease"
-                borderRadius="12px"
-                _hover={{
-                  backgroundColor: colourScheme.border,
-                }}
-                onClick={() => {
-                  if (JSON.parse(game.moves).length > 0)
-                    navigate(`/analysis/${game.id}`);
-                }}
-                onMouseOver={() => setGameHoverId(game.id)}
-                onMouseLeave={() => setGameHoverId("")}
-                position="relative"
-                borderBottomWidth={"1px"}
-                borderBottomColor={colourScheme.border}
-                px="20px"
-                py="10px"
-              >
-                <Grid templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"} gap="40px">
-                  <GridItem w="100%">
-                    <Box>
-                      {game.whiteUser.username === auth.user.username
-                        ? game.blackUser.username
-                        : game.whiteUser.username}
-                    </Box>
-                  </GridItem>
-                  <GridItem>
-                    {game.whiteUser.username === auth.user?.username
-                      ? "White"
-                      : "Black"}
-                  </GridItem>
-                  <GridItem>
-                    {game.result === "stalemate" || game.result === "draw"
-                      ? "Draw"
-                      : game.result === "unfinished"
-                      ? "Unfinished"
-                      : (game.winner === "black" &&
-                          game.blackUser.username === auth.user?.username) ||
-                        (game.winner === "white" &&
-                          game.whiteUser.username === auth.user?.username)
-                      ? "Win"
-                      : "Loss"}
-                  </GridItem>
-                  <GridItem>{game.result}</GridItem>
-                  <GridItem>{JSON.parse(game.moves).length}</GridItem>
-                  <GridItem>
-                    {new Date(game.createdAt.slice(0, 10)).toLocaleDateString()}
-                  </GridItem>
-                </Grid>
-                <Flex
-                  position={"absolute"}
-                  // right="-35%"
-                  left="99%"
-                  top={`calc(50% - ${boardHeight / 2 + 8}px)`}
+            {games.map((game) => {
+              const boardPosition = getPieces(JSON.parse(game.moves));
+              return (
+                <Box
+                  key={game.id}
+                  cursor="pointer"
+                  transition="0.3s ease"
+                  borderRadius="12px"
+                  _hover={{
+                    backgroundColor: colourScheme.border,
+                  }}
+                  onClick={() => {
+                    if (JSON.parse(game.moves).length > 0)
+                      navigate(`/analysis/${game.id}`);
+                  }}
+                  onMouseOver={() => setGameHoverId(game.id)}
+                  onMouseLeave={() => setGameHoverId("")}
+                  position="relative"
+                  borderBottomWidth={"1px"}
+                  borderBottomColor={colourScheme.border}
+                  px="20px"
+                  py="10px"
+                  fontSize={fontSizes}
+                  w={tableWidth}
                 >
-                  <Flex
-                    position="relative"
-                    p="8px"
-                    bgColor={colourScheme.border}
-                    borderRadius="12px"
-                    display={gameHoverId === game.id ? "flex" : "none"}
+                  <Grid
+                    templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"}
+                    gap={columnGaps}
                   >
-                    <Board
-                      moves={JSON.parse(game.moves)}
-                      colour={
-                        game.whiteUser.username === auth.user?.username
-                          ? "White"
-                          : "Black"
-                      }
-                      boardHeight={200}
-                    />
+                    <GridItem>
+                      <Box>
+                        {game.whiteUser.username === auth.user.username
+                          ? game.blackUser.username
+                          : game.whiteUser.username}
+                      </Box>
+                    </GridItem>
+                    <GridItem>
+                      {game.whiteUser.username === auth.user?.username
+                        ? "White"
+                        : "Black"}
+                    </GridItem>
+                    <GridItem>
+                      {game.result === "stalemate" || game.result === "draw"
+                        ? "Draw"
+                        : game.result === "unfinished"
+                        ? "Unfinished"
+                        : (game.winner === "black" &&
+                            game.blackUser.username === auth.user?.username) ||
+                          (game.winner === "white" &&
+                            game.whiteUser.username === auth.user?.username)
+                        ? "Win"
+                        : "Loss"}
+                    </GridItem>
+                    <GridItem>{game.result}</GridItem>
+                    <GridItem>{JSON.parse(game.moves).length}</GridItem>
+                    <GridItem>
+                      {new Date(
+                        game.createdAt.slice(0, 10)
+                      ).toLocaleDateString()}
+                    </GridItem>
+                  </Grid>
+                  <Flex
+                    position={"absolute"}
+                    // right="-35%"
+                    left="99%"
+                    top={`calc(50% - ${boardHeight / 2 + 8}px)`}
+                  >
+                    <Flex
+                      position="relative"
+                      p="8px"
+                      bgColor={colourScheme.border}
+                      borderRadius="12px"
+                      display={gameHoverId === game.id ? "flex" : "none"}
+                    >
+                      <Board
+                        pieces={boardPosition.pieces}
+                        previousPieceMovedFrom={
+                          boardPosition.previousPieceMovedFrom
+                        }
+                        previousPieceMovedTo={
+                          boardPosition.previousPieceMovedTo
+                        }
+                        colour={
+                          game.whiteUser.username === auth.user?.username
+                            ? "White"
+                            : "Black"
+                        }
+                        boardHeight={200}
+                        selectedPiece={null}
+                        handleSquareClick={() => {}}
+                      />
+                    </Flex>
                   </Flex>
-                </Flex>
-              </Box>
-            ))}
+                </Box>
+              );
+            })}
             <Flex justify="space-between" alignItems={"center"} pt="30px">
-              <Text pl="10px">
+              <Text pl="10px" fontSize={fontSizes}>
                 Displaying {games.length} of {data.gamesCount} results
               </Text>
               <Flex>
                 <PaginationButton value={0} jumpTo={"start"}>
                   <FontAwesomeIcon icon={faAnglesLeft} />
+                </PaginationButton>
+                <PaginationButton
+                  value={data.currentPage - 1}
+                  jumpTo={"previous"}
+                >
+                  <FontAwesomeIcon icon={faAngleLeft} />
                 </PaginationButton>
                 <>
                   {pageValues.map((value, index) => (
@@ -238,6 +314,9 @@ export function MyGamesRoute() {
                     </PaginationButton>
                   ))}
                 </>
+                <PaginationButton value={data.currentPage + 1} jumpTo={"next"}>
+                  <FontAwesomeIcon icon={faAngleRight} />
+                </PaginationButton>
                 <PaginationButton value={data.pagesCount - 1} jumpTo={"end"}>
                   <FontAwesomeIcon icon={faAnglesRight} />
                 </PaginationButton>

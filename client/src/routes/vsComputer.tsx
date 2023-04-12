@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect, useState } from "react";
-import Board from "../components/Board";
+import Board from "../components/board/Board";
 import { newGamePieces, debugPieces } from "../data/newGamePieces";
-import AnalysisSection from "../deprecated/AnalysisSection";
 import CapturedPieces from "../components/CapturedPieces";
 import { Move, Piece } from "../../types";
 import {
@@ -29,7 +28,7 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AnalysisSectionV2 } from "../components/AnalysisSection";
+import { AnalysisSection } from "../components/AnalysisSection";
 import { useSyncExternalStore } from "react";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HamburgerIcon } from "@chakra-ui/icons";
@@ -40,7 +39,7 @@ import optimusPrime from "../assets/botAvatars/optimusPrimeAvatar.png";
 import walle from "../assets/botAvatars/walleAvatar.png";
 import r2d2 from "../assets/botAvatars/r2d2Avatar.png";
 import terminator from "../assets/botAvatars/terminatorAvatar.png";
-import { calculateBotMove } from "../components/square/logic";
+import { calculateBotMove } from "../components/board/square/logic";
 import { useColour } from "../hooks/useColour";
 
 export default function VsComputerRoute() {
@@ -203,9 +202,15 @@ export default function VsComputerRoute() {
                 defaultValue="2"
               >
                 <Stack direction="row" spacing="20px">
-                  <Radio value="1">Easy</Radio>
-                  <Radio value="2">Medium</Radio>
-                  <Radio value="3">Hard</Radio>
+                  <Radio value="1" variant={colourScheme.name}>
+                    Easy
+                  </Radio>
+                  <Radio value="2" variant={colourScheme.name}>
+                    Medium
+                  </Radio>
+                  <Radio value="3" variant={colourScheme.name}>
+                    Hard
+                  </Radio>
                 </Stack>
               </RadioGroup>
 
@@ -220,9 +225,15 @@ export default function VsComputerRoute() {
                 defaultValue="white"
               >
                 <Stack direction="row" spacing="20px">
-                  <Radio value="white">White</Radio>
-                  <Radio value="black">Black</Radio>
-                  <Radio value="random">Randomise</Radio>
+                  <Radio value="white" variant={colourScheme.name}>
+                    White
+                  </Radio>
+                  <Radio value="black" variant={colourScheme.name}>
+                    Black
+                  </Radio>
+                  <Radio value="random" variant={colourScheme.name}>
+                    Randomise
+                  </Radio>
                 </Stack>
               </RadioGroup>
             </Flex>
@@ -328,7 +339,7 @@ export default function VsComputerRoute() {
               height={"inherit"}
             >
               <Box h="100%">
-                <AnalysisSectionV2
+                <AnalysisSection
                   moves={moves}
                   pieces={pieces}
                   setPieces={setPieces}

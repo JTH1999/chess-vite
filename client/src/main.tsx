@@ -19,6 +19,7 @@ import { AnalysisRoute } from "./routes/analysis";
 import { ProvideColour } from "./hooks/useColour";
 import { ProfileRoute, loader as profileLoader } from "./routes/Profile";
 import React from "react";
+import ComingSoon from "./components/ComingSoon";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +74,10 @@ const router = createBrowserRouter([
         path: "/profile",
         element: <ProfileRoute />,
         loader: profileLoader,
+      },
+      {
+        path: "/friends",
+        element: <ComingSoon />,
       },
     ],
   },

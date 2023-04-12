@@ -34,6 +34,7 @@ export interface ColourScheme {
   darker: string;
   body: string;
   text: string;
+  name: string;
   primary: string;
   primaryDarker: string;
   primarySquare: string;

@@ -1,78 +1,45 @@
-import { Flex, Image, Img } from "@chakra-ui/react";
-import { Dispatch, SetStateAction, useEffect } from "react";
-import { Move, Piece } from "../../../types";
+import { Flex, Image } from "@chakra-ui/react";
 import translucentCircle from "../../assets/TranslucentCircle.svg";
 import translucentRing from "../../assets/TranslucentRing.svg";
-import { useColour } from "../../hooks/useColour";
-import { handleClickLogic } from "./logic";
+import { Piece } from "../../types";
+import { Socket } from "socket.io-client";
+import { useColour } from "../hooks/useColour";
+import { Dispatch, SetStateAction } from "react";
 
-export default function Square({
+export default function OnlineSquare({
   row,
   col,
   pieces,
   selectedPiece,
-  whiteToMove,
-  capturedPieces,
-  whiteKingSquare,
-  blackKingSquare,
-  isCheck,
-  promote,
-  moves,
-  analysisMode,
+  isYourMove,
+  socket,
+  roomCode,
+  colour,
+  gameId,
   boardHeight,
+  analysisMode,
   previousPieceMovedFrom,
   previousPieceMovedTo,
-  colour,
-  flipBoard,
-  setColour,
-  setPieces,
   setSelectedPiece,
-  setWhiteToMove,
-  setCapturedPieces,
-  setWhiteKingSquare,
-  setBlackKingSquare,
-  setIsCheck,
-  setIsCheckmate,
-  setIsStalemate,
-  setPromote,
-  setMoves,
-  setAnalysisMoveNumber,
+  setIsYourMove,
 }: {
   row: number;
   col: number;
   pieces: Piece[];
-  selectedPiece: Piece | null;
-  whiteToMove: boolean;
-  capturedPieces: Piece[];
-  whiteKingSquare: string;
-  blackKingSquare: string;
-  isCheck: boolean;
-  promote: boolean;
-  moves: Move[];
-  analysisMode: boolean;
+  selectedPiece: Piece | null | undefined;
+  isYourMove: boolean;
+  socket: Socket;
+  roomCode: string;
+  colour: string;
+  gameId: string;
   boardHeight: number;
+  analysisMode: boolean;
   previousPieceMovedFrom: string;
   previousPieceMovedTo: string;
-  colour: string;
-  flipBoard: boolean;
-  setColour: Dispatch<SetStateAction<string>>;
-  setPieces: Dispatch<SetStateAction<Piece[]>>;
   setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
-  setWhiteToMove: Dispatch<SetStateAction<boolean>>;
-  setCapturedPieces: Dispatch<SetStateAction<Piece[]>>;
-  setWhiteKingSquare: Dispatch<SetStateAction<string>>;
-  setBlackKingSquare: Dispatch<SetStateAction<string>>;
-  setIsCheck: Dispatch<SetStateAction<boolean>>;
-  setIsCheckmate: Dispatch<SetStateAction<boolean>>;
-  setIsStalemate: Dispatch<SetStateAction<boolean>>;
-  setPromote: Dispatch<SetStateAction<boolean>>;
-  setMoves: Dispatch<SetStateAction<Move[]>>;
-  setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+  setIsYourMove: Dispatch<SetStateAction<boolean>>;
 }) {
   const { colourScheme } = useColour();
-
-  let bgColor;
-
   const square = col.toString() + row.toString();
   let piece: Piece | null = null;
   const height = boardHeight / 8;
@@ -84,74 +51,97 @@ export default function Square({
     }
   }
 
-  function handleClick() {
-    handleClickLogic(
-      row,
-      col,
-      square,
-      piece,
-      pieces,
-      selectedPiece,
-      whiteToMove,
-      capturedPieces,
-      whiteKingSquare,
-      blackKingSquare,
-      isCheck,
-      promote,
-      moves,
-      analysisMode,
-      colour,
-      flipBoard,
-      setColour,
-      setPieces,
-      setSelectedPiece,
-      setWhiteToMove,
-      setCapturedPieces,
-      setWhiteKingSquare,
-      setBlackKingSquare,
-      setIsCheck,
-      setIsCheckmate,
-      setIsStalemate,
-      setPromote,
-      setMoves,
-      setAnalysisMoveNumber
-    );
-  }
-
+  let bgColor;
   if (row % 2 === 0) {
     bgColor =
       col % 2 !== 0
         ? (selectedPiece !== null &&
+            selectedPiece !== undefined &&
             selectedPiece.currentCol === col &&
             selectedPiece.currentRow === row) ||
           square === previousPieceMovedFrom ||
           square === previousPieceMovedTo
-          ? colourScheme.primaryMovedLight
+          ? "teal.200"
           : colourScheme.primarySquare
         : (selectedPiece !== null &&
+            selectedPiece !== undefined &&
             selectedPiece.currentCol === col &&
             selectedPiece.currentRow === row) ||
           square === previousPieceMovedFrom ||
           square === previousPieceMovedTo
-        ? colourScheme.primaryMovedDark
+        ? "teal.400"
         : colourScheme.primary;
   } else {
     bgColor =
       col % 2 === 0
         ? (selectedPiece !== null &&
+            selectedPiece !== undefined &&
             selectedPiece.currentCol === col &&
             selectedPiece.currentRow === row) ||
           square === previousPieceMovedFrom ||
           square === previousPieceMovedTo
-          ? colourScheme.primaryMovedLight
+          ? "teal.200"
           : colourScheme.primarySquare
         : (selectedPiece !== null &&
+            selectedPiece !== undefined &&
             selectedPiece.currentCol === col &&
             selectedPiece.currentRow === row) ||
           square === previousPieceMovedFrom ||
           square === previousPieceMovedTo
-        ? colourScheme.primaryMovedDark
+        ? "teal.400"
         : colourScheme.primary;
+  }
+
+  function sendMove(selectedPiece: Piece, square: string) {
+    const move = {
+      selectedPiece: selectedPiece,
+      square: square,
+      roomCode: roomCode,
+      gameId: gameId,
+      colour: colour,
+    };
+
+    socket.emit("sendMove", move);
+    setIsYourMove(false);
+    setSelectedPiece(null);
+  }
+
+  function handleClick() {
+    if (!isYourMove) {
+      return;
+    }
+
+    if (analysisMode) {
+      return;
+    }
+    // if there is a selected piece
+    if (selectedPiece) {
+      if (
+        piece?.colour === selectedPiece.colour &&
+        piece?.name !== selectedPiece.name
+      ) {
+        let selectedPieceCopy = { ...piece };
+
+        setSelectedPiece(selectedPieceCopy);
+        return;
+      }
+
+      if (selectedPiece.availableMoves.includes(square)) {
+        sendMove(selectedPiece, square);
+      } else if (
+        selectedPiece.currentCol.toString() +
+          selectedPiece.currentRow.toString() ===
+        square
+      ) {
+        setSelectedPiece(null);
+      }
+      // if no piece selected yet
+    } else if (piece) {
+      if (piece.colour === colour) {
+        let selectedPieceCopy = { ...piece };
+        setSelectedPiece(selectedPieceCopy);
+      }
+    }
   }
 
   return (
@@ -160,7 +150,6 @@ export default function Square({
       justify={"center"}
       bgColor={bgColor}
       onClick={handleClick}
-      float={"left"}
       height={`${height}px`}
       width={`${height}px`}
       userSelect={"none"}
@@ -171,7 +160,7 @@ export default function Square({
         h={`${height * 0.8}px`}
         cursor={"pointer"}
       />
-      <Img
+      <Image
         src={
           selectedPiece?.availableMoves.includes(square) && !piece
             ? translucentCircle
@@ -182,7 +171,7 @@ export default function Square({
         zIndex={"20"}
         position="absolute"
       />
-      <Img
+      <Image
         src={
           selectedPiece?.availableMoves.includes(square) && piece
             ? translucentRing

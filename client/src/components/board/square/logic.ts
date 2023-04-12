@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Move, Piece } from "../../../types";
+import { Move, Piece } from "../../../../types";
 
 import {
   capturePiece,
@@ -14,7 +14,7 @@ import {
   BR2INDEX,
   WK1INDEX,
   BK1INDEX,
-} from "../../data/pieceIndexes";
+} from "../../../data/pieceIndexes";
 import {
   blackBishopPST,
   blackKingPST,
@@ -27,7 +27,7 @@ import {
   whiteKnightPST,
   whitePawnPST,
   whiteRookPST,
-} from "../../data/pieceSquareTables";
+} from "../../../data/pieceSquareTables";
 
 export async function handleClickLogic(
   row: number,

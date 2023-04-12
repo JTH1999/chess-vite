@@ -1,88 +1,67 @@
 import { Dispatch, SetStateAction } from "react";
-import { Piece } from "../../../types";
-import OnlineSquare from "./OnlineSquare";
-import { Socket } from "socket.io-client";
+import { Move, Piece } from "../../../types";
+import Square from "./square/Square";
+import { Flex } from "@chakra-ui/react";
 
-export function OnlineBoardRow({
+export default function BoardRow({
   row,
   pieces,
   selectedPiece,
-  colour,
-  isYourMove,
-  socket,
-  roomCode,
-  gameId,
   boardHeight,
-  analysisMode,
+  colour,
   previousPieceMovedFrom,
   previousPieceMovedTo,
-  setSelectedPiece,
-  setIsYourMove,
+  handleSquareClick,
 }: {
   row: number;
   pieces: Piece[];
-  selectedPiece: Piece | null | undefined;
-  colour: string;
-  isYourMove: boolean;
-  socket: Socket;
-  roomCode: string;
-  gameId: string;
+  selectedPiece: Piece | null;
   boardHeight: number;
-  analysisMode: boolean;
+  colour: string;
   previousPieceMovedFrom: string;
   previousPieceMovedTo: string;
-  setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
-  setIsYourMove: Dispatch<SetStateAction<boolean>>;
+  handleSquareClick: (
+    row: number,
+    col: number,
+    square: string,
+    piece: Piece | null
+  ) => void;
 }) {
   const whiteCols = [1, 2, 3, 4, 5, 6, 7, 8];
   const blackCols = [8, 7, 6, 5, 4, 3, 2, 1];
   return (
-    <div>
+    <Flex w={`${boardHeight}px`}>
       {colour === "white"
         ? whiteCols.map((col) => {
             return (
-              <OnlineSquare
+              <Square
                 key={col}
                 row={row}
                 col={col}
                 pieces={pieces}
                 selectedPiece={selectedPiece}
-                isYourMove={isYourMove}
-                socket={socket}
-                roomCode={roomCode}
-                setIsYourMove={setIsYourMove}
-                setSelectedPiece={setSelectedPiece}
-                colour={colour}
-                gameId={gameId}
                 boardHeight={boardHeight}
-                analysisMode={analysisMode}
                 previousPieceMovedFrom={previousPieceMovedFrom}
                 previousPieceMovedTo={previousPieceMovedTo}
+                handleSquareClick={handleSquareClick}
               />
             );
           })
         : blackCols.map((col) => {
             return (
-              <OnlineSquare
+              <Square
                 key={col}
                 row={row}
                 col={col}
                 pieces={pieces}
                 selectedPiece={selectedPiece}
-                isYourMove={isYourMove}
-                socket={socket}
-                roomCode={roomCode}
-                setIsYourMove={setIsYourMove}
-                setSelectedPiece={setSelectedPiece}
-                colour={colour}
-                gameId={gameId}
                 boardHeight={boardHeight}
-                analysisMode={analysisMode}
                 previousPieceMovedFrom={previousPieceMovedFrom}
                 previousPieceMovedTo={previousPieceMovedTo}
+                handleSquareClick={handleSquareClick}
               />
             );
           })}
-    </div>
+    </Flex>
   );
 }

@@ -21,11 +21,12 @@ import { useEffect, useRef, useState } from "react";
 import { newGamePieces } from "../data/newGamePieces";
 import { useAuth } from "../hooks/useAuth";
 import useWindowDimensions from "../hooks/useWindowDimensions";
-import { AnalysisSectionV2 } from "../components/AnalysisSection";
+import { AnalysisSection } from "../components/AnalysisSection";
 import CapturedPieces from "../components/CapturedPieces";
-import { AnalysisBoard } from "../components/analysis/AnalysisBoard";
+import { AnalysisBoard } from "../deprecated/analysis/AnalysisBoard";
 import { Move, Piece } from "../../types";
 import { useColour } from "../hooks/useColour";
+import Board from "../components/board/Board";
 
 export function AnalysisRoute() {
   const data = useLoaderData() as {
@@ -101,13 +102,14 @@ export function AnalysisRoute() {
                 src={null}
               />
             </Flex>
-
-            <AnalysisBoard
+            <Board
               colour={colour}
               pieces={pieces}
+              selectedPiece={null}
               boardHeight={boardHeight}
               previousPieceMovedFrom={previousPieceMovedFrom}
               previousPieceMovedTo={previousPieceMovedTo}
+              handleSquareClick={() => {}}
             />
             <Flex justify={"space-between"} pt="10px">
               <CapturedPieces
@@ -122,7 +124,7 @@ export function AnalysisRoute() {
 
           <Flex w="400px" flexDirection={"column"} ml="50px" height={"inherit"}>
             <Box h="100%">
-              <AnalysisSectionV2
+              <AnalysisSection
                 moves={moves.current}
                 pieces={pieces}
                 setPieces={setPieces}

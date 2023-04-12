@@ -25,7 +25,7 @@ export default function OnlineEndScreen({
   setPieces,
 }: {
   status: string;
-  winner: string;
+  winner: string | null;
   analysisMode: boolean;
   whiteToMove: boolean;
   moves: Move[];

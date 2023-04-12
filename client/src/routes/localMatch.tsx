@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import Board from "../components/Board";
+import Board from "../components/board/Board";
 import { newGamePieces, debugPieces } from "../data/newGamePieces";
-import AnalysisSection from "../deprecated/AnalysisSection";
 import CapturedPieces from "../components/CapturedPieces";
 import { Move, Piece } from "../../types";
 import {
@@ -27,9 +26,10 @@ import {
   Stack,
   Switch,
   Text,
+  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { AnalysisSectionV2 } from "../components/AnalysisSection";
+import { AnalysisSection } from "../components/AnalysisSection";
 import { useSyncExternalStore } from "react";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HamburgerIcon } from "@chakra-ui/icons";
@@ -37,6 +37,10 @@ import { useAuth } from "../hooks/useAuth";
 import MainButton from "../components/MainButton";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useColour } from "../hooks/useColour";
+import AnalysisSectionMobile from "../components/AnalysisSectionMobile";
+import { handleClickLogic } from "../components/board/square/logic";
+import PromoteScreen from "../components/PromoteScreen";
+import CheckmateScreen from "../components/CheckmateScreen";
 
 export async function loader() {
   const tokenString = localStorage.getItem("token");
@@ -90,7 +94,17 @@ export default function LocalMatchRoute() {
   const { colourScheme } = useColour();
 
   const screenHeight = height - 30;
-  const boardHeight = screenHeight - 120;
+  const screenWidth = width - 30;
+  const possibleBoardHeight = screenHeight - 120;
+  const boardHeight = useBreakpointValue({
+    base: screenWidth,
+    xs: screenWidth,
+    sm: screenWidth,
+    md: Math.min(600, possibleBoardHeight),
+    lg: Math.min(700, possibleBoardHeight),
+    xl: Math.min(800, possibleBoardHeight),
+    xxl: Math.min(900, possibleBoardHeight),
+  })!;
 
   let previousPieceMovedFrom = "";
   let previousPieceMovedTo = "";
@@ -128,6 +142,45 @@ export default function LocalMatchRoute() {
     }
   }
 
+  function handleSquareClick(
+    row: number,
+    col: number,
+    square: string,
+    piece: Piece | null
+  ) {
+    handleClickLogic(
+      row,
+      col,
+      square,
+      piece,
+      pieces,
+      selectedPiece,
+      whiteToMove,
+      capturedPieces,
+      whiteKingSquare,
+      blackKingSquare,
+      isCheck,
+      promote,
+      moves,
+      analysisMode,
+      colour,
+      flipBoard,
+      setColour,
+      setPieces,
+      setSelectedPiece,
+      setWhiteToMove,
+      setCapturedPieces,
+      setWhiteKingSquare,
+      setBlackKingSquare,
+      setIsCheck,
+      setIsCheckmate,
+      setIsStalemate,
+      setPromote,
+      setMoves,
+      setAnalysisMoveNumber
+    );
+  }
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -160,16 +213,21 @@ export default function LocalMatchRoute() {
                 Select Player 1 Colour
               </Text>
               <RadioGroup
-                // colorScheme={colourScheme.primary}
                 mb="20px"
                 isDisabled={moves.length > 0}
                 onChange={setColours}
                 defaultValue="white"
               >
                 <Stack direction="row" spacing="20px">
-                  <Radio value="white">White</Radio>
-                  <Radio value="black">Black</Radio>
-                  <Radio value="random">Randomise</Radio>
+                  <Radio value="white" variant={colourScheme.name}>
+                    White
+                  </Radio>
+                  <Radio value="black" variant={colourScheme.name}>
+                    Black
+                  </Radio>
+                  <Radio value="random" variant={colourScheme.name}>
+                    Randomise
+                  </Radio>
                 </Stack>
               </RadioGroup>
               <Flex alignItems={"center"}>
@@ -178,7 +236,7 @@ export default function LocalMatchRoute() {
                 </Text>
                 <Switch
                   isChecked={flipBoard}
-                  // colorScheme={"green"}
+                  variant={colourScheme.name}
                   onChange={(e) => setFlipBoard(!flipBoard)}
                 />
               </Flex>
@@ -197,9 +255,24 @@ export default function LocalMatchRoute() {
         </ModalContent>
       </Modal>
 
-      <Flex justify={"center"} pt="8px">
-        <Flex flexDirection={"column"}>
-          <Flex h={`${screenHeight}px`} maxH={`${screenHeight}px`}>
+      <Flex justify={"center"} mt={["60px", null, null, "8px"]}>
+        <Flex
+          flexDirection={"column"}
+          w="100%"
+          px={["15px", null, null, "30px", null, "100px"]}
+        >
+          <Box mb="20px" display={["block", null, "none"]}>
+            <AnalysisSectionMobile
+              moves={moves}
+              pieces={pieces}
+              setPieces={setPieces}
+              setAnalysisMode={setAnalysisMode}
+              analysisMode={analysisMode}
+              analysisMoveNumber={analysisMoveNumber}
+              setAnalysisMoveNumber={setAnalysisMoveNumber}
+            ></AnalysisSectionMobile>
+          </Box>
+          <Flex h={`${boardHeight + 2 * 50 + 2 * 10}px`} w="100%">
             <Flex flexDirection={"column"}>
               <Flex justify={"space-between"} pb="10px">
                 <CapturedPieces
@@ -236,39 +309,59 @@ export default function LocalMatchRoute() {
                 </Flex>
               </Flex>
 
-              <Board
-                pieces={pieces}
-                setPieces={setPieces}
-                selectedPiece={selectedPiece}
-                setSelectedPiece={setSelectedPiece}
-                whiteToMove={whiteToMove}
-                setWhiteToMove={setWhiteToMove}
-                capturedPieces={capturedPieces}
-                setCapturedPieces={setCapturedPieces}
-                whiteKingSquare={whiteKingSquare}
-                setWhiteKingSquare={setWhiteKingSquare}
-                blackKingSquare={blackKingSquare}
-                setBlackKingSquare={setBlackKingSquare}
-                isCheck={isCheck}
-                setIsCheck={setIsCheck}
-                isCheckmate={isCheckmate}
-                setIsCheckmate={setIsCheckmate}
-                isStalemate={isStalemate}
-                setIsStalemate={setIsStalemate}
-                promote={promote}
-                setPromote={setPromote}
-                moves={moves}
-                setMoves={setMoves}
-                analysisMode={analysisMode}
-                setAnalysisMode={setAnalysisMode}
-                setAnalysisMoveNumber={setAnalysisMoveNumber}
-                boardHeight={boardHeight}
-                colour={colour}
-                previousPieceMovedFrom={previousPieceMovedFrom}
-                previousPieceMovedTo={previousPieceMovedTo}
-                flipBoard={flipBoard}
-                setColour={setColour}
-              />
+              <Box>
+                <Board
+                  pieces={pieces}
+                  selectedPiece={selectedPiece}
+                  boardHeight={boardHeight}
+                  colour={colour}
+                  previousPieceMovedFrom={previousPieceMovedFrom}
+                  previousPieceMovedTo={previousPieceMovedTo}
+                  handleSquareClick={handleSquareClick}
+                >
+                  <CheckmateScreen
+                    whiteToMove={whiteToMove}
+                    isCheckmate={isCheckmate}
+                    isStalemate={isStalemate}
+                    setWhiteToMove={setWhiteToMove}
+                    setCapturedPieces={setCapturedPieces}
+                    setWhiteKingSquare={setWhiteKingSquare}
+                    setBlackKingSquare={setBlackKingSquare}
+                    setIsCheck={setIsCheck}
+                    setIsCheckmate={setIsCheckmate}
+                    setIsStalemate={setIsStalemate}
+                    setPromote={setPromote}
+                    setMoves={setMoves}
+                    setPieces={setPieces}
+                    setSelectedPiece={setSelectedPiece}
+                    analysisMode={analysisMode}
+                    setAnalysisMode={setAnalysisMode}
+                    setAnalysisMoveNumber={setAnalysisMoveNumber}
+                    moves={moves}
+                  />
+                  <PromoteScreen
+                    pieces={pieces}
+                    setPieces={setPieces}
+                    selectedPiece={selectedPiece}
+                    setSelectedPiece={setSelectedPiece}
+                    whiteToMove={whiteToMove}
+                    setWhiteToMove={setWhiteToMove}
+                    whiteKingSquare={whiteKingSquare}
+                    blackKingSquare={blackKingSquare}
+                    setIsCheck={setIsCheck}
+                    setIsCheckmate={setIsCheckmate}
+                    setIsStalemate={setIsStalemate}
+                    promote={promote}
+                    setPromote={setPromote}
+                    moves={moves}
+                    capturedPieces={capturedPieces}
+                    flipBoard={flipBoard}
+                    colour={colour}
+                    setColour={setColour}
+                  />
+                </Board>
+              </Box>
+
               <Flex justify={"space-between"} pt="10px">
                 <CapturedPieces
                   username={
@@ -283,13 +376,15 @@ export default function LocalMatchRoute() {
             </Flex>
 
             <Flex
-              w="400px"
+              // w={[null, null, null, "300px", "300px", "400px"]}
+              w="100%"
               flexDirection={"column"}
-              ml="50px"
+              ml="30px"
               height={"inherit"}
+              display={["none", "none", "flex", "flex", "flex", "flex"]}
             >
               <Box h="100%">
-                <AnalysisSectionV2
+                <AnalysisSection
                   moves={moves}
                   pieces={pieces}
                   setPieces={setPieces}

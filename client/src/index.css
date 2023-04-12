@@ -22,7 +22,8 @@ body {
 
 /* Works on Chrome, Edge, and Safari */
 *::-webkit-scrollbar {
-  width: 8px;
+  width: 5px;
+  height: 5px
 }
 
 *::-webkit-scrollbar-track {
@@ -30,6 +31,6 @@ body {
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #4A5568;
+  background-color: rgba(0,0,0,0.2);
   border-radius: 20px;
 }
