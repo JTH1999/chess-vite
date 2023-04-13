@@ -16,7 +16,6 @@ export default function CapturedPieces({
   top: boolean;
   src: string | null;
 }) {
-  console.log(src);
   const { colourScheme } = useColour();
   // This is the pieces captured by the player
   const playerCapturedPieces = capturedPieces.filter(

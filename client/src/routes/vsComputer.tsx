@@ -23,9 +23,11 @@ import {
   ModalOverlay,
   Radio,
   RadioGroup,
+  Spinner,
   Stack,
   Switch,
   Text,
+  Tooltip,
   useDisclosure,
 } from "@chakra-ui/react";
 import { AnalysisSection } from "../components/AnalysisSection";
@@ -39,8 +41,14 @@ import optimusPrime from "../assets/botAvatars/optimusPrimeAvatar.png";
 import walle from "../assets/botAvatars/walleAvatar.png";
 import r2d2 from "../assets/botAvatars/r2d2Avatar.png";
 import terminator from "../assets/botAvatars/terminatorAvatar.png";
-import { calculateBotMove } from "../components/board/square/logic";
+import {
+  calculateBotMove,
+  handleClickLogic,
+} from "../components/board/square/logic";
 import { useColour } from "../hooks/useColour";
+import CheckmateScreen from "../components/CheckmateScreen";
+import PromoteScreen from "../components/PromoteScreen";
+import { GameScreen } from "../components/GameScreen";
 
 export default function VsComputerRoute() {
   const auth = useAuth();
@@ -132,49 +140,113 @@ export default function VsComputerRoute() {
     return bot;
   }
 
-  useEffect(() => {
-    if (
-      (!whiteToMove && colour === "white") ||
-      (whiteToMove && colour === "black")
-    )
-      setBotToMove(true);
-  }, [whiteToMove]);
+  // useEffect(() => {
+  //   if (
+  //     (!whiteToMove && colour === "white") ||
+  //     (whiteToMove && colour === "black")
+  //   )
+  //     setBotToMove(true);
+  // }, [whiteToMove]);
 
-  useEffect(() => {
-    if (botToMove && !isCheckmate && !isStalemate) {
-      calculateBotMove(
-        pieces,
-        whiteToMove,
-        capturedPieces,
-        whiteKingSquare,
-        blackKingSquare,
-        isCheck,
-        promote,
-        moves,
-        analysisMode,
-        colour,
-        false,
-        botDifficulty,
-        setColour,
-        setPieces,
-        setSelectedPiece,
-        setWhiteToMove,
-        setCapturedPieces,
-        setWhiteKingSquare,
-        setBlackKingSquare,
-        setIsCheck,
-        setIsCheckmate,
-        setIsStalemate,
-        setPromote,
-        setMoves,
-        setAnalysisMoveNumber
-      );
-      setBotToMove(false);
-    }
-  }, [botToMove]);
+  // useEffect(() => {
+  //   if (botToMove && !isCheckmate && !isStalemate) {
+  //     async function calc() {
+  //       await calculateBotMove(
+  //         pieces,
+  //         whiteToMove,
+  //         capturedPieces,
+  //         whiteKingSquare,
+  //         blackKingSquare,
+  //         isCheck,
+  //         promote,
+  //         moves,
+  //         analysisMode,
+  //         colour,
+  //         false,
+  //         botDifficulty,
+  //         setBotToMove,
+  //         setColour,
+  //         setPieces,
+  //         setSelectedPiece,
+  //         setWhiteToMove,
+  //         setCapturedPieces,
+  //         setWhiteKingSquare,
+  //         setBlackKingSquare,
+  //         setIsCheck,
+  //         setIsCheckmate,
+  //         setIsStalemate,
+  //         setPromote,
+  //         setMoves,
+  //         setAnalysisMoveNumber
+  //       );
+  //       setBotToMove(false);
+  //     }
 
-  return (
-    <>
+  //     calc();
+  //   }
+  // }, [botToMove]);
+
+  function handleSquareClick(
+    row: number,
+    col: number,
+    square: string,
+    piece: Piece | null
+  ) {
+    handleClickLogic(
+      row,
+      col,
+      square,
+      piece,
+      pieces,
+      selectedPiece,
+      whiteToMove,
+      capturedPieces,
+      whiteKingSquare,
+      blackKingSquare,
+      isCheck,
+      promote,
+      moves,
+      analysisMode,
+      colour,
+      false,
+      true,
+      setBotToMove,
+      setColour,
+      setPieces,
+      setSelectedPiece,
+      setWhiteToMove,
+      setCapturedPieces,
+      setWhiteKingSquare,
+      setBlackKingSquare,
+      setIsCheck,
+      setIsCheckmate,
+      setIsStalemate,
+      setPromote,
+      setMoves,
+      setAnalysisMoveNumber
+    );
+
+    console.log(whiteToMove);
+  }
+
+  function resetBoard() {
+    setWhiteToMove(true);
+    setCapturedPieces([]);
+    setWhiteKingSquare("51");
+    setBlackKingSquare("58");
+    setIsCheck(false);
+    setIsCheckmate(false);
+    setIsStalemate(false);
+    setPromote(false);
+    setMoves([]);
+    setPieces(newGamePieces);
+    setSelectedPiece(null);
+    setAnalysisMode(false);
+    setAnalysisMoveNumber(0);
+  }
+
+  function OptionsModal() {
+    return (
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent bgColor={colourScheme.body} p="20px">
@@ -250,109 +322,119 @@ export default function VsComputerRoute() {
           </ModalFooter>
         </ModalContent>
       </Modal>
+    );
+  }
 
-      <Flex justify={"center"} pt="8px">
-        <Flex flexDirection={"column"}>
-          <Flex h={`${screenHeight}px`} maxH={`${screenHeight}px`}>
-            <Flex flexDirection={"column"}>
-              <Flex justify={"space-between"} pb="10px">
-                <CapturedPieces
-                  capturedPieces={capturedPieces}
-                  colour={colour}
-                  username={bot.name}
-                  src={bot.src}
-                  top={true}
-                />
-                <Flex>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      aria-label="Options"
-                      icon={<HamburgerIcon />}
-                      variant="outline"
-                      size="lg"
-                      h="50px"
-                      w="50px"
-                      borderRadius={"8px"}
-                      borderWidth="2px"
-                      borderColor={colourScheme.border}
-                      bgColor={colourScheme.darker}
-                    />
+  function MenuItems() {
+    return (
+      <>
+        <MenuItem onClick={resetBoard}>New Game</MenuItem>
+        <Tooltip
+          label={
+            auth?.user.username
+              ? "Save your game for later"
+              : "You must be logged in to save your game"
+          }
+        >
+          <MenuItem isDisabled={!auth?.user.username}>Save</MenuItem>
+        </Tooltip>
 
-                    <MenuList zIndex={"20"}>
-                      <MenuItem>New Game</MenuItem>
-                      <MenuItem>Save</MenuItem>
-                      <MenuItem onClick={onOpen}>Options</MenuItem>
-                    </MenuList>
-                  </Menu>
-                </Flex>
-              </Flex>
-
-              <Board
-                pieces={pieces}
-                setPieces={setPieces}
-                selectedPiece={selectedPiece}
-                setSelectedPiece={setSelectedPiece}
-                whiteToMove={whiteToMove}
-                setWhiteToMove={setWhiteToMove}
-                capturedPieces={capturedPieces}
-                setCapturedPieces={setCapturedPieces}
-                whiteKingSquare={whiteKingSquare}
-                setWhiteKingSquare={setWhiteKingSquare}
-                blackKingSquare={blackKingSquare}
-                setBlackKingSquare={setBlackKingSquare}
-                isCheck={isCheck}
-                setIsCheck={setIsCheck}
-                isCheckmate={isCheckmate}
-                setIsCheckmate={setIsCheckmate}
-                isStalemate={isStalemate}
-                setIsStalemate={setIsStalemate}
-                promote={promote}
-                setPromote={setPromote}
-                moves={moves}
-                setMoves={setMoves}
-                analysisMode={analysisMode}
-                setAnalysisMode={setAnalysisMode}
-                setAnalysisMoveNumber={setAnalysisMoveNumber}
-                boardHeight={boardHeight}
-                colour={colour}
-                previousPieceMovedFrom={previousPieceMovedFrom}
-                previousPieceMovedTo={previousPieceMovedTo}
-                flipBoard={false}
-                setColour={setColour}
-              />
-              <Flex justify={"space-between"} pt="10px">
-                <CapturedPieces
-                  username={player1Name}
-                  capturedPieces={capturedPieces}
-                  colour={colour === "white" ? "black" : "white"}
-                  src={avatarUrl}
-                  top={false}
-                />
-              </Flex>
-            </Flex>
-
-            <Flex
-              w="400px"
-              flexDirection={"column"}
-              ml="50px"
-              height={"inherit"}
-            >
-              <Box h="100%">
-                <AnalysisSection
-                  moves={moves}
-                  pieces={pieces}
-                  setPieces={setPieces}
-                  setAnalysisMode={setAnalysisMode}
-                  analysisMode={analysisMode}
-                  analysisMoveNumber={analysisMoveNumber}
-                  setAnalysisMoveNumber={setAnalysisMoveNumber}
-                />
-              </Box>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Flex>
-    </>
+        <MenuItem onClick={onOpen}>Options</MenuItem>
+      </>
+    );
+  }
+  return (
+    <GameScreen
+      modal={<OptionsModal />}
+      capturedPiecesTop={
+        <CapturedPieces
+          capturedPieces={capturedPieces}
+          colour={colour}
+          username={bot.name}
+          src={bot.src}
+          top={true}
+        />
+      }
+      capturedPiecesBottom={
+        <CapturedPieces
+          username={player1Name}
+          capturedPieces={capturedPieces}
+          colour={colour === "white" ? "black" : "white"}
+          src={avatarUrl}
+          top={false}
+        />
+      }
+      menuItems={<MenuItems />}
+      endScreen={
+        <CheckmateScreen
+          whiteToMove={whiteToMove}
+          isCheckmate={isCheckmate}
+          isStalemate={isStalemate}
+          setWhiteToMove={setWhiteToMove}
+          setCapturedPieces={setCapturedPieces}
+          setWhiteKingSquare={setWhiteKingSquare}
+          setBlackKingSquare={setBlackKingSquare}
+          setIsCheck={setIsCheck}
+          setIsCheckmate={setIsCheckmate}
+          setIsStalemate={setIsStalemate}
+          setPromote={setPromote}
+          setMoves={setMoves}
+          setPieces={setPieces}
+          setSelectedPiece={setSelectedPiece}
+          analysisMode={analysisMode}
+          setAnalysisMode={setAnalysisMode}
+          setAnalysisMoveNumber={setAnalysisMoveNumber}
+          moves={moves}
+          resetBoard={resetBoard}
+        />
+      }
+      promoteScreen={
+        <PromoteScreen
+          pieces={pieces}
+          setPieces={setPieces}
+          selectedPiece={selectedPiece}
+          setSelectedPiece={setSelectedPiece}
+          whiteToMove={whiteToMove}
+          setWhiteToMove={setWhiteToMove}
+          whiteKingSquare={whiteKingSquare}
+          blackKingSquare={blackKingSquare}
+          setIsCheck={setIsCheck}
+          setIsCheckmate={setIsCheckmate}
+          setIsStalemate={setIsStalemate}
+          promote={promote}
+          setPromote={setPromote}
+          moves={moves}
+          capturedPieces={capturedPieces}
+          flipBoard={false}
+          colour={colour}
+          setColour={setColour}
+        />
+      }
+      analysisSection={
+        <Box h="100%">
+          <AnalysisSection
+            moves={moves}
+            pieces={pieces}
+            setPieces={setPieces}
+            setAnalysisMode={setAnalysisMode}
+            analysisMode={analysisMode}
+            analysisMoveNumber={analysisMoveNumber}
+            setAnalysisMoveNumber={setAnalysisMoveNumber}
+          />
+        </Box>
+      }
+      moves={moves}
+      pieces={pieces}
+      analysisMode={analysisMode}
+      analysisMoveNumber={analysisMoveNumber}
+      previousPieceMovedFrom={previousPieceMovedFrom}
+      previousPieceMovedTo={previousPieceMovedTo}
+      colour={colour}
+      selectedPiece={selectedPiece}
+      handleSquareClick={handleSquareClick}
+      setPieces={setPieces}
+      setAnalysisMode={setAnalysisMode}
+      setAnalysisMoveNumber={setAnalysisMoveNumber}
+    />
   );
 }

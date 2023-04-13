@@ -73,7 +73,7 @@ export default function Root() {
         aria-label="menu"
         icon={<HamburgerIcon />}
         position="absolute"
-        right="10px"
+        left="10px"
         top="10px"
         display={["flex", "flex", "flex", "none", "none", "none"]}
         {...buttonProps}

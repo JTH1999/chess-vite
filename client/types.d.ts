@@ -48,6 +48,12 @@ export interface User {
 
 export type AuthContext = {
   user: User;
+  validate: (
+    username: string,
+    password: string,
+    setUsernameError: Dispatch<SetStateAction<string>>,
+    setPasswordError: Dispatch<SetStateAction<string>>
+  ) => boolean;
   signup: (
     username: string,
     password: string,

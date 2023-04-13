@@ -7,6 +7,7 @@ import {
   Button,
   Grid,
   GridItem,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { Children, ReactNode, useState } from "react";
 import { Form, useLoaderData, useNavigate } from "react-router-dom";
@@ -75,11 +76,26 @@ export function MyGamesRoute() {
     pageValues.push(i);
   }
 
+  const columnCount = useBreakpointValue({
+    base: 4,
+    xs: 4,
+    sm: 4,
+    md: 5,
+    lg: 5,
+    xl: 5,
+    xxl: 5,
+  })!;
+
   // Responsive styling
   const tableWidth = ["100%", null, null, null, "800px", "800px"];
   const headingFontSizes = ["12px", null, "14px", "18px", "20px"];
-  const fontSizes = ["10px", null, "12px", "16px", "18px"];
+  const fontSizes = ["12px", "16px", "16px", "16px", "18px"];
   const columnGaps = ["10px", null, null, "20px", "30px", "40px"];
+  const gridTemplateColumns =
+    columnCount === 4 ? "2fr 1fr 1fr 1fr" : "4fr 2fr 2fr 2fr 2fr 2fr";
+  const tablePadding = ["10px", null, "20px", "30px", "40px"];
+  const rowPadding = ["5px", null, "10px", "20px"];
+  const pagePx = ["10px", "20px", null, "30px"];
 
   function PaginationButton({
     children,
@@ -93,9 +109,10 @@ export function MyGamesRoute() {
     return (
       <Form>
         <Input type="hidden" name="page" value={value} />
-        <Button
+        <Box
+          as="button"
           py="5px"
-          px={["4px", null, null, "12px"]}
+          px="8px"
           bgColor="transparent"
           cursor="pointer"
           fontSize={fontSizes}
@@ -120,7 +137,7 @@ export function MyGamesRoute() {
           _hover={{ color: colourScheme.primary }}
         >
           {children}
-        </Button>
+        </Box>
       </Form>
     );
   }
@@ -165,13 +182,13 @@ export function MyGamesRoute() {
           flexDirection="column"
           alignItems="center"
           pt="60px"
-          px="30px"
+          px={pagePx}
         >
           <Heading pb="30px">My Games</Heading>
           <Box
             bgColor={colourScheme.darker}
             borderRadius={"12px"}
-            p="40px"
+            p={tablePadding}
             borderWidth="2px"
             borderColor={colourScheme.border}
           >
@@ -181,19 +198,23 @@ export function MyGamesRoute() {
               borderBottomColor={colourScheme.border}
               fontSize={headingFontSizes}
               fontWeight={"bold"}
-              px="20px"
+              px={rowPadding}
               py="8px"
               w={tableWidth}
             >
-              <Grid
-                templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"}
-                gap={columnGaps}
-              >
+              <Grid templateColumns={gridTemplateColumns} gap={columnGaps}>
                 <GridItem>Opponent</GridItem>
                 <GridItem>Colour</GridItem>
                 <GridItem>Result</GridItem>
-                <GridItem>By</GridItem>
-                <GridItem>Moves</GridItem>
+                {columnCount === 4 ? (
+                  <></>
+                ) : (
+                  <>
+                    <GridItem>By</GridItem>
+                    <GridItem>Moves</GridItem>
+                  </>
+                )}
+
                 <GridItem>Date</GridItem>
               </Grid>
             </Box>
@@ -204,7 +225,6 @@ export function MyGamesRoute() {
                   key={game.id}
                   cursor="pointer"
                   transition="0.3s ease"
-                  borderRadius="12px"
                   _hover={{
                     backgroundColor: colourScheme.border,
                   }}
@@ -217,15 +237,12 @@ export function MyGamesRoute() {
                   position="relative"
                   borderBottomWidth={"1px"}
                   borderBottomColor={colourScheme.border}
-                  px="20px"
+                  px={rowPadding}
                   py="10px"
                   fontSize={fontSizes}
                   w={tableWidth}
                 >
-                  <Grid
-                    templateColumns={"4fr 2fr 2fr 2fr 2fr 2fr"}
-                    gap={columnGaps}
-                  >
+                  <Grid templateColumns={gridTemplateColumns} gap={columnGaps}>
                     <GridItem>
                       <Box>
                         {game.whiteUser.username === auth.user.username
@@ -250,8 +267,15 @@ export function MyGamesRoute() {
                         ? "Win"
                         : "Loss"}
                     </GridItem>
-                    <GridItem>{game.result}</GridItem>
-                    <GridItem>{JSON.parse(game.moves).length}</GridItem>
+                    {columnCount === 4 ? (
+                      <></>
+                    ) : (
+                      <>
+                        <GridItem>{game.result}</GridItem>
+                        <GridItem>{JSON.parse(game.moves).length}</GridItem>
+                      </>
+                    )}
+
                     <GridItem>
                       {new Date(
                         game.createdAt.slice(0, 10)

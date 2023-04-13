@@ -46,6 +46,8 @@ export async function handleClickLogic(
   analysisMode: boolean,
   colour: string,
   flipBoard: boolean,
+  vsComputer: boolean,
+  setBotToMove: Dispatch<SetStateAction<boolean>> | (() => void),
   setColour: Dispatch<SetStateAction<string>>,
   setPieces: Dispatch<SetStateAction<Piece[]>>,
   setSelectedPiece: Dispatch<SetStateAction<Piece | null>>,
@@ -224,6 +226,53 @@ export async function handleClickLogic(
       if (flipBoard) {
         setColour(colour === "white" ? "black" : "white");
       }
+      if (
+        vsComputer &&
+        ((whiteToMove && colour === "white") ||
+          (!whiteToMove && colour === "black"))
+      ) {
+        setBotToMove(true);
+        console.log("here");
+
+        const a = new Promise((resolve, reject) => {
+          resolve(
+            calculateBotMove(
+              piecesCopy,
+              !whiteToMove,
+              capturedPiecesCopy,
+              whiteKingSquare,
+              blackKingSquare,
+              isCheck,
+              promote,
+              movesCopy,
+              analysisMode,
+              colour,
+              false,
+              "3", // remember to change !!!
+              setBotToMove,
+              setColour,
+              setPieces,
+              setSelectedPiece,
+              setWhiteToMove,
+              setCapturedPieces,
+              setWhiteKingSquare,
+              setBlackKingSquare,
+              setIsCheck,
+              setIsCheckmate,
+              setIsStalemate,
+              setPromote,
+              setMoves,
+              setAnalysisMoveNumber
+            )
+          );
+        });
+        console.log(a);
+
+        a.then(() => {
+          setBotToMove(false);
+        });
+        console.log("hererere");
+      }
     } else if (
       selectedPiece.currentCol.toString() +
         selectedPiece.currentRow.toString() ===
@@ -243,7 +292,7 @@ export async function handleClickLogic(
   }
 }
 
-export function calculateBotMove(
+export async function calculateBotMove(
   pieces: Piece[],
   whiteToMove: boolean,
   capturedPieces: Piece[],
@@ -256,6 +305,7 @@ export function calculateBotMove(
   colour: string,
   flipBoard: boolean,
   botDifficulty: string,
+  setBotToMove: Dispatch<SetStateAction<boolean>> | (() => void),
   setColour: Dispatch<SetStateAction<string>>,
   setPieces: Dispatch<SetStateAction<Piece[]>>,
   setSelectedPiece: Dispatch<SetStateAction<Piece | null>>,
@@ -282,7 +332,6 @@ export function calculateBotMove(
     -10000000,
     10000000
   );
-  console.log("Count: " + minimaxResult.count.toString());
 
   const col = parseInt(minimaxResult.square[0]);
   const row = parseInt(minimaxResult.square[1]);
@@ -313,6 +362,8 @@ export function calculateBotMove(
     analysisMode,
     colour,
     flipBoard,
+    true,
+    setBotToMove,
     setColour,
     setPieces,
     setSelectedPiece,
@@ -436,12 +487,6 @@ function minimax(
     };
     loop1: for (const piece of currentPlayerPieces.slice().reverse()) {
       loop2: for (const square of piece.availableMoves) {
-        if (depth === 3) {
-          console.log(
-            piece.name +
-              "================================================================================================================"
-          );
-        }
         const pieceCopy = JSON.parse(JSON.stringify(piece));
         const position = calculatePosition(square, pieces, pieceCopy, moves);
         const evaluation = minimax(
@@ -463,11 +508,11 @@ function minimax(
         }
 
         alpha = Math.max(alpha, evaluation.value);
-        console.log(
-          `Depth ${depth} - piece: ${piece.name}, square: ${square}, evaluation: ${evaluation.value}, alpha: ${alpha}, beta: ${beta}`
-        );
+        // console.log(
+        //   `Depth ${depth} - piece: ${piece.name}, square: ${square}, evaluation: ${evaluation.value}, alpha: ${alpha}, beta: ${beta}`
+        // );
         if (beta <= alpha) {
-          console.log("here " + beta + " " + alpha);
+          // console.log("here " + beta + " " + alpha);
           break loop1;
         }
         // beta = evaluation.beta;
@@ -516,9 +561,9 @@ function minimax(
           minEval.square = square;
         }
         beta = Math.min(beta, evaluation.value);
-        console.log(
-          `Depth ${depth} - piece: ${piece.name}, square: ${square}, evaluation: ${evaluation.value}, alpha: ${alpha}, beta: ${beta}`
-        );
+        // console.log(
+        //   `Depth ${depth} - piece: ${piece.name}, square: ${square}, evaluation: ${evaluation.value}, alpha: ${alpha}, beta: ${beta}`
+        // );
         if (beta <= alpha) {
           break loop1;
         }

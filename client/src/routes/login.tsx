@@ -33,6 +33,8 @@ export default function Login() {
   const [show, setShow] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
@@ -82,6 +84,8 @@ export default function Login() {
         target.password.value,
         setIsSubmitting,
         setError,
+        setUsernameError,
+        setPasswordError,
         genericErrorMessage
       );
 
@@ -92,8 +96,6 @@ export default function Login() {
       }
     }
   };
-
-  console.log(value);
 
   return (
     <Box bgImage={bgImage} height="100vh" bgSize="cover" pt="40">
@@ -111,7 +113,12 @@ export default function Login() {
             <Stack spacing="5" textAlign={"left"}>
               <Flex justify={"center"}>
                 <RadioGroup
-                  onChange={setValue}
+                  onChange={(value) => {
+                    setValue(value);
+                    setUsernameError("");
+                    setPasswordError("");
+                    setError("");
+                  }}
                   value={value}
                   colorScheme="green"
                 >
@@ -130,26 +137,23 @@ export default function Login() {
                 <Text pb="4px">Username</Text>
                 <Input
                   name="username"
-                  // defaultValue={actionData?.fields?.username}
-                  // isInvalid={Boolean(
-                  //     responseUsernameError || usernameError
-                  // )}
-                  // aria-invalid={
-                  //     Boolean(usernameError) || undefined
-                  // }
-                  // aria-errormessage={
-                  //     usernameError != ""
-                  //         ? "username-error"
-                  //         : undefined
-                  // }
-                  // onChange={handleUsernameChange}
+                  borderColor={usernameError ? "red.400" : "inherit"}
+                  onChange={(e) => {
+                    setUsername(e.target.value);
+                    auth.validate(
+                      e.target.value,
+                      password,
+                      setUsernameError,
+                      setPasswordError
+                    );
+                  }}
                 />
-                {/* <Text>{responseUsernameError}</Text>
-                            {usernameError != "" ? (
-                                <Text color={"red.500"} role="alert">
-                                    {usernameError}
-                                </Text>
-                            ) : null} */}
+
+                {usernameError ? (
+                  <Text color={"red.400"} role="alert">
+                    {usernameError}
+                  </Text>
+                ) : null}
               </Box>
               <Box>
                 <Text pb="4px">Password</Text>
@@ -158,9 +162,18 @@ export default function Login() {
                     pr="4.5rem"
                     type={show ? "text" : "password"}
                     placeholder="Enter password"
+                    borderColor={passwordError ? "red.400" : "inherit"}
                     name="password"
-                    onChange={() => {}}
                     isInvalid={false}
+                    onChange={(e) => {
+                      setPassword(e.target.value);
+                      auth.validate(
+                        username,
+                        e.target.value,
+                        setUsernameError,
+                        setPasswordError
+                      );
+                    }}
                   />
                   <InputRightElement width="4.5rem">
                     <Button
@@ -172,11 +185,11 @@ export default function Login() {
                     </Button>
                   </InputRightElement>
                 </InputGroup>
-                {/* {passwordError != "" ? (
-                                <Text color={"red.500"} role="alert">
-                                    {passwordError}
-                                </Text>
-                            ) : null} */}
+                {passwordError ? (
+                  <Text color={"red.500"} role="alert">
+                    {passwordError}
+                  </Text>
+                ) : null}
               </Box>
 
               <Button

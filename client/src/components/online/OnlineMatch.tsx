@@ -36,6 +36,7 @@ import { Socket } from "socket.io-client";
 import Board from "../board/Board";
 import OnlinePromoteScreen from "./OnlinePromoteScreen";
 import OnlineEndScreen from "./OnlineEndScreen";
+import { GameScreen } from "../GameScreen";
 
 export function OnlineMatch({
   colour,
@@ -258,6 +259,9 @@ export function OnlineMatch({
 
   useEffect(() => {
     socket.on("currentTimes", (times) => {
+      if (times.gameId !== gameId) {
+        return;
+      }
       setWhiteTime(times.white);
       setBlackTime(times.black);
     });
@@ -269,13 +273,10 @@ export function OnlineMatch({
     });
 
     socket.on("drawOfferReceived", (message) => {
-      console.log(message);
-      console.log(messages);
       setMessages([...messages, message]);
     });
 
     socket.on("drawOfferRejected", () => {
-      console.log("here");
       const message = {
         text: `${opposition} rejected your draw offer.`,
         type: "draw offer response",
@@ -292,126 +293,60 @@ export function OnlineMatch({
   const screenHeight = height - 30;
   const boardHeight = screenHeight - 120;
   return (
-    <Flex justify={"center"} pt="8px">
-      <Flex flexDirection={"column"}>
-        <Flex h={`${screenHeight}px`}>
-          <Flex flexDirection={"column"}>
-            <Flex justify={"space-between"} pb="10px">
-              <CapturedPieces
-                capturedPieces={capturedPieces}
-                colour={colour}
-                username={opposition}
-                top={true}
-                src={null}
-              />
-              <Flex>
-                <Menu>
-                  <MenuButton
-                    as={IconButton}
-                    aria-label="Options"
-                    icon={<HamburgerIcon />}
-                    variant="outline"
-                    size="lg"
-                    h="50px"
-                    w="50px"
-                    borderRadius={"12px"}
-                    borderWidth="2px"
-                    borderColor={colourScheme.border}
-                    mr="10px"
-                    bgColor={colourScheme.darker}
-                  />
-
-                  <MenuList zIndex={"20"}>
-                    <MenuItem onClick={sendDrawOffer}>Offer Draw</MenuItem>
-                    <MenuItem onClick={resign}>Resign</MenuItem>
-                  </MenuList>
-                </Menu>
-                <Flex
-                  borderWidth={"2px"}
-                  borderColor={
-                    isYourMove ? colourScheme.border : colourScheme.primary
-                  }
-                  bgColor={colourScheme.darker}
-                  borderRadius="12px"
-                  px="20px"
-                  justify="center"
-                  alignItems="center"
-                >
-                  <Text
-                    fontSize={"24px"}
-                    fontWeight={"bold"}
-                    color={colourScheme.text}
-                  >
-                    {colour === "white"
-                      ? msToTime(blackTime)
-                      : msToTime(whiteTime)}
-                  </Text>
-                </Flex>
-              </Flex>
-            </Flex>
-
-            <Board
-              colour={colour}
-              pieces={pieces}
-              selectedPiece={selectedPiece}
-              boardHeight={boardHeight}
-              previousPieceMovedFrom={previousPieceMovedFrom}
-              previousPieceMovedTo={previousPieceMovedTo}
-              handleSquareClick={handleSquareClick}
-            >
-              <OnlineEndScreen
-                whiteToMove={whiteToMove}
-                analysisMode={analysisMode}
-                winner={winner}
-                status={status}
-                moves={moves}
-                roomCode={roomCode}
-                socket={socket}
-                setAnalysisMode={setAnalysisMode}
-                setAnalysisMoveNumber={setAnalysisMoveNumber}
-                setPieces={setPieces}
-              />
-              <OnlinePromoteScreen
-                roomCode={roomCode}
-                gameId={gameId}
-                status={status}
-                whiteToMove={whiteToMove}
-                socket={socket}
-              />
-            </Board>
-            <Flex justify={"space-between"} pt="10px">
-              <CapturedPieces
-                username={username}
-                capturedPieces={capturedPieces}
-                colour={colour === "white" ? "black" : "white"}
-                top={false}
-                src={null}
-              />
-              <Flex
-                borderWidth={"2px"}
-                borderRadius={"12px"}
-                borderColor={
-                  isYourMove ? colourScheme.primary : colourScheme.border
-                }
-                bgColor={colourScheme.darker}
-                justify="center"
-                alignItems="center"
-                px="20px"
-              >
-                <Text
-                  fontSize={"24px"}
-                  fontWeight={"bold"}
-                  color={colourScheme.text}
-                >
-                  {colour === "white"
-                    ? msToTime(whiteTime)
-                    : msToTime(blackTime)}
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
-
-          <Flex w="400px" flexDirection={"column"} ml="50px" height={"inherit"}>
+    <>
+      <GameScreen
+        modal={<></>}
+        capturedPiecesTop={
+          <CapturedPieces
+            capturedPieces={capturedPieces}
+            colour={colour}
+            username={opposition}
+            top={true}
+            src={null}
+          />
+        }
+        capturedPiecesBottom={
+          <CapturedPieces
+            username={username}
+            capturedPieces={capturedPieces}
+            colour={colour === "white" ? "black" : "white"}
+            top={false}
+            src={null}
+          />
+        }
+        menuItems={
+          <>
+            <MenuItem onClick={sendDrawOffer}>Offer Draw</MenuItem>
+            <MenuItem onClick={resign}>
+              {moves.length > 0 ? "Resign" : "Exit"}
+            </MenuItem>
+          </>
+        }
+        endScreen={
+          <OnlineEndScreen
+            whiteToMove={whiteToMove}
+            analysisMode={analysisMode}
+            winner={winner}
+            status={status}
+            moves={moves}
+            roomCode={roomCode}
+            socket={socket}
+            setAnalysisMode={setAnalysisMode}
+            setAnalysisMoveNumber={setAnalysisMoveNumber}
+            setPieces={setPieces}
+          />
+        }
+        promoteScreen={
+          <OnlinePromoteScreen
+            roomCode={roomCode}
+            gameId={gameId}
+            status={status}
+            whiteToMove={whiteToMove}
+            socket={socket}
+          />
+        }
+        analysisSection={
+          <>
             <Box h="60%" flexShrink={"0"}>
               <AnalysisSection
                 moves={moves}
@@ -548,9 +483,332 @@ export function OnlineMatch({
                 </Button>
               </Flex>
             </Flex>
+          </>
+        }
+        topClock={
+          <Flex
+            borderWidth={"2px"}
+            borderColor={
+              isYourMove ? colourScheme.border : colourScheme.primary
+            }
+            bgColor={colourScheme.darker}
+            borderRadius="12px"
+            px="20px"
+            justify="center"
+            alignItems="center"
+            ml="10px"
+          >
+            <Text
+              fontSize={"24px"}
+              fontWeight={"bold"}
+              color={colourScheme.text}
+            >
+              {colour === "white" ? msToTime(blackTime) : msToTime(whiteTime)}
+            </Text>
+          </Flex>
+        }
+        bottomClock={
+          <Flex
+            borderWidth={"2px"}
+            borderRadius={"12px"}
+            borderColor={
+              isYourMove ? colourScheme.primary : colourScheme.border
+            }
+            bgColor={colourScheme.darker}
+            justify="center"
+            alignItems="center"
+            px="20px"
+          >
+            <Text
+              fontSize={"24px"}
+              fontWeight={"bold"}
+              color={colourScheme.text}
+            >
+              {colour === "white" ? msToTime(whiteTime) : msToTime(blackTime)}
+            </Text>
+          </Flex>
+        }
+        moves={moves}
+        pieces={pieces}
+        analysisMode={analysisMode}
+        analysisMoveNumber={analysisMoveNumber}
+        previousPieceMovedFrom={previousPieceMovedFrom}
+        previousPieceMovedTo={previousPieceMovedTo}
+        colour={colour}
+        selectedPiece={selectedPiece}
+        handleSquareClick={handleSquareClick}
+        setPieces={setPieces}
+        setAnalysisMode={setAnalysisMode}
+        setAnalysisMoveNumber={setAnalysisMoveNumber}
+      />
+
+      {/* <Flex justify={"center"} pt="8px">
+        <Flex flexDirection={"column"}>
+          <Flex h={`${screenHeight}px`}>
+            <Flex flexDirection={"column"}>
+              <Flex justify={"space-between"} pb="10px">
+                <CapturedPieces
+                  capturedPieces={capturedPieces}
+                  colour={colour}
+                  username={opposition}
+                  top={true}
+                  src={null}
+                />
+                <Flex>
+                  <Menu>
+                    <MenuButton
+                      as={IconButton}
+                      aria-label="Options"
+                      icon={<HamburgerIcon />}
+                      variant="outline"
+                      size="lg"
+                      h="50px"
+                      w="50px"
+                      borderRadius={"12px"}
+                      borderWidth="2px"
+                      borderColor={colourScheme.border}
+                      mr="10px"
+                      bgColor={colourScheme.darker}
+                    />
+
+                    <MenuList zIndex={"20"}>
+                      <MenuItem onClick={sendDrawOffer}>Offer Draw</MenuItem>
+                      <MenuItem onClick={resign}>
+                        {moves.length > 0 ? "Resign" : "Exit"}
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                  <Flex
+                    borderWidth={"2px"}
+                    borderColor={
+                      isYourMove ? colourScheme.border : colourScheme.primary
+                    }
+                    bgColor={colourScheme.darker}
+                    borderRadius="12px"
+                    px="20px"
+                    justify="center"
+                    alignItems="center"
+                  >
+                    <Text
+                      fontSize={"24px"}
+                      fontWeight={"bold"}
+                      color={colourScheme.text}
+                    >
+                      {colour === "white"
+                        ? msToTime(blackTime)
+                        : msToTime(whiteTime)}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Flex>
+
+              <Board
+                colour={colour}
+                pieces={pieces}
+                selectedPiece={selectedPiece}
+                boardHeight={boardHeight}
+                previousPieceMovedFrom={previousPieceMovedFrom}
+                previousPieceMovedTo={previousPieceMovedTo}
+                handleSquareClick={handleSquareClick}
+              >
+                <OnlineEndScreen
+                  whiteToMove={whiteToMove}
+                  analysisMode={analysisMode}
+                  winner={winner}
+                  status={status}
+                  moves={moves}
+                  roomCode={roomCode}
+                  socket={socket}
+                  setAnalysisMode={setAnalysisMode}
+                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                  setPieces={setPieces}
+                />
+                <OnlinePromoteScreen
+                  roomCode={roomCode}
+                  gameId={gameId}
+                  status={status}
+                  whiteToMove={whiteToMove}
+                  socket={socket}
+                />
+              </Board>
+              <Flex justify={"space-between"} pt="10px">
+                <CapturedPieces
+                  username={username}
+                  capturedPieces={capturedPieces}
+                  colour={colour === "white" ? "black" : "white"}
+                  top={false}
+                  src={null}
+                />
+                <Flex
+                  borderWidth={"2px"}
+                  borderRadius={"12px"}
+                  borderColor={
+                    isYourMove ? colourScheme.primary : colourScheme.border
+                  }
+                  bgColor={colourScheme.darker}
+                  justify="center"
+                  alignItems="center"
+                  px="20px"
+                >
+                  <Text
+                    fontSize={"24px"}
+                    fontWeight={"bold"}
+                    color={colourScheme.text}
+                  >
+                    {colour === "white"
+                      ? msToTime(whiteTime)
+                      : msToTime(blackTime)}
+                  </Text>
+                </Flex>
+              </Flex>
+            </Flex>
+
+            <Flex
+              w="400px"
+              flexDirection={"column"}
+              ml="50px"
+              height={"inherit"}
+            >
+              <Box h="60%" flexShrink={"0"}>
+                <AnalysisSection
+                  moves={moves}
+                  pieces={pieces}
+                  setPieces={setPieces}
+                  setAnalysisMode={setAnalysisMode}
+                  analysisMode={analysisMode}
+                  analysisMoveNumber={analysisMoveNumber}
+                  setAnalysisMoveNumber={setAnalysisMoveNumber}
+                />
+              </Box>
+              <Flex
+                bgColor={colourScheme.darker}
+                borderColor={colourScheme.border}
+                borderWidth="2px"
+                borderRadius="12px"
+                borderTopWidth={"0"}
+                flex="1 1 auto"
+                flexDirection={"column"}
+                overflow="hidden"
+              >
+                <Box
+                  flex="1 1 auto"
+                  bgColor={"transparent"}
+                  m="10px"
+                  mr="0"
+                  pr="10px"
+                  overflow={"auto"}
+                >
+                  <List spacing="2px">
+                    {messages.map((message, index: number) => (
+                      <ListItem key={message.id}>
+                        {message.type === "draw offer" ||
+                        message.type === "draw offer response" ? (
+                          <>
+                            <Text textAlign="center" pb="6px">
+                              {message.text}
+                            </Text>
+                            {message.type === "draw offer" ? (
+                              <Flex justify="center" pb="4px">
+                                <Flex w="25%" justify="space-between">
+                                  <Tooltip
+                                    hasArrow
+                                    label="Accept"
+                                    borderRadius={"6px"}
+                                  >
+                                    <IconButton
+                                      aria-label="accept"
+                                      icon={<CheckIcon />}
+                                      _hover={{
+                                        backgroundColor: colourScheme.primary,
+                                      }}
+                                      onClick={() => acceptDrawOffer(index)}
+                                    />
+                                  </Tooltip>
+
+                                  <Tooltip
+                                    hasArrow
+                                    label="Reject"
+                                    borderRadius={"6px"}
+                                  >
+                                    <IconButton
+                                      aria-label="reject"
+                                      icon={<CloseIcon />}
+                                      _hover={{
+                                        backgroundColor: colourScheme.primary,
+                                      }}
+                                      onClick={() => rejectDrawOffer(index)}
+                                    />
+                                  </Tooltip>
+                                </Flex>
+                              </Flex>
+                            ) : (
+                              <></>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <Flex
+                              justify={
+                                message.name === username ? "right" : "left"
+                              }
+                            >
+                              <Flex
+                                borderRadius="20px"
+                                borderBottomRightRadius={
+                                  message.name === username ? "0" : "20px"
+                                }
+                                borderBottomLeftRadius={
+                                  message.name === username ? "20px" : "0px"
+                                }
+                                color="white"
+                                bgColor={
+                                  message.name === username
+                                    ? colourScheme.primary
+                                    : "gray.600"
+                                }
+                                p="2px"
+                                px="15px"
+                              >
+                                <Text>
+                                  {message.name === username
+                                    ? ""
+                                    : message.name + ": "}
+                                  {message.text}
+                                </Text>
+                              </Flex>
+                            </Flex>
+                          </>
+                        )}
+                      </ListItem>
+                    ))}
+                    <Box ref={bottomRef} h="0px"></Box>
+                  </List>
+                </Box>
+                <Flex flex="0 0">
+                  <Input
+                    borderRadius={"0"}
+                    placeholder="Enter message here"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    borderWidth="0"
+                    borderTopWidth="2px"
+                    borderTopColor={colourScheme.border}
+                  />
+                  <Button
+                    bgColor={colourScheme.primary}
+                    color="white"
+                    borderRadius={"0"}
+                    onClick={sendMessage}
+                  >
+                    Send
+                  </Button>
+                </Flex>
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
-    </Flex>
+      </Flex> */}
+    </>
   );
 }

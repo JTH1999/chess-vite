@@ -95,15 +95,13 @@ export default function Home() {
             rowGap={["40px", null, null, "60px"]}
           >
             <GridItem>
-              <Flex justify="start">
-                <GameCard
-                  icon={faChess}
-                  heading={"Local match"}
-                  text="Play offline against a friend"
-                  link="/local-match"
-                  colourBackground={false}
-                />
-              </Flex>
+              <GameCard
+                icon={faChess}
+                heading={"Local match"}
+                text="Play offline against a friend"
+                link="/local-match"
+                colourBackground={false}
+              />
             </GridItem>
             <GridItem>
               <GameCard
@@ -115,26 +113,22 @@ export default function Home() {
               />
             </GridItem>
             <GridItem>
-              <Flex justify={"end"}>
-                <GameCard
-                  icon={faWifi}
-                  heading={"Online match"}
-                  text="Play online against a friend"
-                  link="/online-match"
-                  colourBackground={false}
-                />
-              </Flex>
+              <GameCard
+                icon={faWifi}
+                heading={"Online match"}
+                text="Play online against a friend"
+                link="/online-match"
+                colourBackground={false}
+              />
             </GridItem>
             <GridItem>
-              <Flex justify="start">
-                <GameCard
-                  icon={faMagnifyingGlass}
-                  heading={"Analysis"}
-                  text="Analyse your previous matches"
-                  link="/my-games"
-                  colourBackground={false}
-                />
-              </Flex>
+              <GameCard
+                icon={faMagnifyingGlass}
+                heading={"Analysis"}
+                text="Analyse your previous matches"
+                link="/my-games"
+                colourBackground={false}
+              />
             </GridItem>
             <GridItem>
               <GameCard
@@ -146,15 +140,13 @@ export default function Home() {
               />
             </GridItem>
             <GridItem>
-              <Flex justify="end">
-                <GameCard
-                  icon={faUser}
-                  heading={"My Profile"}
-                  text="View and edit your profile"
-                  link="/profile"
-                  colourBackground={false}
-                />
-              </Flex>
+              <GameCard
+                icon={faUser}
+                heading={"My Profile"}
+                text="View and edit your profile"
+                link="/profile"
+                colourBackground={false}
+              />
             </GridItem>
           </Grid>
         </Flex>

@@ -23,24 +23,13 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { CloseIcon, ChatIcon } from "@chakra-ui/icons";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useBeforeUnload, useNavigate } from "react-router-dom";
-import pawnImage from "../assets/pieces/w_pawn_svg_NoShadow.svg";
-import ComingSoon from "../components/ComingSoon";
-import MainButton from "../components/MainButton";
-import { authContext, useAuth } from "../hooks/useAuth";
+import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../hooks/useAuth";
 import { Socket, io } from "socket.io-client";
-import TransparentButton from "../components/TransparentButton";
-import { ChatDrawer } from "../components/ChatDrawer";
 import { LobbyScreen } from "../components/online/LobbyScreen";
-import { OnlineBoard } from "../deprecated/OnlineBoard";
-import { calculateSelectedPieceLegalMoves } from "../components/board/square/helperFunctions";
 import { OnlineMatch } from "../components/online/OnlineMatch";
 import { Message, Move, Piece } from "../../types";
 import { PleaseLogin } from "../components/PleaseLogin";
-
-// const socket = io("http://localhost:8082");
 
 export default function OnlineMatchRoute() {
   const auth = useAuth();
@@ -49,13 +38,13 @@ export default function OnlineMatchRoute() {
   const buttonRef = useRef();
   const colour = useRef<"white" | "black">("white");
   const whiteToMove = useRef(false);
+  const gameId = useRef("");
   const winner = useRef<string | null>(null);
   const [pieces, setPieces] = useState<Piece[]>([]);
   const [moves, setMoves] = useState<Move[]>([]);
   const [capturedPieces, setCapturedPieces] = useState<Piece[]>([]);
   const [isYourMove, setIsYourMove] = useState<boolean>(false);
   const [gameRoomCode, setGameRoomCode] = useState<string | null>(null);
-  const [gameId, setGameId] = useState("");
   const [analysisMoveNumber, setAnalysisMoveNumber] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
   const [players, setPlayers] = useState<string[]>([]);
@@ -106,13 +95,15 @@ export default function OnlineMatchRoute() {
         pieces: Piece[];
         roomCode: string;
       }) => {
+        // if room code != saved room code, return
+        console.log(response.gameId);
         colour.current = response.colour;
+        gameId.current = response.gameId;
         whiteToMove.current = true;
         setStatus("match");
         setPieces(response.pieces);
         setIsYourMove(Boolean(response.colour === "white"));
         setGameRoomCode(response.roomCode);
-        setGameId(response.gameId);
         setCapturedPieces([]);
       }
     );
@@ -120,7 +111,7 @@ export default function OnlineMatchRoute() {
     socket.on(
       "moveComplete",
       (response: {
-        // gameId: string;
+        gameId: string;
         status: string;
         whiteToMove: boolean;
         pieces: Piece[];
@@ -128,6 +119,11 @@ export default function OnlineMatchRoute() {
         capturedPieces: Piece[];
         check: boolean;
       }) => {
+        console.log(response.gameId);
+        console.log(gameId);
+        if (response.gameId !== gameId.current) {
+          return;
+        }
         setStatus(response.status);
         whiteToMove.current = response.whiteToMove;
 
@@ -145,6 +141,7 @@ export default function OnlineMatchRoute() {
     socket.on(
       "checkmate",
       (response: {
+        gameId: string;
         status: string;
         pieces: Piece[];
         moves: Move[];
@@ -153,6 +150,9 @@ export default function OnlineMatchRoute() {
         check: boolean;
         winner: string;
       }) => {
+        if (response.gameId !== gameId.current) {
+          return;
+        }
         setStatus("checkmate");
         whiteToMove.current = response.whiteToMove;
         winner.current = response.winner;
@@ -167,6 +167,7 @@ export default function OnlineMatchRoute() {
     socket.on(
       "stalemate",
       (response: {
+        gameId: string;
         status: string;
         pieces: Piece[];
         moves: Move[];
@@ -174,6 +175,9 @@ export default function OnlineMatchRoute() {
         whiteToMove: boolean;
         check: boolean;
       }) => {
+        if (response.gameId !== gameId.current) {
+          return;
+        }
         setStatus("stalemate");
         whiteToMove.current = response.whiteToMove;
         setPieces(response.pieces);
@@ -187,6 +191,7 @@ export default function OnlineMatchRoute() {
     socket.on(
       "promotePiece",
       (response: {
+        gameId: string;
         status: string;
         selectedPiece: Piece[];
         pieces: Piece[];
@@ -194,6 +199,9 @@ export default function OnlineMatchRoute() {
         capturedPieces: Piece[];
         whiteToMove: boolean;
       }) => {
+        if (response.gameId !== gameId.current) {
+          return;
+        }
         setStatus("promote");
         whiteToMove.current = response.whiteToMove;
         setPieces(response.pieces);
@@ -204,7 +212,10 @@ export default function OnlineMatchRoute() {
       }
     );
 
-    socket.on("draw", () => {
+    socket.on("draw", (response: { gameId: string }) => {
+      if (response.gameId !== gameId.current) {
+        return;
+      }
       setStatus("draw");
       setIsYourMove(false);
     });
@@ -212,25 +223,48 @@ export default function OnlineMatchRoute() {
     socket.on(
       "resignation",
       (response: { gameId: string; roomCode: string; winner: string }) => {
+        if (response.gameId !== gameId.current) {
+          return;
+        }
         setStatus("resignation");
         setIsYourMove(false);
         winner.current = response.winner;
       }
     );
 
-    socket.on("outOfTime", (response: { winner: string }) => {
+    socket.on("outOfTime", (response: { gameId: string; winner: string }) => {
+      if (response.gameId !== gameId.current) {
+        return;
+      }
       winner.current = response.winner;
       setIsYourMove(false);
       setStatus("time");
     });
 
-    socket.on("forfeit", (response: { winner: string }) => {
-      console.log("forfeit received");
+    socket.on("forfeit", (response: { gameId: string; winner: string }) => {
+      if (response.gameId !== gameId.current) {
+        return;
+      }
       winner.current = response.winner;
       setIsYourMove(false);
       setStatus("forfeit");
-      console.log("forfeit recveived");
     });
+
+    socket.on(
+      "gameEnded",
+      (response: {
+        gameId: string;
+        roomCode: string;
+        exitedPlayer: string;
+      }) => {
+        if (response.gameId !== gameId.current) {
+          return;
+        }
+        winner.current = response.exitedPlayer; // Player is not the winner, just using existing variable
+        setStatus("gameEnded");
+        setIsYourMove(false);
+      }
+    );
 
     return () => {
       socket.disconnect();
@@ -260,7 +294,7 @@ export default function OnlineMatchRoute() {
                 socket={socket!}
                 roomCode={gameRoomCode!}
                 setIsYourMove={setIsYourMove}
-                gameId={gameId}
+                gameId={gameId.current}
                 whiteToMove={whiteToMove.current}
                 status={status}
                 winner={winner.current}

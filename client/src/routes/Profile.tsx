@@ -1,9 +1,12 @@
 import {
   Flex,
+  Grid,
+  GridItem,
   Heading,
   Image,
   Input,
   Text,
+  useBreakpointValue,
   useColorMode,
 } from "@chakra-ui/react";
 import { Link, useLoaderData } from "react-router-dom";
@@ -84,8 +87,6 @@ export function ProfileRoute() {
   const { colourScheme } = useColour();
   const hiddenFileInput = useRef<HTMLInputElement>(null);
 
-  const statsSpacing = "60px";
-
   function handleClick() {
     hiddenFileInput.current!.click();
   }
@@ -120,26 +121,50 @@ export function ProfileRoute() {
     setAvatar(avatarImg);
   }
 
+  // Styling
+  const pagePx = ["20px", "40px", "60px", "100px", "100px", "240px"];
+  const nameFontSize = ["32px", "40px", "60px", "80px", "80px", "80px"];
+  const statsFontSize = ["70px", "80px", "80px", "80px", "100px", "140px"];
+  const headingFontSize = ["24px", "24px", "40px", "40px", null, "40px"];
+  const textFontSize = ["16px", "18px", "20px", "20px", null, "24px"];
+  const statsSpacing = ["20px", "30px", "40px", "40px", null, "60px"];
+  const avatarHeight = ["100px", "140px", "150px", "160px", "170px", "180px"];
+  const avatarMarginRight = ["0px", "20px", null, "40px", null, "60px"];
+  const gridTemplateCols = ["1fr 1fr 1fr", null, null, "1fr 1fr 1fr 1fr 1fr"];
+  const avatarTextFontSize = useBreakpointValue({
+    base: "12px",
+    xs: "12px",
+    sm: "16px",
+    md: "20px",
+    lg: "20px",
+    xl: "20px",
+    xxl: "20px",
+  })!;
+
   return (
     <>
       {auth?.user.username ? (
         <Flex justify="center" direction="column">
-          <Flex justify="center" px="240px" py="100px">
+          <Flex justify="center" px={pagePx} py="100px">
             <Flex
               alignItems="start"
               textAlign="left"
               direction="column"
-              pr="200px"
               w="100%"
             >
-              <Flex mb="60px">
-                <Flex mr="60px">
-                  <Avatar height="160px" src={avatar}>
+              <Flex
+                w="100%"
+                mb="40px"
+                direction={["column", "row"]}
+                alignItems={"center"}
+              >
+                <Flex mr={avatarMarginRight} mb={["10px", "0"]}>
+                  <Avatar height={avatarHeight} src={avatar}>
                     <Flex
                       zIndex={20}
                       position="absolute"
                       bottom="0%"
-                      h="30px"
+                      h="20%"
                       w="100%"
                       bgColor="blackAlpha.600"
                       cursor="pointer"
@@ -153,9 +178,12 @@ export function ProfileRoute() {
                     >
                       <Flex>
                         <Flex mr="10px" alignItems={"center"}>
-                          <FontAwesomeIcon icon={faCamera} fontSize={"20px"} />
+                          <FontAwesomeIcon
+                            icon={faCamera}
+                            fontSize={avatarTextFontSize}
+                          />
                         </Flex>
-                        <Text>Add</Text>
+                        <Text fontSize={avatarTextFontSize}>Add</Text>
                       </Flex>
                     </Flex>
                     <Input
@@ -168,11 +196,11 @@ export function ProfileRoute() {
                   </Avatar>
                 </Flex>
 
-                <Flex direction="column" justify={"space-between"}>
+                <Flex direction="column" justify={"end"}>
                   <Heading
                     as="h1"
-                    fontSize={"80px"}
-                    textAlign="left"
+                    fontSize={nameFontSize}
+                    textAlign={["center", "left"]}
                     mb="0"
                     pb="0"
                   >
@@ -181,9 +209,9 @@ export function ProfileRoute() {
 
                   <Text
                     fontWeight={"400"}
-                    mt="30px"
-                    fontSize={"24px"}
-                    textAlign="left"
+                    mt="10px"
+                    fontSize={textFontSize}
+                    textAlign={["center", "left"]}
                   >
                     Edit your profile and view your statistics
                   </Text>
@@ -191,7 +219,7 @@ export function ProfileRoute() {
               </Flex>
               <Heading
                 as="h1"
-                fontSize={"60px"}
+                fontSize={headingFontSize}
                 textAlign="left"
                 mb="0"
                 pb="30px"
@@ -199,76 +227,113 @@ export function ProfileRoute() {
                 Statistics
               </Heading>
               <Flex>
-                <Flex direction={"column"} mr={statsSpacing}>
-                  <Heading as="h3" fontSize={"40px"} textAlign="left">
-                    Played
-                  </Heading>
-                  <Heading
-                    as="h3"
-                    fontSize={"120px"}
-                    textAlign="left"
-                    color={colourScheme.primary}
-                  >
-                    {stats.games}
-                  </Heading>
-                </Flex>
-                <Flex direction={"column"} mr={statsSpacing}>
-                  <Heading as="h3" fontSize={"40px"} textAlign="left">
-                    Won
-                  </Heading>
-                  <Heading
-                    as="h3"
-                    fontSize={"120px"}
-                    textAlign="left"
-                    color={colourScheme.primary}
-                  >
-                    {stats.wins}
-                  </Heading>
-                </Flex>
-                <Flex direction={"column"} mr={statsSpacing}>
-                  <Heading as="h3" fontSize={"40px"} textAlign="left">
-                    Lost
-                  </Heading>
-                  <Heading
-                    as="h3"
-                    fontSize={"120px"}
-                    textAlign="left"
-                    color={colourScheme.primary}
-                  >
-                    {stats.losses}
-                  </Heading>
-                </Flex>
-                <Flex direction={"column"} mr={statsSpacing}>
-                  <Heading as="h3" fontSize={"40px"} textAlign="left">
-                    Drawn
-                  </Heading>
-                  <Heading
-                    as="h3"
-                    fontSize={"120px"}
-                    textAlign="left"
-                    color={colourScheme.primary}
-                  >
-                    {stats.draws}
-                  </Heading>
-                </Flex>
-                <Flex direction={"column"} mr={statsSpacing}>
-                  <Heading as="h3" fontSize={"40px"} textAlign="left">
-                    Unfinished
-                  </Heading>
-                  <Heading
-                    as="h3"
-                    fontSize={"120px"}
-                    textAlign="left"
-                    color={colourScheme.primary}
-                  >
-                    {stats.unfinished}
-                  </Heading>
-                </Flex>
+                <Grid
+                  templateColumns={gridTemplateCols}
+                  rowGap={"30px"}
+                  columnGap={statsSpacing}
+                >
+                  <GridItem>
+                    <Flex direction={"column"}>
+                      <Heading
+                        as="h3"
+                        fontSize={headingFontSize}
+                        textAlign="left"
+                      >
+                        Played
+                      </Heading>
+                      <Heading
+                        as="h3"
+                        fontSize={statsFontSize}
+                        textAlign="left"
+                        color={colourScheme.primary}
+                      >
+                        {stats.games}
+                      </Heading>
+                    </Flex>
+                  </GridItem>
+                  <GridItem>
+                    <Flex direction={"column"}>
+                      <Heading
+                        as="h3"
+                        fontSize={headingFontSize}
+                        textAlign="left"
+                      >
+                        Won
+                      </Heading>
+                      <Heading
+                        as="h3"
+                        fontSize={statsFontSize}
+                        textAlign="left"
+                        color={colourScheme.primary}
+                      >
+                        {stats.wins}
+                      </Heading>
+                    </Flex>
+                  </GridItem>
+                  <GridItem>
+                    <Flex direction={"column"}>
+                      <Heading
+                        as="h3"
+                        fontSize={headingFontSize}
+                        textAlign="left"
+                      >
+                        Lost
+                      </Heading>
+                      <Heading
+                        as="h3"
+                        fontSize={statsFontSize}
+                        textAlign="left"
+                        color={colourScheme.primary}
+                      >
+                        {stats.losses}
+                      </Heading>
+                    </Flex>
+                  </GridItem>
+                  <GridItem>
+                    <Flex direction={"column"}>
+                      <Heading
+                        as="h3"
+                        fontSize={headingFontSize}
+                        textAlign="left"
+                      >
+                        Drawn
+                      </Heading>
+                      <Heading
+                        as="h3"
+                        fontSize={statsFontSize}
+                        textAlign="left"
+                        color={colourScheme.primary}
+                      >
+                        {stats.draws}
+                      </Heading>
+                    </Flex>
+                  </GridItem>
+                  <GridItem>
+                    <Flex direction={"column"}>
+                      <Heading
+                        as="h3"
+                        fontSize={headingFontSize}
+                        textAlign="left"
+                      >
+                        Unfinished
+                      </Heading>
+                      <Heading
+                        as="h3"
+                        fontSize={statsFontSize}
+                        textAlign="left"
+                        color={colourScheme.primary}
+                      >
+                        {stats.unfinished}
+                      </Heading>
+                    </Flex>
+                  </GridItem>
+                </Grid>
               </Flex>
+
               <Link to={"/my-games"}>
                 <Heading
                   as="h3"
-                  fontSize={"40px"}
+                  fontSize={headingFontSize}
                   textAlign="left"
                   pt="60px"
                   _hover={{

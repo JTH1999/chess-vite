@@ -28,6 +28,7 @@ export default function CheckmateScreen({
   setSelectedPiece,
   setAnalysisMode,
   setAnalysisMoveNumber,
+  resetBoard,
 }: {
   isCheckmate: boolean;
   isStalemate: boolean;
@@ -47,24 +48,9 @@ export default function CheckmateScreen({
   setSelectedPiece: Dispatch<SetStateAction<Piece | null>>;
   setAnalysisMode: Dispatch<SetStateAction<boolean>>;
   setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
+  resetBoard: () => void;
 }) {
   const { colourScheme } = useColour();
-
-  function resetBoard() {
-    setWhiteToMove(true);
-    setCapturedPieces([]);
-    setWhiteKingSquare("51");
-    setBlackKingSquare("58");
-    setIsCheck(false);
-    setIsCheckmate(false);
-    setIsStalemate(false);
-    setPromote(false);
-    setMoves([]);
-    setPieces(newGamePieces);
-    setSelectedPiece(null);
-    setAnalysisMode(false);
-    setAnalysisMoveNumber(0);
-  }
 
   function enterAnalysisMode() {
     setAnalysisMode(true);

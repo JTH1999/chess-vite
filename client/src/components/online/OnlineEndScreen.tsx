@@ -18,8 +18,6 @@ export default function OnlineEndScreen({
   analysisMode,
   whiteToMove,
   moves,
-  socket,
-  roomCode,
   setAnalysisMode,
   setAnalysisMoveNumber,
   setPieces,
@@ -46,6 +44,7 @@ export default function OnlineEndScreen({
     "resignation",
     "forfeit",
     "time",
+    "gameEnded",
   ];
 
   function enterAnalysisMode() {
@@ -89,7 +88,9 @@ export default function OnlineEndScreen({
         fontWeight="bold"
         margin={"10px"}
       >
-        {status === "stalemate"
+        {status === "gameEnded"
+          ? `${winner} exited`
+          : status === "stalemate"
           ? "Stalemate"
           : status === "draw"
           ? "Draw"
@@ -114,7 +115,7 @@ export default function OnlineEndScreen({
       </Text>
       <Image
         src={
-          status === "stalemate" || status === "draw"
+          status === "stalemate" || status === "draw" || status === "gameEnded"
             ? stalematePNG
             : whiteToMove
             ? blackCheckmate

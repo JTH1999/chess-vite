@@ -32,13 +32,41 @@ export function useAuth() {
 export function authProvider() {
   const [user, setUser] = useState<User>({ username: null });
 
+  const validate = (
+    username: string,
+    password: string,
+    setUsernameError: Dispatch<SetStateAction<string>>,
+    setPasswordError: Dispatch<SetStateAction<string>>
+  ) => {
+    let errors = false;
+    if (username.length < 4) {
+      setUsernameError("Username must be at least 4 characters");
+      errors = true;
+    } else {
+      setUsernameError("");
+    }
+    if (password.length < 4) {
+      setPasswordError("Password must be at least 4 characters");
+      errors = true;
+    } else {
+      setPasswordError("");
+    }
+    return errors;
+  };
+
   const signup = async (
     username: string,
     password: string,
     setIsSubmitting: Dispatch<SetStateAction<boolean>>,
     setError: Dispatch<SetStateAction<string>>,
+    setUsernameError: Dispatch<SetStateAction<string>>,
+    setPasswordError: Dispatch<SetStateAction<string>>,
     genericErrorMessage: string
   ) => {
+    if (validate(username, password, setUsernameError, setPasswordError)) {
+      return false;
+    }
+
     const response = await fetch(
       import.meta.env.VITE_CHESS_API_ENDPOINT + "users/signup",
       {
@@ -58,7 +86,11 @@ export function authProvider() {
     if (response) {
       if (!response.ok) {
         if (response.status === 400) {
-          setError("Please fill all the fields correctly!");
+          const errors = await response.json();
+          console.log(errors);
+          setUsernameError(errors.usernameError);
+          setPasswordError(errors.passwordError);
+          setError(errors.generalError);
         } else if (response.status === 401) {
           setError("Invalid email and password combination.");
         } else if (response.status === 500) {
@@ -167,7 +199,7 @@ export function authProvider() {
     return () => unsubscribe(user);
   }, []);
 
-  return { user, signup, signin, signout, getUser, getToken };
+  return { user, validate, signup, signin, signout, getUser, getToken };
 }
 
 export function ProvideAuth({ children }: { children: ReactNode }) {

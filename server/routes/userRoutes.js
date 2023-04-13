@@ -21,27 +21,41 @@ const {
 const { error } = require("console");
 
 router.post("/signup", async (req, res, next) => {
+  const errors = {
+    usernameError: "",
+    passwordError: "",
+    generalError: "",
+  };
+  let valid = true;
   const userExists = await db.user.findFirst({
     where: { username: req.body.username },
   });
   if (userExists) {
-    return res.status(400).json({
-      fieldErrors: null,
-      fields: null,
-      formError: `User with username ${req.body.username} already exists`,
-    });
+    errors.usernameError = `User with username ${req.body.username} already exists`;
+    return res.status(400).json(errors);
   }
+
+  if (req.body.username.length < 4) {
+    errors.usernameError = "Username must be at least 4 characters";
+    valid = false;
+  }
+  if (req.body.password.length < 4) {
+    errors.passwordError = "Password must be at least 4 characters";
+    valid = false;
+  }
+
+  if (!valid) {
+    return res.status(400).json(errors);
+  }
+
   const passwordHash = await bcrypt.hash(req.body.password, 10);
 
   const user = await db.user.create({
     data: { username: req.body.username, passwordHash: passwordHash },
   });
   if (!user) {
-    return res.status(400).json({
-      fieldErrors: null,
-      fields: null,
-      formError: `Something went wrong trying to create new user`,
-    });
+    errors.generalError = `Something went wrong trying to create new user`;
+    return res.status(400).json(errors);
   }
 
   const token = getToken({ id: user.id });
