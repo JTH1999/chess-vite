@@ -12,12 +12,6 @@ const io = new Server(httpServer, {
 
 const PORT = 8082;
 
-const http = require("http").Server(router);
-const cors = require("cors");
-const { time } = require("console");
-const { json } = require("stream/consumers");
-
-let rooms = {};
 let usernames = {};
 let games = {};
 
