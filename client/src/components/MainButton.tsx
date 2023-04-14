@@ -7,12 +7,14 @@ export default function MainButton({
   disabled = false,
   w = "100%",
   mt = "0px",
+  type = "button",
 }: {
   text: string;
   onClick: any;
   disabled: boolean | undefined;
   w: string;
   mt: string;
+  type: "button" | "submit" | "reset" | undefined;
 }) {
   const { colourScheme } = useColour();
   return (
@@ -31,6 +33,7 @@ export default function MainButton({
       onClick={onClick}
       transition="0.3s ease"
       _hover={{ bgColor: colourScheme.primaryDarker }}
+      type={type}
     >
       {text}
     </Button>

@@ -47,6 +47,7 @@ export async function handleClickLogic(
   colour: string,
   flipBoard: boolean,
   vsComputer: boolean,
+  botDifficulty: string | null = "2",
   setBotToMove: Dispatch<SetStateAction<boolean>> | (() => void),
   setColour: Dispatch<SetStateAction<string>>,
   setPieces: Dispatch<SetStateAction<Piece[]>>,
@@ -248,7 +249,7 @@ export async function handleClickLogic(
               analysisMode,
               colour,
               false,
-              "3", // remember to change !!!
+              botDifficulty, // remember to change !!!
               setBotToMove,
               setColour,
               setPieces,
@@ -363,6 +364,7 @@ export async function calculateBotMove(
     colour,
     flipBoard,
     true,
+    botDifficulty,
     setBotToMove,
     setColour,
     setPieces,

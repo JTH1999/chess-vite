@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalOverlay,
   useBreakpointValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import AnalysisSectionMobile from "./AnalysisSectionMobile";
 
@@ -22,12 +23,12 @@ import {
   ReactElement,
   ReactNode,
   SetStateAction,
+  useEffect,
 } from "react";
 import { Move, Piece } from "../../types";
 import useWindowDimensions from "../hooks/useWindowDimensions";
 
 export function GameScreen({
-  modal,
   capturedPiecesTop,
   capturedPiecesBottom,
   menuItems,
@@ -49,7 +50,6 @@ export function GameScreen({
   setAnalysisMode,
   setAnalysisMoveNumber,
 }: {
-  modal: ReactNode;
   capturedPiecesTop: ReactNode;
   capturedPiecesBottom: ReactNode;
   menuItems: ReactNode;
@@ -94,7 +94,6 @@ export function GameScreen({
 
   return (
     <>
-      {modal}
       <Flex justify={"center"} mt={["60px", null, null, "8px"]}>
         <Flex
           flexDirection={"column"}

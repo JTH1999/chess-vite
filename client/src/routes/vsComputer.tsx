@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { SyntheticEvent, useEffect, useLayoutEffect, useState } from "react";
 import Board from "../components/board/Board";
 import { newGamePieces, debugPieces } from "../data/newGamePieces";
 import CapturedPieces from "../components/CapturedPieces";
@@ -36,7 +36,7 @@ import useWindowDimensions from "../hooks/useWindowDimensions";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import { useAuth } from "../hooks/useAuth";
 import MainButton from "../components/MainButton";
-import { useLoaderData, useNavigate } from "react-router-dom";
+import { Form, useLoaderData, useNavigate } from "react-router-dom";
 import optimusPrime from "../assets/botAvatars/optimusPrimeAvatar.png";
 import walle from "../assets/botAvatars/walleAvatar.png";
 import r2d2 from "../assets/botAvatars/r2d2Avatar.png";
@@ -85,10 +85,6 @@ export default function VsComputerRoute() {
   let previousPieceMovedFrom = "";
   let previousPieceMovedTo = "";
 
-  useEffect(() => {
-    onOpen();
-  }, []);
-
   if (moves.length >= 1) {
     const previousPieceIndex = moves[analysisMoveNumber].movedPieceIndex;
     let previousPiecePreviousPosition;
@@ -107,12 +103,27 @@ export default function VsComputerRoute() {
       previousPieceCurrentPosition.currentRow.toString();
   }
 
+  useEffect(() => {
+    onOpen();
+  }, []);
+
   function setColours(value: string) {
     if (value === "white" || value === "black") {
-      setPlayer1Colour(value);
+      setColour(value);
+      if (value === "black") {
+        setBotToMove(true);
+      } else {
+        setBotToMove(false);
+      }
     } else if (value === "random") {
       const rand = Math.random();
-      setPlayer1Colour(rand > 0.5 ? "white" : "black");
+      const randomColour = rand > 0.5 ? "white" : "black";
+      setColour(randomColour);
+      if (randomColour === "black") {
+        setBotToMove(true);
+      } else {
+        setBotToMove(false);
+      }
     } else {
       throw new Error("Value should be white, black or random.");
     }
@@ -210,6 +221,7 @@ export default function VsComputerRoute() {
       colour,
       false,
       true,
+      botDifficulty,
       setBotToMove,
       setColour,
       setPieces,
@@ -225,8 +237,6 @@ export default function VsComputerRoute() {
       setMoves,
       setAnalysisMoveNumber
     );
-
-    console.log(whiteToMove);
   }
 
   function resetBoard() {
@@ -243,6 +253,51 @@ export default function VsComputerRoute() {
     setSelectedPiece(null);
     setAnalysisMode(false);
     setAnalysisMoveNumber(0);
+    onOpen();
+  }
+
+  function handleSubmit(e: SyntheticEvent) {
+    e.preventDefault();
+    const target = e.target as typeof e.target & {
+      player1Input: { value: string };
+      botDifficulty: { value: string };
+      playerColour: { value: string };
+    };
+
+    onClose();
+    setPlayer1Name(target.player1Input.value);
+    setBotDifficulty(target.botDifficulty.value);
+    setColours(target.playerColour.value);
+    if (botToMove) {
+      calculateBotMove(
+        pieces,
+        whiteToMove,
+        capturedPieces,
+        whiteKingSquare,
+        blackKingSquare,
+        isCheck,
+        promote,
+        moves,
+        analysisMode,
+        colour,
+        false,
+        botDifficulty,
+        setBotToMove,
+        setColour,
+        setPieces,
+        setSelectedPiece,
+        setWhiteToMove,
+        setCapturedPieces,
+        setWhiteKingSquare,
+        setBlackKingSquare,
+        setIsCheck,
+        setIsCheckmate,
+        setIsStalemate,
+        setPromote,
+        setMoves,
+        setAnalysisMoveNumber
+      );
+    }
   }
 
   function OptionsModal() {
@@ -252,74 +307,101 @@ export default function VsComputerRoute() {
         <ModalContent bgColor={colourScheme.body} p="20px">
           <ModalHeader textAlign={"center"}>Configure Match</ModalHeader>
           <ModalCloseButton onClick={onClose} />
-          <ModalBody>
-            <Flex direction="column">
-              <Text fontSize={"18px"} pb="4px">
-                Player 1
-              </Text>
-              <Input
-                mb="20px"
-                name="player1Input"
-                value={player1Name}
-                onChange={(e) => setPlayer1Name(e.target.value)}
+          <Form onSubmit={handleSubmit}>
+            <ModalBody>
+              <Flex direction="column">
+                <Text fontSize={"18px"} pb="4px">
+                  Player 1
+                </Text>
+                <Input
+                  mb="20px"
+                  name="player1Input"
+                  value={player1Name}
+                  onChange={(e) => setPlayer1Name(e.target.value)}
+                />
+                <Text fontSize={"18px"} pb="8px">
+                  Select Bot Difficulty
+                </Text>
+                <RadioGroup
+                  colorScheme="green"
+                  mb="20px"
+                  isDisabled={moves.length > 0}
+                  onChange={setBotDifficulty}
+                  defaultValue="2"
+                >
+                  <Stack direction="row" spacing="20px">
+                    <Radio
+                      value="1"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Easy
+                    </Radio>
+                    <Radio
+                      value="2"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Medium
+                    </Radio>
+                    <Radio
+                      value="3"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Hard
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+
+                <Text fontSize={"18px"} pb="8px">
+                  Select Your Colour
+                </Text>
+                <RadioGroup
+                  colorScheme="green"
+                  mb="20px"
+                  isDisabled={moves.length > 0}
+                  onChange={setColours}
+                  defaultValue="white"
+                >
+                  <Stack direction="row" spacing="20px">
+                    <Radio
+                      value="white"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      White
+                    </Radio>
+                    <Radio
+                      value="black"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      Black
+                    </Radio>
+                    <Radio
+                      value="random"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      Randomise
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </Flex>
+            </ModalBody>
+
+            <ModalFooter>
+              <MainButton
+                // onClick={onClose}
+                text={moves.length > 0 ? "Save" : "Start Match"}
+                disabled={false}
+                w="100%"
+                mt="0"
+                type="submit"
               />
-              <Text fontSize={"18px"} pb="8px">
-                Select Bot Difficulty
-              </Text>
-              <RadioGroup
-                colorScheme="green"
-                mb="20px"
-                isDisabled={moves.length > 0}
-                onChange={setBotDifficulty}
-                defaultValue="2"
-              >
-                <Stack direction="row" spacing="20px">
-                  <Radio value="1" variant={colourScheme.name}>
-                    Easy
-                  </Radio>
-                  <Radio value="2" variant={colourScheme.name}>
-                    Medium
-                  </Radio>
-                  <Radio value="3" variant={colourScheme.name}>
-                    Hard
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-
-              <Text fontSize={"18px"} pb="8px">
-                Select Your Colour
-              </Text>
-              <RadioGroup
-                colorScheme="green"
-                mb="20px"
-                isDisabled={moves.length > 0}
-                onChange={setColours}
-                defaultValue="white"
-              >
-                <Stack direction="row" spacing="20px">
-                  <Radio value="white" variant={colourScheme.name}>
-                    White
-                  </Radio>
-                  <Radio value="black" variant={colourScheme.name}>
-                    Black
-                  </Radio>
-                  <Radio value="random" variant={colourScheme.name}>
-                    Randomise
-                  </Radio>
-                </Stack>
-              </RadioGroup>
-            </Flex>
-          </ModalBody>
-
-          <ModalFooter>
-            <MainButton
-              onClick={onClose}
-              text={moves.length > 0 ? "Save" : "Start Match"}
-              disabled={false}
-              w="100%"
-              mt="0"
-            />
-          </ModalFooter>
+            </ModalFooter>
+          </Form>
         </ModalContent>
       </Modal>
     );
@@ -343,98 +425,203 @@ export default function VsComputerRoute() {
       </>
     );
   }
+
+  console.log(botDifficulty);
   return (
-    <GameScreen
-      modal={<OptionsModal />}
-      capturedPiecesTop={
-        <CapturedPieces
-          capturedPieces={capturedPieces}
-          colour={colour}
-          username={bot.name}
-          src={bot.src}
-          top={true}
-        />
-      }
-      capturedPiecesBottom={
-        <CapturedPieces
-          username={player1Name}
-          capturedPieces={capturedPieces}
-          colour={colour === "white" ? "black" : "white"}
-          src={avatarUrl}
-          top={false}
-        />
-      }
-      menuItems={<MenuItems />}
-      endScreen={
-        <CheckmateScreen
-          whiteToMove={whiteToMove}
-          isCheckmate={isCheckmate}
-          isStalemate={isStalemate}
-          setWhiteToMove={setWhiteToMove}
-          setCapturedPieces={setCapturedPieces}
-          setWhiteKingSquare={setWhiteKingSquare}
-          setBlackKingSquare={setBlackKingSquare}
-          setIsCheck={setIsCheck}
-          setIsCheckmate={setIsCheckmate}
-          setIsStalemate={setIsStalemate}
-          setPromote={setPromote}
-          setMoves={setMoves}
-          setPieces={setPieces}
-          setSelectedPiece={setSelectedPiece}
-          analysisMode={analysisMode}
-          setAnalysisMode={setAnalysisMode}
-          setAnalysisMoveNumber={setAnalysisMoveNumber}
-          moves={moves}
-          resetBoard={resetBoard}
-        />
-      }
-      promoteScreen={
-        <PromoteScreen
-          pieces={pieces}
-          setPieces={setPieces}
-          selectedPiece={selectedPiece}
-          setSelectedPiece={setSelectedPiece}
-          whiteToMove={whiteToMove}
-          setWhiteToMove={setWhiteToMove}
-          whiteKingSquare={whiteKingSquare}
-          blackKingSquare={blackKingSquare}
-          setIsCheck={setIsCheck}
-          setIsCheckmate={setIsCheckmate}
-          setIsStalemate={setIsStalemate}
-          promote={promote}
-          setPromote={setPromote}
-          moves={moves}
-          capturedPieces={capturedPieces}
-          flipBoard={false}
-          colour={colour}
-          setColour={setColour}
-        />
-      }
-      analysisSection={
-        <Box h="100%">
-          <AnalysisSection
+    <>
+      <Modal isOpen={isOpen} onClose={onClose} isCentered>
+        <ModalOverlay />
+        <ModalContent bgColor={colourScheme.body} p="20px">
+          <ModalHeader textAlign={"center"}>Configure Match</ModalHeader>
+          <ModalCloseButton onClick={onClose} />
+          <Form onSubmit={handleSubmit}>
+            <ModalBody>
+              <Flex direction="column">
+                <Text fontSize={"18px"} pb="4px">
+                  Player 1
+                </Text>
+                <Input
+                  mb="20px"
+                  name="player1Input"
+                  value={player1Name}
+                  onChange={(e) => setPlayer1Name(e.target.value)}
+                />
+                <Text fontSize={"18px"} pb="8px">
+                  Select Bot Difficulty
+                </Text>
+                <RadioGroup
+                  colorScheme="green"
+                  mb="20px"
+                  isDisabled={moves.length > 0}
+                  onChange={setBotDifficulty}
+                  defaultValue="2"
+                >
+                  <Stack direction="row" spacing="20px">
+                    <Radio
+                      value="1"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Easy
+                    </Radio>
+                    <Radio
+                      value="2"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Medium
+                    </Radio>
+                    <Radio
+                      value="3"
+                      variant={colourScheme.name}
+                      name="botDifficulty"
+                    >
+                      Hard
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+
+                <Text fontSize={"18px"} pb="8px">
+                  Select Your Colour
+                </Text>
+                <RadioGroup
+                  colorScheme="green"
+                  mb="20px"
+                  isDisabled={moves.length > 0}
+                  onChange={setColours}
+                  defaultValue="white"
+                >
+                  <Stack direction="row" spacing="20px">
+                    <Radio
+                      value="white"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      White
+                    </Radio>
+                    <Radio
+                      value="black"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      Black
+                    </Radio>
+                    <Radio
+                      value="random"
+                      variant={colourScheme.name}
+                      name="playerColour"
+                    >
+                      Randomise
+                    </Radio>
+                  </Stack>
+                </RadioGroup>
+              </Flex>
+            </ModalBody>
+
+            <ModalFooter>
+              <MainButton
+                // onClick={onClose}
+                text={moves.length > 0 ? "Save" : "Start Match"}
+                disabled={false}
+                w="100%"
+                mt="0"
+                type="submit"
+              />
+            </ModalFooter>
+          </Form>
+        </ModalContent>
+      </Modal>
+      <GameScreen
+        capturedPiecesTop={
+          <CapturedPieces
+            capturedPieces={capturedPieces}
+            colour={colour}
+            username={bot.name}
+            src={bot.src}
+            top={true}
+          />
+        }
+        capturedPiecesBottom={
+          <CapturedPieces
+            username={player1Name}
+            capturedPieces={capturedPieces}
+            colour={colour === "white" ? "black" : "white"}
+            src={avatarUrl}
+            top={false}
+          />
+        }
+        menuItems={<MenuItems />}
+        endScreen={
+          <CheckmateScreen
+            whiteToMove={whiteToMove}
+            isCheckmate={isCheckmate}
+            isStalemate={isStalemate}
+            setWhiteToMove={setWhiteToMove}
+            setCapturedPieces={setCapturedPieces}
+            setWhiteKingSquare={setWhiteKingSquare}
+            setBlackKingSquare={setBlackKingSquare}
+            setIsCheck={setIsCheck}
+            setIsCheckmate={setIsCheckmate}
+            setIsStalemate={setIsStalemate}
+            setPromote={setPromote}
+            setMoves={setMoves}
+            setPieces={setPieces}
+            setSelectedPiece={setSelectedPiece}
+            analysisMode={analysisMode}
+            setAnalysisMode={setAnalysisMode}
+            setAnalysisMoveNumber={setAnalysisMoveNumber}
             moves={moves}
+            resetBoard={resetBoard}
+          />
+        }
+        promoteScreen={
+          <PromoteScreen
             pieces={pieces}
             setPieces={setPieces}
-            setAnalysisMode={setAnalysisMode}
-            analysisMode={analysisMode}
-            analysisMoveNumber={analysisMoveNumber}
-            setAnalysisMoveNumber={setAnalysisMoveNumber}
+            selectedPiece={selectedPiece}
+            setSelectedPiece={setSelectedPiece}
+            whiteToMove={whiteToMove}
+            setWhiteToMove={setWhiteToMove}
+            whiteKingSquare={whiteKingSquare}
+            blackKingSquare={blackKingSquare}
+            setIsCheck={setIsCheck}
+            setIsCheckmate={setIsCheckmate}
+            setIsStalemate={setIsStalemate}
+            promote={promote}
+            setPromote={setPromote}
+            moves={moves}
+            capturedPieces={capturedPieces}
+            flipBoard={false}
+            colour={colour}
+            setColour={setColour}
           />
-        </Box>
-      }
-      moves={moves}
-      pieces={pieces}
-      analysisMode={analysisMode}
-      analysisMoveNumber={analysisMoveNumber}
-      previousPieceMovedFrom={previousPieceMovedFrom}
-      previousPieceMovedTo={previousPieceMovedTo}
-      colour={colour}
-      selectedPiece={selectedPiece}
-      handleSquareClick={handleSquareClick}
-      setPieces={setPieces}
-      setAnalysisMode={setAnalysisMode}
-      setAnalysisMoveNumber={setAnalysisMoveNumber}
-    />
+        }
+        analysisSection={
+          <Box h="100%">
+            <AnalysisSection
+              moves={moves}
+              pieces={pieces}
+              setPieces={setPieces}
+              setAnalysisMode={setAnalysisMode}
+              analysisMode={analysisMode}
+              analysisMoveNumber={analysisMoveNumber}
+              setAnalysisMoveNumber={setAnalysisMoveNumber}
+            />
+          </Box>
+        }
+        moves={moves}
+        pieces={pieces}
+        analysisMode={analysisMode}
+        analysisMoveNumber={analysisMoveNumber}
+        previousPieceMovedFrom={previousPieceMovedFrom}
+        previousPieceMovedTo={previousPieceMovedTo}
+        colour={colour}
+        selectedPiece={selectedPiece}
+        handleSquareClick={handleSquareClick}
+        setPieces={setPieces}
+        setAnalysisMode={setAnalysisMode}
+        setAnalysisMoveNumber={setAnalysisMoveNumber}
+      />
+    </>
   );
 }

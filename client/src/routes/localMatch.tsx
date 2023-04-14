@@ -167,6 +167,7 @@ export default function LocalMatchRoute() {
       colour,
       flipBoard,
       false,
+      null,
       () => {},
       setColour,
       setPieces,
@@ -200,8 +201,20 @@ export default function LocalMatchRoute() {
     setAnalysisMoveNumber(0);
   }
 
-  function OptionsModal() {
+  function MenuItems() {
     return (
+      <>
+        <MenuItem onClick={resetBoard}>New Game</MenuItem>
+        <MenuItem>Save</MenuItem>
+        <MenuItem onClick={onOpen}>Options</MenuItem>
+      </>
+    );
+  }
+
+  console.log(colour);
+
+  return (
+    <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent bgColor={colourScheme.body} p="20px">
@@ -273,111 +286,97 @@ export default function LocalMatchRoute() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    );
-  }
-
-  function MenuItems() {
-    return (
-      <>
-        <MenuItem onClick={resetBoard}>New Game</MenuItem>
-        <MenuItem>Save</MenuItem>
-        <MenuItem onClick={onOpen}>Options</MenuItem>
-      </>
-    );
-  }
-
-  return (
-    <GameScreen
-      modal={<OptionsModal />}
-      capturedPiecesTop={
-        <CapturedPieces
-          capturedPieces={capturedPieces}
-          colour={colour}
-          username={colour === player1Colour ? player2Name : player1Name}
-          top={true}
-          src={colour === player1Colour ? "" : avatarUrl}
-        />
-      }
-      capturedPiecesBottom={
-        <CapturedPieces
-          username={colour === player1Colour ? player1Name : player2Name}
-          capturedPieces={capturedPieces}
-          colour={colour === "white" ? "black" : "white"}
-          top={false}
-          src={colour === player1Colour ? avatarUrl : null}
-        />
-      }
-      menuItems={<MenuItems />}
-      endScreen={
-        <CheckmateScreen
-          whiteToMove={whiteToMove}
-          isCheckmate={isCheckmate}
-          isStalemate={isStalemate}
-          setWhiteToMove={setWhiteToMove}
-          setCapturedPieces={setCapturedPieces}
-          setWhiteKingSquare={setWhiteKingSquare}
-          setBlackKingSquare={setBlackKingSquare}
-          setIsCheck={setIsCheck}
-          setIsCheckmate={setIsCheckmate}
-          setIsStalemate={setIsStalemate}
-          setPromote={setPromote}
-          setMoves={setMoves}
-          setPieces={setPieces}
-          setSelectedPiece={setSelectedPiece}
-          analysisMode={analysisMode}
-          setAnalysisMode={setAnalysisMode}
-          setAnalysisMoveNumber={setAnalysisMoveNumber}
-          moves={moves}
-          resetBoard={resetBoard}
-        />
-      }
-      promoteScreen={
-        <PromoteScreen
-          pieces={pieces}
-          setPieces={setPieces}
-          selectedPiece={selectedPiece}
-          setSelectedPiece={setSelectedPiece}
-          whiteToMove={whiteToMove}
-          setWhiteToMove={setWhiteToMove}
-          whiteKingSquare={whiteKingSquare}
-          blackKingSquare={blackKingSquare}
-          setIsCheck={setIsCheck}
-          setIsCheckmate={setIsCheckmate}
-          setIsStalemate={setIsStalemate}
-          promote={promote}
-          setPromote={setPromote}
-          moves={moves}
-          capturedPieces={capturedPieces}
-          flipBoard={flipBoard}
-          colour={colour}
-          setColour={setColour}
-        />
-      }
-      analysisSection={
-        <Box h="100%">
-          <AnalysisSection
+      <GameScreen
+        capturedPiecesTop={
+          <CapturedPieces
+            capturedPieces={capturedPieces}
+            colour={colour}
+            username={colour === player1Colour ? player2Name : player1Name}
+            top={true}
+            src={colour === player1Colour ? "" : avatarUrl}
+          />
+        }
+        capturedPiecesBottom={
+          <CapturedPieces
+            username={colour === player1Colour ? player1Name : player2Name}
+            capturedPieces={capturedPieces}
+            colour={colour === "white" ? "black" : "white"}
+            top={false}
+            src={colour === player1Colour ? avatarUrl : null}
+          />
+        }
+        menuItems={<MenuItems />}
+        endScreen={
+          <CheckmateScreen
+            whiteToMove={whiteToMove}
+            isCheckmate={isCheckmate}
+            isStalemate={isStalemate}
+            setWhiteToMove={setWhiteToMove}
+            setCapturedPieces={setCapturedPieces}
+            setWhiteKingSquare={setWhiteKingSquare}
+            setBlackKingSquare={setBlackKingSquare}
+            setIsCheck={setIsCheck}
+            setIsCheckmate={setIsCheckmate}
+            setIsStalemate={setIsStalemate}
+            setPromote={setPromote}
+            setMoves={setMoves}
+            setPieces={setPieces}
+            setSelectedPiece={setSelectedPiece}
+            analysisMode={analysisMode}
+            setAnalysisMode={setAnalysisMode}
+            setAnalysisMoveNumber={setAnalysisMoveNumber}
             moves={moves}
+            resetBoard={resetBoard}
+          />
+        }
+        promoteScreen={
+          <PromoteScreen
             pieces={pieces}
             setPieces={setPieces}
-            setAnalysisMode={setAnalysisMode}
-            analysisMode={analysisMode}
-            analysisMoveNumber={analysisMoveNumber}
-            setAnalysisMoveNumber={setAnalysisMoveNumber}
+            selectedPiece={selectedPiece}
+            setSelectedPiece={setSelectedPiece}
+            whiteToMove={whiteToMove}
+            setWhiteToMove={setWhiteToMove}
+            whiteKingSquare={whiteKingSquare}
+            blackKingSquare={blackKingSquare}
+            setIsCheck={setIsCheck}
+            setIsCheckmate={setIsCheckmate}
+            setIsStalemate={setIsStalemate}
+            promote={promote}
+            setPromote={setPromote}
+            moves={moves}
+            capturedPieces={capturedPieces}
+            flipBoard={flipBoard}
+            colour={colour}
+            setColour={setColour}
           />
-        </Box>
-      }
-      moves={moves}
-      pieces={pieces}
-      analysisMode={analysisMode}
-      analysisMoveNumber={analysisMoveNumber}
-      previousPieceMovedFrom={previousPieceMovedFrom}
-      previousPieceMovedTo={previousPieceMovedTo}
-      colour={colour}
-      selectedPiece={selectedPiece}
-      handleSquareClick={handleSquareClick}
-      setPieces={setPieces}
-      setAnalysisMode={setAnalysisMode}
-      setAnalysisMoveNumber={setAnalysisMoveNumber}
-    />
+        }
+        analysisSection={
+          <Box h="100%">
+            <AnalysisSection
+              moves={moves}
+              pieces={pieces}
+              setPieces={setPieces}
+              setAnalysisMode={setAnalysisMode}
+              analysisMode={analysisMode}
+              analysisMoveNumber={analysisMoveNumber}
+              setAnalysisMoveNumber={setAnalysisMoveNumber}
+            />
+          </Box>
+        }
+        moves={moves}
+        pieces={pieces}
+        analysisMode={analysisMode}
+        analysisMoveNumber={analysisMoveNumber}
+        previousPieceMovedFrom={previousPieceMovedFrom}
+        previousPieceMovedTo={previousPieceMovedTo}
+        colour={colour}
+        selectedPiece={selectedPiece}
+        handleSquareClick={handleSquareClick}
+        setPieces={setPieces}
+        setAnalysisMode={setAnalysisMode}
+        setAnalysisMoveNumber={setAnalysisMoveNumber}
+      />
+    </>
   );
 }
