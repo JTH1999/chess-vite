@@ -278,4 +278,9 @@ router.post(
   }
 );
 
+router.get("/test", async (req, res, next) => {
+  const users = await db.user.findMany({select: {username: true}});
+  res.send(users);
+})
+
 module.exports = router;
