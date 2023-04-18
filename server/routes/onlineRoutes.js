@@ -4,9 +4,12 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 const router = express.Router();
 const httpServer = createServer(router);
+const whitelist = process.env.WHITELISTED_DOMAINS
+  ? process.env.WHITELISTED_DOMAINS.split(",")
+  : [];
 const io = new Server(httpServer, {
   cors: {
-    origin: ["http://localhost:5173", "http://127.0.0.1:5173"],
+    origin: whitelist,
   },
 });
 
