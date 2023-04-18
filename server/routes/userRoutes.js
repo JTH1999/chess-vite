@@ -9,9 +9,6 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 
-const userAvatarsPath =
-  "C:/Users/Jack Harmer/Projects/Chess/chess-vite/server/userAvatars/";
-
 const {
   getToken,
   COOKIE_OPTIONS,
@@ -244,7 +241,7 @@ router.get("/avatar", verifyUser, async (req, res, next) => {
       avatar: true,
     },
   });
-  const avatarFile = userAvatarsPath + avatarUrl.avatar;
+  const avatarFile = process.env.USER_AVATAR_PATH + avatarUrl.avatar;
   return res.sendFile(avatarFile);
 });
 
@@ -270,7 +267,7 @@ router.post(
           avatar: filename,
         },
       });
-      const avatarFile = userAvatarsPath + filename;
+      const avatarFile = process.env.USER_AVATAR_PATH ? process.env.USER_AVATAR_PATH + filename : filename;
       return res.sendFile(avatarFile);
     } catch (error) {
       res.sendStatus(500);

@@ -6,8 +6,10 @@ import { useColour } from "../hooks/useColour";
 export function PleaseLogin({ text }: { text: string }) {
   const navigate = useNavigate();
   const { colourScheme } = useColour();
+
   return (
-    <Flex justify={"center"} pt="120px">
+    <Flex justify={"center"} pt="120px" px={"10px"}>
+      
       <Flex
         borderColor={colourScheme.border}
         borderWidth={"2px"}
@@ -15,7 +17,8 @@ export function PleaseLogin({ text }: { text: string }) {
         bgColor={colourScheme.darker}
         direction="column"
         p="50px"
-        w="30%"
+        
+        
         textAlign={"center"}
         h="auto"
       >

@@ -25,6 +25,7 @@ import { useAuth } from "../../hooks/useAuth";
 import TransparentButton from "../TransparentButton";
 import { Socket, io } from "socket.io-client";
 import { useColour } from "../../hooks/useColour";
+import { PleaseLogin } from "../PleaseLogin";
 
 export function LobbyScreen({
   socket,
@@ -246,19 +247,9 @@ export function LobbyScreen({
           </>
         ) : (
           <>
-            <Heading pb="20px">Please Log In</Heading>
-            <Text textAlign={"center"} pb="10px">
-              You must be logged in to play online with another user. Please log
-              in to continue.
-            </Text>
-            <MainButton
-              onClick={() => navigate("/login")}
-              text="Sign in"
-              disabled={false}
-              w="100%"
-              mt="0"
-            />
+            <PleaseLogin text="You must be logged in to play online with another user. Please login to continue." />
           </>
+          
         )}
       </Flex>
     </Flex>
