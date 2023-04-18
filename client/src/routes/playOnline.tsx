@@ -56,7 +56,7 @@ export default function OnlineMatchRoute() {
   const username = auth?.user.username;
 
   useEffect(() => {
-    const socket = io("http://localhost:8082");
+    const socket = io("http://localhost:8081");
     setSocket(socket);
 
     socket.on(
