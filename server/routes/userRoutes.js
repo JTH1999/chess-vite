@@ -241,8 +241,7 @@ router.get("/avatar", verifyUser, async (req, res, next) => {
       avatar: true,
     },
   });
-  const avatarFile = process.env.USER_AVATAR_PATH + avatarUrl.avatar;
-  return res.sendFile(avatarFile);
+  return res.sendFile(avatarUrl.avatar, {root: "./userAvatars"});
 });
 
 router.post(
@@ -267,8 +266,8 @@ router.post(
           avatar: filename,
         },
       });
-      const avatarFile = process.env.USER_AVATAR_PATH ? process.env.USER_AVATAR_PATH + filename : filename;
-      return res.sendFile(avatarFile);
+      
+      return res.sendFile(filename, {root: "./userAvatars"});
     } catch (error) {
       res.sendStatus(500);
     }
