@@ -272,7 +272,7 @@ io.on("connection", (socket) => {
     }
     const hostColour = randomNumber >= 0.5 ? "white" : "black";
     const otherColour = hostColour === "white" ? "black" : "white";
-    const newGamePieces = require("../data/newGamePieces");
+    const newGamePieces = require("./data/newGamePieces");
 
     // Need to get user ids of players, know which is white and which is black
     const hostUser = await db.user.findUnique({
@@ -359,7 +359,7 @@ io.on("connection", (socket) => {
     if (request.selectedPiece.colour !== expectedColour)
       return console.log("Piece colour does not match expected colour");
 
-    const moveLogic = require("../chessLogic/logic").moveLogic;
+    const moveLogic = require("./chessLogic/logic").moveLogic;
 
     const logicResult = moveLogic(
       request.selectedPiece,
@@ -438,7 +438,7 @@ io.on("connection", (socket) => {
     if (socket.id !== expectedSocketId)
       return console.log("Unexpected socket id");
 
-    const promoteLogic = require("../chessLogic/logic").promoteLogic;
+    const promoteLogic = require("./chessLogic/logic").promoteLogic;
     const logicResult = promoteLogic(
       game.pieces,
       game.selectedPiece,

@@ -56,7 +56,7 @@ export default function OnlineMatchRoute() {
   const username = auth?.user.username;
 
   useEffect(() => {
-    const socket = io("http://localhost:8081");
+    const socket = io(import.meta.env.VITE_CHESS_API_ENDPOINT);
     setSocket(socket);
 
     socket.on(
