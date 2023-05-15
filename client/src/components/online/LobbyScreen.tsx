@@ -26,6 +26,7 @@ import TransparentButton from "../TransparentButton";
 import { Socket, io } from "socket.io-client";
 import { useColour } from "../../hooks/useColour";
 import { PleaseLogin } from "../PleaseLogin";
+import { ClientToServerEvents, ServerToClientEvents } from "../../../types";
 
 export function LobbyScreen({
   socket,
@@ -36,7 +37,7 @@ export function LobbyScreen({
   roomJoined,
   players,
 }: {
-  socket: Socket;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
   username: string;
   onOpen: any;
   isRoomCreated: boolean;
@@ -55,17 +56,18 @@ export function LobbyScreen({
     const createRoomRequest = {
       username: username,
       room: username,
-      socketId: socket.id,
     };
 
     socket.emit("joinRoom", createRoomRequest);
   }
 
   function joinRoom(roomCode: string) {
+    if (!auth?.user.username) {
+      throw new Error("Must be an authenticated user to join a room")
+    }
     const joinRoomRequest = {
       username: auth?.user?.username,
       room: roomCode,
-      socketId: socket.id,
     };
 
     socket.emit("joinRoom", joinRoomRequest);

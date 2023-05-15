@@ -1,12 +1,25 @@
+import { Socket } from "net";
+import {
+  ClientToServerEvents,
+  Game,
+  GamesObject,
+  Move,
+  Piece,
+  ServerToClientEvents,
+  UsernamesObject,
+} from "./types";
+import { createServer } from "http";
+
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const db = require("./db.js");
+const db = require("./db");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
-const { Server } = require("socket.io");
-const { createServer } = require("http");
+import { Server } from "socket.io";
+import { error } from "console";
+// const { createServer } = require("http");
 
 if (process.env.NODE_ENV !== "production") {
   // Load environment variables from .env file in non prod environments
@@ -30,7 +43,7 @@ const whitelist = process.env.WHITELISTED_DOMAINS
   : [];
 
 const corsOptions = {
-  origin: function (origin, callback) {
+  origin: function (origin: any, callback: any) {
     if (!origin || whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
@@ -42,35 +55,35 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
 app.use(passport.initialize());
-
-
-
-app.get("/", async function (req, res) {
-  res.type("html").send(html);
-});
 
 //Start the server in port 8081
 app.use("/users", userRouter);
 // server.use("/online", onlineRouter);
 
-const server = require('http').Server(app);
+// const server = require("http").Server(app);
+const server = createServer(app);
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
+  cors: corsOptions,
+});
 
-const io = require('socket.io')(server, {cors: corsOptions});
-
+// const io: <ServerToClientEvents, ClientToServerEvents> = require("socket.io")(server, { cors: corsOptions });
 
 server.listen(process.env.PORT || 8081, function () {
-  const port = server.address().port;
-
-  console.log("App started at port:", port);
+  const address = server.address();
+  if (address !== null && typeof address !== "string") {
+    const port = address.port;
+    console.log("App started at port:", port);
+  } else {
+    throw new Error("server.address is null or string");
+  }
 });
 
 const html = `
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello from Render!</title>
+    <title>Jack's chess backend</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
       setTimeout(() => {
@@ -111,16 +124,16 @@ const html = `
   </head>
   <body>
     <section>
-      Hello from Render!
+      Jack's chess backend!
     </section>
   </body>
 </html>
 `;
 
-let usernames = {};
-let games = {};
+let usernames: UsernamesObject = {};
+let games: GamesObject = {};
 
-function pressClock(id) {
+function pressClock(id: string) {
   const game = games[id];
   // white to move has aready changed at time of calling function
   if (game.moves.length === 1) {
@@ -137,11 +150,11 @@ function pressClock(id) {
   }
 }
 
-function startClock(id) {
+function startClock(id: string) {
   const game = games[id];
   const statuses = ["draw", "checkmate", "stalemate", "forfeit", "resignation"];
   game.interval = setInterval(async () => {
-    if (statuses.includes(game.status)) {
+    if (game.status && statuses.includes(game.status)) {
       clearInterval(game.interval);
       return;
     }
@@ -213,7 +226,7 @@ io.on("connection", (socket) => {
     if (sockets.length > 0) {
       if (sockets.length === 2) {
         console.log("This room is already full");
-        return socket.emit("This room is already full.");
+        return socket.emit("roomFull");
       }
 
       currentlyInRoom.push(usernames[sockets[0].id]);
@@ -237,7 +250,7 @@ io.on("connection", (socket) => {
 
   // ------------------------------------------------------------------------------
   // Leave room
-  socket.on("leaveRoom", async (roomCode) => {
+  socket.on("leaveRoom", async (roomCode: string) => {
     socket.leave(roomCode);
     const currentlyInRoom = [];
     const sockets = await io.in(roomCode).fetchSockets();
@@ -255,7 +268,7 @@ io.on("connection", (socket) => {
 
   // ------------------------------------------------------------------------------
   // Start match
-  socket.on("startMatch", async (roomCode) => {
+  socket.on("startMatch", async (roomCode: string) => {
     // Need to say which player is black / white
     // Need to provide initial pieces and available moves
     const randomNumber = Math.random();
@@ -284,6 +297,9 @@ io.on("connection", (socket) => {
       },
     });
 
+    if (!otherSocketId) {
+      throw new Error("othersocketId is undefined");
+    }
     const otherUser = await db.user.findUnique({
       where: {
         username: usernames[otherSocketId],
@@ -304,7 +320,7 @@ io.on("connection", (socket) => {
         result: "unfinished",
       },
     });
-    const game = {
+    const game: Game = {
       roomCode: roomCode,
       [hostColour]: hostSocketId,
       [otherColour]: otherSocketId,
@@ -317,6 +333,12 @@ io.on("connection", (socket) => {
       capturedPieces: [],
       whiteTime: 1800000,
       blackTime: 1800000,
+      currentMoveStart: 0,
+      interval: null,
+      selectedPiece: null,
+      winner: "",
+      white: "",
+      black: "",
     };
     games[createGame.id] = game;
 
@@ -645,5 +667,3 @@ io.on("connection", (socket) => {
     }
   });
 });
-
-

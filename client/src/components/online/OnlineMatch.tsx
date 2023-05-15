@@ -31,7 +31,7 @@ import { useColour } from "../../hooks/useColour";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { AnalysisSection } from "../AnalysisSection";
 import CapturedPieces from "../CapturedPieces";
-import { Message, Move, Piece } from "../../../types";
+import { ClientToServerEvents, Message, Move, Piece, ServerToClientEvents } from "../../../types";
 import { Socket } from "socket.io-client";
 import Board from "../board/Board";
 import OnlinePromoteScreen from "./OnlinePromoteScreen";
@@ -69,7 +69,7 @@ export function OnlineMatch({
   moves: Move[];
   whiteToMove: boolean;
   messages: Message[];
-  socket: Socket;
+  socket: Socket<ServerToClientEvents, ClientToServerEvents>;
   analysisMoveNumber: number;
   players: string[];
   setIsYourMove: Dispatch<SetStateAction<boolean>>;

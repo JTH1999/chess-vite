@@ -92,6 +92,7 @@ export default function Square({
       height={`${height}px`}
       width={`${height}px`}
       userSelect={"none"}
+      position={"relative"}
     >
       <Image
         src={piece ? piece.src : undefined}

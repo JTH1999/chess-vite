@@ -1,26 +1,4 @@
 import {
-  Box,
-  Button,
-  Drawer,
-  DrawerBody,
-  DrawerCloseButton,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  Flex,
-  Heading,
-  IconButton,
-  Image,
-  Input,
-  List,
-  ListItem,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
-  Text,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
@@ -28,7 +6,7 @@ import { useAuth } from "../hooks/useAuth";
 import { Socket, io } from "socket.io-client";
 import { LobbyScreen } from "../components/online/LobbyScreen";
 import { OnlineMatch } from "../components/online/OnlineMatch";
-import { Message, Move, Piece } from "../../types";
+import { ClientToServerEvents, Message, Move, Piece, ServerToClientEvents } from "../../types";
 import { PleaseLogin } from "../components/PleaseLogin";
 
 export default function OnlineMatchRoute() {
@@ -56,18 +34,18 @@ export default function OnlineMatchRoute() {
   const username = auth?.user.username;
 
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_CHESS_API_ENDPOINT);
+    const socket: Socket<ServerToClientEvents, ClientToServerEvents> = io(import.meta.env.VITE_CHESS_API_ENDPOINT);
     setSocket(socket);
 
     socket.on(
       "roomCreated",
-      (response: { room: string; players: string[] }) => {
+      (response) => {
         setIsRoomCreated(true);
         setPlayers(response.players);
       }
     );
 
-    socket.on("roomJoined", (response: { room: string; players: string[] }) => {
+    socket.on("roomJoined", (response) => {
       if (!isRoomCreated) {
         setRoomJoined(response.room);
       }
@@ -75,7 +53,7 @@ export default function OnlineMatchRoute() {
       setPlayers(response.players);
     });
 
-    socket.on("playerLeft", (response: { room: string; players: string[] }) => {
+    socket.on("playerLeft", (response) => {
       setPlayers(response.players);
       console.log("player left :(");
     });
@@ -87,14 +65,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "goToBoard",
-      (response: {
-        gameId: string;
-        status: string;
-        colour: "white" | "black";
-        whiteToMove: boolean;
-        pieces: Piece[];
-        roomCode: string;
-      }) => {
+      (response) => {
         // if room code != saved room code, return
         console.log(response.gameId);
         colour.current = response.colour;
@@ -110,15 +81,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "moveComplete",
-      (response: {
-        gameId: string;
-        status: string;
-        whiteToMove: boolean;
-        pieces: Piece[];
-        moves: Move[];
-        capturedPieces: Piece[];
-        check: boolean;
-      }) => {
+      (response) => {
         console.log(response.gameId);
         console.log(gameId);
         if (response.gameId !== gameId.current) {
@@ -140,16 +103,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "checkmate",
-      (response: {
-        gameId: string;
-        status: string;
-        pieces: Piece[];
-        moves: Move[];
-        capturedPieces: Piece[];
-        whiteToMove: boolean;
-        check: boolean;
-        winner: string;
-      }) => {
+      (response) => {
         if (response.gameId !== gameId.current) {
           return;
         }
@@ -166,15 +120,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "stalemate",
-      (response: {
-        gameId: string;
-        status: string;
-        pieces: Piece[];
-        moves: Move[];
-        capturedPieces: Piece[];
-        whiteToMove: boolean;
-        check: boolean;
-      }) => {
+      (response) => {
         if (response.gameId !== gameId.current) {
           return;
         }
@@ -190,15 +136,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "promotePiece",
-      (response: {
-        gameId: string;
-        status: string;
-        selectedPiece: Piece[];
-        pieces: Piece[];
-        moves: Move[];
-        capturedPieces: Piece[];
-        whiteToMove: boolean;
-      }) => {
+      (response) => {
         if (response.gameId !== gameId.current) {
           return;
         }
@@ -212,7 +150,7 @@ export default function OnlineMatchRoute() {
       }
     );
 
-    socket.on("draw", (response: { gameId: string }) => {
+    socket.on("draw", (response) => {
       if (response.gameId !== gameId.current) {
         return;
       }
@@ -222,7 +160,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "resignation",
-      (response: { gameId: string; roomCode: string; winner: string }) => {
+      (response) => {
         if (response.gameId !== gameId.current) {
           return;
         }
@@ -232,7 +170,7 @@ export default function OnlineMatchRoute() {
       }
     );
 
-    socket.on("outOfTime", (response: { gameId: string; winner: string }) => {
+    socket.on("outOfTime", (response) => {
       if (response.gameId !== gameId.current) {
         return;
       }
@@ -252,11 +190,7 @@ export default function OnlineMatchRoute() {
 
     socket.on(
       "gameEnded",
-      (response: {
-        gameId: string;
-        roomCode: string;
-        exitedPlayer: string;
-      }) => {
+      (response) => {
         if (response.gameId !== gameId.current) {
           return;
         }

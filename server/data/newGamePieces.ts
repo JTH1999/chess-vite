@@ -1,17 +1,15 @@
-const absPath = "/src/assets/pieces/";
-
-const wPawn = absPath + "w_pawn_svg_NoShadow.svg";
-const bPawn = absPath + "b_pawn_svg_NoShadow.svg";
-const wRook = absPath + "w_rook_svg_NoShadow.svg";
-const bRook = absPath + "b_rook_svg_NoShadow.svg";
-const wKnight = absPath + "w_knight_svg_NoShadow.svg";
-const bKnight = absPath + "b_knight_svg_NoShadow.svg";
-const wBishop = absPath + "w_bishop_svg_NoShadow.svg";
-const bBishop = absPath + "b_bishop_svg_NoShadow.svg";
-const wQueen = absPath + "w_queen_svg_NoShadow.svg";
-const bQueen = absPath + "b_queen_svg_NoShadow.svg";
-const wKing = absPath + "w_king_svg_NoShadow.svg";
-const bKing = absPath + "b_king_svg_NoShadow.svg";
+const wPawn = process.env.ABS_PATH + "w_pawn_svg_NoShadow.svg";
+const bPawn = process.env.ABS_PATH + "b_pawn_svg_NoShadow.svg";
+const wRook = process.env.ABS_PATH + "w_rook_svg_NoShadow.svg";
+const bRook = process.env.ABS_PATH + "b_rook_svg_NoShadow.svg";
+const wKnight = process.env.ABS_PATH + "w_knight_svg_NoShadow.svg";
+const bKnight = process.env.ABS_PATH + "b_knight_svg_NoShadow.svg";
+const wBishop = process.env.ABS_PATH + "w_bishop_svg_NoShadow.svg";
+const bBishop = process.env.ABS_PATH + "b_bishop_svg_NoShadow.svg";
+const wQueen = process.env.ABS_PATH + "w_queen_svg_NoShadow.svg";
+const bQueen = process.env.ABS_PATH + "b_queen_svg_NoShadow.svg";
+const wKing = process.env.ABS_PATH + "w_king_svg_NoShadow.svg";
+const bKing = process.env.ABS_PATH + "b_king_svg_NoShadow.svg";
 
 const newGamePieces = [
     {
@@ -390,4 +388,5 @@ const newGamePieces = [
     },
 ];
 
-module.exports = newGamePieces;
+module.exports = {newGamePieces, wPawn, bPawn, wKnight, bKnight, wBishop, bBishop, wRook, bRook, wKing, bKing, wQueen, bQueen} ;
+export {};
