@@ -14,7 +14,7 @@ const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
-const db = require("./db.js");
+const db = require("./db");
 const passport = require("passport");
 const cookieSession = require("cookie-session");
 const socket_io_1 = require("socket.io");
@@ -57,8 +57,14 @@ const io = new socket_io_1.Server(server, {
 });
 // const io: <ServerToClientEvents, ClientToServerEvents> = require("socket.io")(server, { cors: corsOptions });
 server.listen(process.env.PORT || 8081, function () {
-    const port = server.address().port;
-    console.log("App started at port:", port);
+    const address = server.address();
+    if (address !== null && typeof address !== "string") {
+        const port = address.port;
+        console.log("App started at port:", port);
+    }
+    else {
+        throw new Error("server.address is null or string");
+    }
 });
 const html = `
 <!DOCTYPE html>

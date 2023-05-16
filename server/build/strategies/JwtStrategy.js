@@ -11,8 +11,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy, ExtractJwt = require("passport-jwt").ExtractJwt;
-const db = require("../db.js");
-const opts = { jwtFromRequest: undefined, secretOrKey: undefined };
+const db = require("../db");
+const opts = {
+    jwtFromRequest: undefined,
+    secretOrKey: undefined,
+};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 // Used by the authenticated requests to deserialize the user,

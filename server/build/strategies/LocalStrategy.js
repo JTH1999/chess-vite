@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
-const db = require("../db.js");
+const db = require("../db");
 const bcrypt = require("bcryptjs");
 //Called during login/sign up.
 passport.use(new LocalStrategy(function verify(username, password, done) {
