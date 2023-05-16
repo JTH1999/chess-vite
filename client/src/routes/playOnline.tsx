@@ -71,6 +71,7 @@ export default function OnlineMatchRoute() {
         colour.current = response.colour;
         gameId.current = response.gameId;
         whiteToMove.current = true;
+        console.log(response.pieces);
         setStatus("match");
         setPieces(response.pieces);
         setIsYourMove(Boolean(response.colour === "white"));
