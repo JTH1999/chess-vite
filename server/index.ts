@@ -343,6 +343,12 @@ io.on("connection", (socket) => {
       white: "",
       black: "",
     };
+
+    game.white = hostColour === "white" ? hostSocketId : otherSocketId;
+    game.black = hostColour === "black" ? hostSocketId : otherSocketId;
+    if (game.white === game.black) {
+      throw new Error("White and Black cannot have the same socket id");
+    }
     games[createGame.id] = game;
 
     socket.emit("goToBoard", {
