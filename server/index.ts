@@ -268,9 +268,12 @@ io.on("connection", (socket) => {
 
   // ------------------------------------------------------------------------------
   // Start match
-  socket.on("startMatch", async (roomCode: string) => {
+  socket.on("startMatch", async (request) => {
     // Need to say which player is black / white
     // Need to provide initial pieces and available moves
+    const roomCode = request.roomCode;
+    const newGamePieces = request.pieces;
+
     const randomNumber = Math.random();
     const sockets = await io.in(roomCode).fetchSockets();
 
@@ -285,7 +288,7 @@ io.on("connection", (socket) => {
     }
     const hostColour = randomNumber >= 0.5 ? "white" : "black";
     const otherColour = hostColour === "white" ? "black" : "white";
-    const newGamePieces = require("./data/newGamePieces");
+    // const newGamePieces = require("./data/newGamePieces");
 
     // Need to get user ids of players, know which is white and which is black
     const hostUser = await db.user.findUnique({

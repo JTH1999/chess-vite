@@ -27,6 +27,7 @@ import { Socket, io } from "socket.io-client";
 import { useColour } from "../../hooks/useColour";
 import { PleaseLogin } from "../PleaseLogin";
 import { ClientToServerEvents, ServerToClientEvents } from "../../../types";
+import { newGamePieces } from "../../data/newGamePieces";
 
 export function LobbyScreen({
   socket,
@@ -78,7 +79,7 @@ export function LobbyScreen({
   }
 
   function startMatch(roomCode: string) {
-    socket.emit("startMatch", roomCode);
+    socket.emit("startMatch", {roomCode: roomCode, pieces: newGamePieces});
   }
 
   function createNewRoom() {

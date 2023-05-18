@@ -193,7 +193,7 @@ export interface ClientToServerEvents {
 
   leaveRoom: (roomCode: string) => void;
 
-  startMatch: (roomCode: string) => void;
+  startMatch: (data: { roomCode: string; pieces: Piece[] }) => void;
 
   sendMove: (data: {
     selectedPiece: Piece;
