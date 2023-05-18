@@ -265,7 +265,19 @@ router.get("/avatar", verifyUser, async (req: Request, res: Response) => {
       avatar: true,
     },
   });
-  return res.sendFile(avatarUrl.avatar, { root: "./userAvatars" });
+
+  if (avatarUrl) {
+    return res.sendFile(avatarUrl.avatar, { root: "./userAvatars" });
+  } else {
+    const updateFilename = await db.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        avatar: "defaultAvatar.png",
+      },
+    });
+  }
 });
 
 router.post(
@@ -276,7 +288,6 @@ router.post(
     const user = req.user as User;
     const userId = user.id;
     try {
-      console.log(req.body);
       const filename = `${userId}.png`;
       fs.writeFile(`userAvatars/${filename}`, req.body, (error: any) => {
         if (error) {
