@@ -266,18 +266,25 @@ router.get("/avatar", verifyUser, async (req: Request, res: Response) => {
     },
   });
 
-  if (avatarUrl) {
-    return res.sendFile(avatarUrl.avatar, { root: "./userAvatars" });
-  } else {
-    const updateFilename = await db.user.update({
-      where: {
-        id: user.id,
-      },
-      data: {
-        avatar: "defaultAvatar.png",
-      },
-    });
-  }
+  fs.readFile(
+    `userAvatars/${avatarUrl.avatar}`,
+    async (error: any, data: any) => {
+      if (!error && data) {
+        return res.sendFile(avatarUrl.avatar, { root: "./userAvatars" });
+      } else {
+        const updateFilename = await db.user.update({
+          where: {
+            id: user.id,
+          },
+          data: {
+            avatar: "defaultAvatar.png",
+          },
+        });
+
+        return res.sendFile("defaultAvatar.png", { root: "./userAvatars" });
+      }
+    }
+  );
 });
 
 router.post(
