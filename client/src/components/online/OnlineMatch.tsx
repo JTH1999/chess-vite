@@ -191,6 +191,7 @@ export function OnlineMatch({
       text: message,
       name: username,
       id: `${socket.id}${Math.random()}`,
+      roomCode: roomCode
     };
 
     socket.emit("sendMessage", messageObj);

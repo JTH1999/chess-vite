@@ -12,8 +12,6 @@ import {
 import { Link, useLoaderData } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import { useColour } from "../hooks/useColour";
-const defaultAvatar =
-  "https://drive.google.com/file/d/1O3yZkHETWKc-TqKKr3ptGTp7ZbRTnMDy/view";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 import { ChangeEvent, useRef, useState } from "react";

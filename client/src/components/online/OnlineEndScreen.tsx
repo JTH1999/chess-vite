@@ -63,7 +63,7 @@ export default function OnlineEndScreen({
       flexDirection="column"
       justifyContent={"center"}
       alignItems={"center"}
-      zIndex="5"
+      zIndex="20"
       bgColor={colourScheme.body}
       p="40px"
       pt="20px"

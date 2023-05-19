@@ -203,7 +203,12 @@ export interface ClientToServerEvents {
     colour: string;
   }) => void;
 
-  sendMessage: (data: { text: string; name: string; id: string }) => void;
+  sendMessage: (data: {
+    text: string;
+    name: string;
+    id: string;
+    roomCode: string;
+  }) => void;
 
   sendDrawOffer: (data: {
     gameId: string;

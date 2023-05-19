@@ -213,7 +213,7 @@ io.on("connection", (socket) => {
 
   // Send message
   socket.on("sendMessage", (message) => {
-    io.emit("recieveMessage", message);
+    io.to(message.roomCode).emit("recieveMessage", message);
   });
 
   // ------------------------------------------------------------------------------
