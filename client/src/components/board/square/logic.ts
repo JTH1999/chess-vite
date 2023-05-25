@@ -212,9 +212,10 @@ export async function handleClickLogic(
 
       if (selectedPiece.type === "king") {
         selectedPiece.colour === "white"
-          ? setWhiteKingSquare(square)
-          : setBlackKingSquare(square);
+          ? setWhiteKingSquare(newWhiteKingSquare)
+          : setBlackKingSquare(newBlackKingSquare);
       }
+      console.log(piecesCopy);
       setIsCheck(isCheck);
       setIsCheckmate(isCheckmate);
       setIsStalemate(isStalemate);
@@ -241,8 +242,8 @@ export async function handleClickLogic(
               piecesCopy,
               !whiteToMove,
               capturedPiecesCopy,
-              whiteKingSquare,
-              blackKingSquare,
+              newWhiteKingSquare,
+              newBlackKingSquare,
               isCheck,
               promote,
               movesCopy,
@@ -267,8 +268,6 @@ export async function handleClickLogic(
             )
           );
         });
-        console.log(a);
-
         a.then(() => {
           setBotToMove(false);
         });

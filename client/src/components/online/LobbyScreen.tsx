@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 
 import { ChatIcon } from "@chakra-ui/icons";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState, KeyboardEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import pawnImage from "../../assets/pieces/w_pawn_svg_NoShadow.svg";
 import MainButton from "../MainButton";
@@ -52,6 +52,12 @@ export function LobbyScreen({
   const [tabIndex, setTabIndex] = useState(-1);
   const buttonRef = useRef();
   const { colourScheme } = useColour();
+
+  function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
+    if (e.key === "Enter") {
+      joinRoom(joinRoomCode);
+    }
+  }
 
   function createRoom() {
     const createRoomRequest = {
@@ -233,6 +239,7 @@ export function LobbyScreen({
                         placeholder="Enter code here"
                         value={joinRoomCode}
                         onChange={(e) => setJoinRoomCode(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         mb="10px"
                       />
                       <MainButton

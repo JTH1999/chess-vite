@@ -31,7 +31,13 @@ import { useColour } from "../../hooks/useColour";
 import useWindowDimensions from "../../hooks/useWindowDimensions";
 import { AnalysisSection } from "../AnalysisSection";
 import CapturedPieces from "../CapturedPieces";
-import { ClientToServerEvents, Message, Move, Piece, ServerToClientEvents } from "../../../types";
+import {
+  ClientToServerEvents,
+  Message,
+  Move,
+  Piece,
+  ServerToClientEvents,
+} from "../../../types";
 import { Socket } from "socket.io-client";
 import Board from "../board/Board";
 import OnlinePromoteScreen from "./OnlinePromoteScreen";
@@ -79,7 +85,7 @@ export function OnlineMatch({
 }) {
   const { height, width } = useWindowDimensions();
   const [analysisMode, setAnalysisMode] = useState(false);
-  const [message, setMessage] = useState("");
+
   const [serverMessages, setServerMessages] = useState([]);
   const [drawOffer, setDrawOffer] = useState(false);
   const [whiteTime, setWhiteTime] = useState(1800000);
@@ -121,13 +127,6 @@ export function OnlineMatch({
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
-
-  function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
-    if (e.key === "Enter") {
-      sendMessage();
-      setMessage("");
-    }
-  }
 
   function sendMove(selectedPiece: Piece, square: string) {
     const move = {
@@ -184,18 +183,6 @@ export function OnlineMatch({
         setSelectedPiece(selectedPieceCopy);
       }
     }
-  }
-
-  function sendMessage() {
-    const messageObj = {
-      text: message,
-      name: username,
-      id: `${socket.id}${Math.random()}`,
-      roomCode: roomCode
-    };
-
-    socket.emit("sendMessage", messageObj);
-    setMessage("");
   }
 
   function sendDrawOffer() {
@@ -293,6 +280,134 @@ export function OnlineMatch({
   // Will need to make this more responsive and dynamic at some point
   const screenHeight = height - 30;
   const boardHeight = screenHeight - 120;
+
+  function Chat() {
+    const [message, setMessage] = useState("");
+    function handleKeyDown(e: KeyboardEvent<HTMLElement>) {
+      if (e.key === "Enter" && message) {
+        sendMessage();
+        setMessage("");
+      }
+    }
+    function sendMessage() {
+      const messageObj = {
+        text: message,
+        name: username,
+        id: `${socket.id}${Math.random()}`,
+        roomCode: roomCode,
+      };
+
+      socket.emit("sendMessage", messageObj);
+      setMessage("");
+    }
+    return (
+      <>
+        <Box
+          flex="1 1 auto"
+          bgColor={"transparent"}
+          m="10px"
+          mr="0"
+          pr="10px"
+          overflow={"auto"}
+        >
+          <List spacing="2px">
+            {messages.map((message, index: number) => (
+              <ListItem key={message.id}>
+                {message.type === "draw offer" ||
+                message.type === "draw offer response" ? (
+                  <>
+                    <Text textAlign="center" pb="6px">
+                      {message.text}
+                    </Text>
+                    {message.type === "draw offer" ? (
+                      <Flex justify="center" pb="4px">
+                        <Flex w="25%" justify="space-between">
+                          <Tooltip hasArrow label="Accept" borderRadius={"6px"}>
+                            <IconButton
+                              aria-label="accept"
+                              icon={<CheckIcon />}
+                              _hover={{
+                                backgroundColor: colourScheme.primary,
+                              }}
+                              onClick={() => acceptDrawOffer(index)}
+                            />
+                          </Tooltip>
+
+                          <Tooltip hasArrow label="Reject" borderRadius={"6px"}>
+                            <IconButton
+                              aria-label="reject"
+                              icon={<CloseIcon />}
+                              _hover={{
+                                backgroundColor: colourScheme.primary,
+                              }}
+                              onClick={() => rejectDrawOffer(index)}
+                            />
+                          </Tooltip>
+                        </Flex>
+                      </Flex>
+                    ) : (
+                      <></>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <Flex
+                      justify={message.name === username ? "right" : "left"}
+                    >
+                      <Flex
+                        borderRadius="20px"
+                        borderBottomRightRadius={
+                          message.name === username ? "0" : "20px"
+                        }
+                        borderBottomLeftRadius={
+                          message.name === username ? "20px" : "0px"
+                        }
+                        color="white"
+                        bgColor={
+                          message.name === username
+                            ? colourScheme.primary
+                            : "gray.600"
+                        }
+                        p="2px"
+                        px="15px"
+                      >
+                        <Text>
+                          {message.name === username ? "" : message.name + ": "}
+                          {message.text}
+                        </Text>
+                      </Flex>
+                    </Flex>
+                  </>
+                )}
+              </ListItem>
+            ))}
+            <Box ref={bottomRef} h="0px"></Box>
+          </List>
+        </Box>
+        <Flex flex="0 0">
+          <Input
+            borderRadius={"0"}
+            placeholder="Enter message here"
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            borderWidth="0"
+            borderTopWidth="2px"
+            borderTopColor={colourScheme.border}
+          />
+          <Button
+            bgColor={colourScheme.primary}
+            color="white"
+            borderRadius={"0"}
+            onClick={message ? sendMessage : () => {}}
+          >
+            Send
+          </Button>
+        </Flex>
+      </>
+    );
+  }
+
   return (
     <>
       <GameScreen
@@ -369,120 +484,7 @@ export function OnlineMatch({
               flexDirection={"column"}
               overflow="hidden"
             >
-              <Box
-                flex="1 1 auto"
-                bgColor={"transparent"}
-                m="10px"
-                mr="0"
-                pr="10px"
-                overflow={"auto"}
-              >
-                <List spacing="2px">
-                  {messages.map((message, index: number) => (
-                    <ListItem key={message.id}>
-                      {message.type === "draw offer" ||
-                      message.type === "draw offer response" ? (
-                        <>
-                          <Text textAlign="center" pb="6px">
-                            {message.text}
-                          </Text>
-                          {message.type === "draw offer" ? (
-                            <Flex justify="center" pb="4px">
-                              <Flex w="25%" justify="space-between">
-                                <Tooltip
-                                  hasArrow
-                                  label="Accept"
-                                  borderRadius={"6px"}
-                                >
-                                  <IconButton
-                                    aria-label="accept"
-                                    icon={<CheckIcon />}
-                                    _hover={{
-                                      backgroundColor: colourScheme.primary,
-                                    }}
-                                    onClick={() => acceptDrawOffer(index)}
-                                  />
-                                </Tooltip>
-
-                                <Tooltip
-                                  hasArrow
-                                  label="Reject"
-                                  borderRadius={"6px"}
-                                >
-                                  <IconButton
-                                    aria-label="reject"
-                                    icon={<CloseIcon />}
-                                    _hover={{
-                                      backgroundColor: colourScheme.primary,
-                                    }}
-                                    onClick={() => rejectDrawOffer(index)}
-                                  />
-                                </Tooltip>
-                              </Flex>
-                            </Flex>
-                          ) : (
-                            <></>
-                          )}
-                        </>
-                      ) : (
-                        <>
-                          <Flex
-                            justify={
-                              message.name === username ? "right" : "left"
-                            }
-                          >
-                            <Flex
-                              borderRadius="20px"
-                              borderBottomRightRadius={
-                                message.name === username ? "0" : "20px"
-                              }
-                              borderBottomLeftRadius={
-                                message.name === username ? "20px" : "0px"
-                              }
-                              color="white"
-                              bgColor={
-                                message.name === username
-                                  ? colourScheme.primary
-                                  : "gray.600"
-                              }
-                              p="2px"
-                              px="15px"
-                            >
-                              <Text>
-                                {message.name === username
-                                  ? ""
-                                  : message.name + ": "}
-                                {message.text}
-                              </Text>
-                            </Flex>
-                          </Flex>
-                        </>
-                      )}
-                    </ListItem>
-                  ))}
-                  <Box ref={bottomRef} h="0px"></Box>
-                </List>
-              </Box>
-              <Flex flex="0 0">
-                <Input
-                  borderRadius={"0"}
-                  placeholder="Enter message here"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  borderWidth="0"
-                  borderTopWidth="2px"
-                  borderTopColor={colourScheme.border}
-                />
-                <Button
-                  bgColor={colourScheme.primary}
-                  color="white"
-                  borderRadius={"0"}
-                  onClick={sendMessage}
-                >
-                  Send
-                </Button>
-              </Flex>
+              <Chat />
             </Flex>
           </>
         }
@@ -529,6 +531,8 @@ export function OnlineMatch({
             </Text>
           </Flex>
         }
+        chat={<Chat />}
+        online={true}
         moves={moves}
         pieces={pieces}
         analysisMode={analysisMode}

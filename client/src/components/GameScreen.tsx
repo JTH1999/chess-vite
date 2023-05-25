@@ -1,5 +1,9 @@
 import {
   Box,
+  Drawer,
+  DrawerCloseButton,
+  DrawerContent,
+  DrawerOverlay,
   Flex,
   IconButton,
   Menu,
@@ -14,7 +18,7 @@ import {
 import AnalysisSectionMobile from "./AnalysisSectionMobile";
 
 import Board from "./board/Board";
-import { HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
+import { ChatIcon, HamburgerIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useColour } from "../hooks/useColour";
 import {
   Dispatch,
@@ -37,6 +41,7 @@ export function GameScreen({
   analysisSection,
   topClock,
   bottomClock,
+  chat,
   moves,
   pieces,
   analysisMode,
@@ -45,6 +50,7 @@ export function GameScreen({
   previousPieceMovedTo,
   colour,
   selectedPiece,
+  online,
   handleSquareClick,
   setPieces,
   setAnalysisMode,
@@ -58,6 +64,7 @@ export function GameScreen({
   analysisSection: ReactNode;
   topClock: ReactNode;
   bottomClock: ReactNode;
+  chat: ReactNode;
   moves: Move[];
   pieces: Piece[];
   analysisMode: boolean;
@@ -66,6 +73,7 @@ export function GameScreen({
   previousPieceMovedTo: string;
   colour: string;
   selectedPiece: Piece | null;
+  online: boolean;
   handleSquareClick: (
     row: number,
     col: number,
@@ -76,6 +84,7 @@ export function GameScreen({
   setAnalysisMode: Dispatch<SetStateAction<boolean>>;
   setAnalysisMoveNumber: Dispatch<SetStateAction<number>>;
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const { height, width } = useWindowDimensions();
   const { colourScheme } = useColour();
 
@@ -91,6 +100,15 @@ export function GameScreen({
     xl: Math.min(800, possibleBoardHeight),
     xxl: Math.min(900, possibleBoardHeight),
   })!;
+  const mobile = useBreakpointValue({
+    base: true,
+    xs: true,
+    sm: true,
+    md: false,
+    lg: false,
+    xl: false,
+    xxl: false,
+  })!;
 
   return (
     <>
@@ -100,6 +118,40 @@ export function GameScreen({
           w={["100%", null, null, null, "90%", "80%"]}
           px={["10px", null, null, "30px", null, "100px"]}
         >
+          {online && mobile ? (
+            <>
+              <Drawer placement={"bottom"} onClose={onClose} isOpen={isOpen}>
+                <DrawerOverlay />
+                <DrawerContent>
+                  <DrawerCloseButton />
+                  <Flex
+                    bgColor={colourScheme.darker}
+                    borderColor={colourScheme.border}
+                    borderWidth="2px"
+                    borderRadius="12px 12px 0 0"
+                    borderTopWidth={"0"}
+                    flex="1 1 auto"
+                    flexDirection={"column"}
+                    overflow="hidden"
+                    height="400px"
+                  >
+                    {chat}
+                  </Flex>
+                </DrawerContent>
+              </Drawer>
+              <IconButton
+                icon={<ChatIcon />}
+                aria-label="chat"
+                position={"absolute"}
+                bottom={"0"}
+                right="0"
+                onClick={onOpen}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+
           <Box mb="10px" display={["block", null, "none"]}>
             <AnalysisSectionMobile
               moves={moves}
