@@ -65,11 +65,10 @@ export default function OnlineEndScreen({
       alignItems={"center"}
       zIndex="20"
       bgColor={colourScheme.body}
-      p="40px"
-      pt="20px"
+      p="20px"
       borderRadius="16px"
       boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
-      width={"400px"}
+      width={["300px", null, null, "350px"]}
       position="absolute"
       className="checkmate-screen"
     >
@@ -122,7 +121,7 @@ export default function OnlineEndScreen({
             : whiteCheckmate
         }
         className="checkmate-screen-pieces"
-        w="100%"
+        w="70%"
         mt={"20px"}
       />
       <MainButton

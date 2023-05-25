@@ -1,6 +1,6 @@
 import BoardRow from "./BoardRow.js";
 import PromoteScreen from "../PromoteScreen.js";
-import CheckmateScreen from "../CheckmateScreen.js";
+import CheckmateScreen from "../EndScreen.js";
 import { Move, Piece } from "../../../types.js";
 import { Dispatch, PropsWithChildren, ReactNode, SetStateAction } from "react";
 import { Flex } from "@chakra-ui/react";

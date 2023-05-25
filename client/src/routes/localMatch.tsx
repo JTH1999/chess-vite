@@ -40,7 +40,7 @@ import { useColour } from "../hooks/useColour";
 import AnalysisSectionMobile from "../components/AnalysisSectionMobile";
 import { handleClickLogic } from "../components/board/square/logic";
 import PromoteScreen from "../components/PromoteScreen";
-import CheckmateScreen from "../components/CheckmateScreen";
+import CheckmateScreen from "../components/EndScreen";
 import { GameScreen } from "../components/GameScreen";
 
 export async function loader() {

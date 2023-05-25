@@ -70,12 +70,10 @@ export default function CheckmateScreen({
       zIndex="20"
       bgColor={colourScheme.body}
       p="20px"
-      pb="30px"
       borderRadius="16px"
       boxShadow={"0px 0px 20px 5px rgba(0, 0, 0, 0.2);"}
-      width={"350px"}
+      width={["300px", null, null, "350px"]}
       position="absolute"
-
     >
       <Flex justify="end" w="100%" mb="-20px">
         <IconButton
@@ -108,6 +106,7 @@ export default function CheckmateScreen({
         }
         className="checkmate-screen-pieces"
         mt={"20px"}
+        w={"70%"}
       />
       <MainButton
         onClick={resetBoard}

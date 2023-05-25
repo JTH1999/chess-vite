@@ -46,7 +46,7 @@ import {
   handleClickLogic,
 } from "../components/board/square/logic";
 import { useColour } from "../hooks/useColour";
-import CheckmateScreen from "../components/CheckmateScreen";
+import CheckmateScreen from "../components/EndScreen";
 import PromoteScreen from "../components/PromoteScreen";
 import { GameScreen } from "../components/GameScreen";
 
