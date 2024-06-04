@@ -144,7 +144,8 @@ export function useColourWrapper() {
   // Firgured out the weird bug, this is running twice, once with initial (default) colour mode,
   // then with the actual. The actual one is not being saved to state for some reason.
   // Going to work around by initialising with local storage value rather than colorMode (hope it works)
-  const dlTheme = localStorage.getItem("chakra-ui-color-mode");
+  const dlTheme = colorMode
+
   const {
     name,
     primary,

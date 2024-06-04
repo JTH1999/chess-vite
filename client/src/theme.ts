@@ -6,7 +6,7 @@ const { definePartsStyle, defineMultiStyleConfig } =
   createMultiStyleConfigHelpers(switchAnatomy.keys);
 
 const config = {
-  initialColorMode: "light",
+  initialColorMode: "system",
   useSystemColorMode: false,
 };
 

@@ -1,4 +1,4 @@
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, ColorModeScript } from "@chakra-ui/react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import ErrorPage from "./error-page";
@@ -96,6 +96,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <ChakraProvider theme={theme}>
       <ProvideAuth>
         <ProvideColour>
+          <ColorModeScript initialColorMode={theme.config.initialColorMode} />
           <RouterProvider router={router} />
         </ProvideColour>
       </ProvideAuth>
