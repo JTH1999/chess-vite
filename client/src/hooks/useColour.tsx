@@ -144,7 +144,8 @@ export function useColourWrapper() {
   // Firgured out the weird bug, this is running twice, once with initial (default) colour mode,
   // then with the actual. The actual one is not being saved to state for some reason.
   // Going to work around by initialising with local storage value rather than colorMode (hope it works)
-  const dlTheme = colorMode
+  let dlTheme = localStorage.getItem("chakra-ui-color-mode")
+  dlTheme = dlTheme ? dlTheme : colorMode
 
   const {
     name,
@@ -217,22 +218,6 @@ export function useColourWrapper() {
     };
     setColourScheme(updatedScheme);
   };
-
-  // Subscribe to user on mount
-  // Because this sets state in the callback it will cause any ...
-  // ... component that utilizes this hook to re-render with the ...
-  // ... latest auth object.
-  // useEffect(() => {
-  //     const unsubscribe = (colourScheme) => {
-  //         if (colourScheme) {
-  //             setColourScheme(colourScheme);
-  //         } else {
-  //             setColourScheme(colours);
-  //         }
-  //     };
-  //     // Cleanup subscription on unmount
-  //     return () => unsubscribe();
-  // }, []);
 
   return {
     colourScheme,
