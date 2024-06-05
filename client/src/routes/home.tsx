@@ -167,15 +167,11 @@ export default function Home() {
                 pb="0"
               >
                 <Flex flexWrap={"wrap"}>
-                  <Flex>Experience&nbsp;</Flex>
-                  <Flex>the&nbsp;</Flex>
-                  <Flex color={colourScheme.primary}>buggiest&nbsp;</Flex>
+                  <Flex>Let's&nbsp;</Flex>
+                  <Flex>play&nbsp;</Flex>
+                  <Flex>some&nbsp;</Flex>
                   <Flex color={colourScheme.primary}>chess&nbsp;</Flex>
-                  <Flex color={colourScheme.primary}>site&nbsp;</Flex>
-                  <Flex>on&nbsp;</Flex>
-                  <Flex>the&nbsp;</Flex>
-                  <Flex>web&nbsp;</Flex>
-                  <Flex>🐛</Flex>
+                  <Flex>♟️</Flex>
                 </Flex>
               </Heading>
 
@@ -185,9 +181,15 @@ export default function Home() {
                 fontSize={["18px", null, null, null, "20px", "22px"]}
                 textAlign="left"
               >
-                With incredible features like local matches and deselecting
-                pieces, you'd be crazy to choose robust, popular sites like
-                Chess.com
+                Play chess against your friends or the computer, view your stats, and analyse your previous games.
+              </Text>
+              <Text
+                fontWeight={"400"}
+                mt="30px"
+                fontSize={["18px", null, null, null, "20px", "22px"]}
+                textAlign="left"
+              >
+                <b>Note:</b> This site is hosted on a Render free instance, so some features may not work until the backend spins up.
               </Text>
               <Flex w="100%">
                 <HStack
@@ -229,7 +231,7 @@ export default function Home() {
             py={["60px", "100px"]}
             px={pagePx}
           >
-            <Grid templateColumns={"1fr 1fr 1fr"} columnGap={"20px"}>
+            <Flex justify={"space-between"}>
               <GameCard
                 icon={faChess}
                 heading={"Local match"}
@@ -251,7 +253,7 @@ export default function Home() {
                 link="/online-match"
                 colourBackground={true}
               />
-            </Grid>
+            </Flex>
           </Box>
         </Flex>
       )}
@@ -282,6 +284,7 @@ function GameCard({
         color: colourBackground ? "gray.800" : colourScheme.primary,
       }}
       color={colourBackground ? "white" : colourScheme.text}
+      justify="center"
     >
       {colourBackground ? (
         <>
@@ -294,7 +297,7 @@ function GameCard({
             <FontAwesomeIcon icon={icon} />
           </Flex> */}
 
-          <Flex direction={"column"} transition="0.2s ease" textAlign="center">
+          <Flex direction={"column"} transition="0.2s ease" textAlign="center" justify={"center"}>
             <Flex
               // w="100px"
               justify="center"
@@ -335,6 +338,7 @@ function GameCard({
             // ml="30px"
             transition="0.2s ease"
             textAlign={"center"}
+            
           >
             <Flex
               // w="100px"
